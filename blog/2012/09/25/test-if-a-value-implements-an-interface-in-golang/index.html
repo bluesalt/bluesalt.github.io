@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Jeff Li</title>
+  <title>Test if a value implements an interface in golang - Jeff Li</title>
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="The first post written by markdown!
-">
+  <meta name="description" content="We all know that type assert could be used to cast a interface type variable to its actual type value. In the other way, golang allows you to query &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://bluesalt.github.io">
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
@@ -64,51 +63,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/05/19/hello-world/">Hello World</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-19T13:59:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>The first post written by markdown!</h3>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/">Test if a Value Implements an Interface in Golang</a></h1>
+      <h1 class="entry-title">Test if a Value Implements an Interface in Golang</h1>
     
     
       <p class="meta">
@@ -131,7 +91,7 @@
   </header>
 
 
-  <div class="entry-content"><p>We all know that type assert could be used to cast a interface type variable to its actual type value. In the other way, golang allows you to query if a value has implement an interface. This could be used when writing unit test cases, for example, you want to make sure that a struct actually implements certain interfaces.</p>
+<div class="entry-content"><p>We all know that type assert could be used to cast a interface type variable to its actual type value. In the other way, golang allows you to query if a value has implement an interface. This could be used when writing unit test cases, for example, you want to make sure that a struct actually implements certain interfaces.</p>
 
 <ul>
 <li><p>Assign the value to an empty interface variable</p></li>
@@ -213,83 +173,16 @@
 </span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/18/bundles-command-error-in-textmate-2/">Bundles Command Error in TextMate 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
 
-<time datetime="2012-08-18T22:43:52+08:00" pubdate data-updated="true">Aug 18<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>When getting the news that the famous text editor in Max OS platform&mdash;TextMate 2 had been released as an open source software in github, I couldn&rsquo;t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
-
-<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in <code>e_url': undefined method</code>gsub&#8217; for nil:NilClass (NoMethodError)</em>
-<em>from (erb):21:in <code>header'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in</code>eval&#8217;</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in <code>block in result'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in</code>call&#8217;</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in <code>result'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in</code>header&#8217;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in <code>show'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in</code>run&#8217;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
-_from Run:4:in</code><main>&lsquo;</em></p>
-
-<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn&rsquo;t the textmate 2  ship with these files.</p>
-
-<ol>
-<li><p>Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p></li>
-<li><p>Extract it to anywhere you like, I put it in:  ~/Library/Application Support/Avian</p></li>
-<li><p>Create a new environment variable called &lsquo;TM_THEME_PATH&#8217;  under Preferences &ndash;> Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p></li>
-</ol>
-
-
-<p>TM_THEME_PATH=$HOME/Library/Application Support/Avian/themes/</p>
-
-<p>Enjoy the powerful editor brought by community of open source!</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/11/22/ecug-con-2011/">ECUG Con 2011</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -301,53 +194,44 @@ _from Run:4:in</code><main>&lsquo;</em></p>
   
 
 
-<time datetime="2011-11-22T20:11:46+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2011</time>
-        
-      </p>
+<time datetime="2012-09-25T06:11:00+08:00" pubdate data-updated="true">Sep 25<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/golang/'>golang</a>
+  
+</span>
+
+
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><p>从买域名到空间终于把博客搭好了，以后再慢慢弄wordpress。第一篇blog，严格的说应该是独立博客的第一篇，以后再慢慢研究要不要吧javaeye上的blog迁移过来，写点ECUG的吧，第一次参加这样的会议。</p>
-
-<p>第一天去了，第二天身体不大舒服，就没有去，想想还是有点遗憾。会议的主题是关于Go语言的应用，这个会议之前是关于Erlang，听许式伟的介绍，他在实践中发现Go语言比Erlang更适合他的项目使用需求，因此转向Go。关于语言的好坏真的是很难讲，几年前对语言还挺感兴趣，这几天虽然也关注语言的发展，当自己的兴趣已经更多的转移到服务器后端架构上了，所以对于Erlang与Go语言孰好孰坏也不作评价了。</p>
-
-<p>第一场演讲是黄东的系统工程师的非专业课，主要是宽带的计费的，互动很多，听听挺有意思，原来宽带的计费学问还挺大的。</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/Bxnj2cTq/medish.jpg" alt="" /></p>
-
-<p>接下来老莫的云储存。分布式存储一直是感兴趣的方向，因此听得格外仔细。当然由于公司原因，自然不会提到太多的细节。让我记住的一点是做网络相关服务器应用要保守，不需要采用太trick的算法，可靠性才是首要考虑目标，而不是性能。</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/BxnjbiQD/medish.jpg" alt="" /></p>
-
-<p>下午第一场是新浪微博田琪的关于redis的，这方面俺完全不懂。。</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/Bxnjklnq/medish.jpg" alt="" /></p>
-
-<p>上海商派的王磊讲关于他们自己开发的PaaS平台的。说实话，国内公司做这一方面开发而且愿意拿出来分享，我真的觉得挺意外的。。</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/BxnjsvfS/medish.jpg" alt="" /></p>
-
-<p>第一天最后一场：韦光京的关于Go语言的</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/BxnjBrZf/medish.jpg" alt="" /></p>
-
-<p>小花絮：参加ECUG的最小听众~</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/BxnjM8JR/medish.jpg" alt="" /></p>
+      <div class="sharing">
+  
+  
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/08/18/bundles-command-error-in-textmate-2/" title="Previous Post: Bundles command error in TextMate 2">&laquo; Bundles command error in TextMate 2</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/05/19/hello-world/" title="Next Post: Hello world">Hello world &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
+  </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -380,6 +264,7 @@ _from Run:4:in</code><main>&lsquo;</em></p>
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -394,7 +279,10 @@ _from Run:4:in</code><main>&lsquo;</em></p>
       var disqus_shortname = 'bluesalt';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
