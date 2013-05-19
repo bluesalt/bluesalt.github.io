@@ -108,86 +108,6 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/">Test if a Value Implements an Interface in Golang</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-25T06:11:00+08:00" pubdate data-updated="true">Sep 25<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>We all know that type assert could be used to cast a interface type variable to its actual type value. In the other way, golang allows you to query if a value has implement an interface. This could be used when writing unit test cases, for example, you want to make sure that a struct actually implements certain interfaces.</p>
-
-<ul>
-<li><p>Assign the value to an empty interface variable</p></li>
-<li><p>Use type assert: assert the empty interface type to any specific interface you are interested</p></li>
-</ul>
-
-
-<p>Here is a small while complete example
-&#8220;`
-package main</p>
-
-<p>import (
-  . &ldquo;launchpad.net/gocheck&rdquo;
-  &ldquo;testing&rdquo;
-)</p>
-
-<p>func Test(t *testing.T) {
-  TestingT(t)
-}</p>
-
-<p>type MySuite struct{}</p>
-
-<p>var _ = Suite(&amp;MySuite{})</p>
-
-<p>type IFoobar interface {
-  foobar()
-}</p>
-
-<p>type Foobar struct {
-}</p>
-
-<p>func (f *Foobar) foobar() {
-}</p>
-
-<p>func (s <em>MySuite) TestFoobar(c </em>C) {
-  v := Foobar{}
-  var i interface{} = v
-  _, ok := i.(IFoobar)
-  c.Assert(ok, Equals, false)</p>
-
-<p>  var p interface{} = &amp;v
-  _, ok = p.(IFoobar)
-  c.Assert(ok, Equals, true)
-}&#8220;`</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
       <h1 class="entry-title"><a href="/blog/2012/08/18/bundles-command-error-in-textmate-2/">Bundles Command Error in TextMate 2</a></h1>
     
     
@@ -320,10 +240,6 @@ _from Run:4:in</code><main>&lsquo;</em></p>
     
       <li class="post">
         <a href="/blog/2013/05/19/hello-world/">Hello World</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/">Test if a Value Implements an Interface in Golang</a>
       </li>
     
       <li class="post">
