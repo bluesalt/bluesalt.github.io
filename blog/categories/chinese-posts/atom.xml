@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Jeff Li]]></title>
-  <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Chinese Posts | Jeff Li]]></title>
+  <link href="http://bluesalt.github.io/blog/categories/chinese-posts/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
   <updated>2013-05-19T16:26:48+08:00</updated>
   <id>http://bluesalt.github.io/</id>
@@ -12,15 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Hello world]]></title>
-    <link href="http://bluesalt.github.io/blog/2013/05/19/hello-world/"/>
-    <updated>2013-05-19T13:59:00+08:00</updated>
-    <id>http://bluesalt.github.io/blog/2013/05/19/hello-world</id>
-    <content type="html"><![CDATA[<h3>The first post written by markdown!</h3>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[ECUG Con 2011]]></title>
