@@ -4,7 +4,7 @@
   <title><![CDATA[Category: golang | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/blog/categories/golang/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2013-05-19T16:32:22+08:00</updated>
+  <updated>2013-05-19T16:36:26+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -27,7 +27,43 @@
 
 
 <p>Here is a small while complete example
-[gist id=3776150]</p>
+```
+package main</p>
+
+<p>import (
+. &ldquo;launchpad.net/gocheck&rdquo;
+&ldquo;testing&rdquo;
+)</p>
+
+<p>func Test(t *testing.T) {
+TestingT(t)
+}</p>
+
+<p>type MySuite struct{}</p>
+
+<p>var _ = Suite(&amp;MySuite{})</p>
+
+<p>type IFoobar interface {
+foobar()
+}</p>
+
+<p>type Foobar struct {
+}</p>
+
+<p>func (f *Foobar) foobar() {
+}</p>
+
+<p>func (s <em>MySuite) TestFoobar(c </em>C) {
+v := Foobar{}
+var i interface{} = v
+_, ok := i.(IFoobar)
+c.Assert(ok, Equals, false)</p>
+
+<p>var p interface{} = &amp;v
+_, ok = p.(IFoobar)
+c.Assert(ok, Equals, true)
+}
+```</p>
 ]]></content>
   </entry>
   
