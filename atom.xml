@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2013-05-19T16:28:29+08:00</updated>
+  <updated>2013-05-19T16:32:22+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -19,6 +19,58 @@
     <updated>2013-05-19T13:59:00+08:00</updated>
     <id>http://bluesalt.github.io/blog/2013/05/19/hello-world</id>
     <content type="html"><![CDATA[<h3>The first post written by markdown!</h3>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Test if a value implements an interface in golang]]></title>
+    <link href="http://bluesalt.github.io/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/"/>
+    <updated>2012-09-25T06:11:00+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang</id>
+    <content type="html"><![CDATA[<p>We all know that type assert could be used to cast a interface type variable to its actual type value. In the other way, golang allows you to query if a value has implement an interface. This could be used when writing unit test cases, for example, you want to make sure that a struct actually implements certain interfaces.</p>
+
+<ul>
+<li><p>Assign the value to an empty interface variable</p></li>
+<li><p>Use type assert: assert the empty interface type to any specific interface you are interested</p></li>
+</ul>
+
+
+<p>Here is a small while complete example
+[gist id=3776150]</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Bundles command error in TextMate 2]]></title>
+    <link href="http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2/"/>
+    <updated>2012-08-18T22:43:52+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2</id>
+    <content type="html"><![CDATA[<p>When getting the news that the famous text editor in Max OS platform&mdash;TextMate 2 had been released as an open source software in github, I couldn&rsquo;t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
+
+<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in <code>e_url': undefined method</code>gsub&#8217; for nil:NilClass (NoMethodError)</em>
+<em>from (erb):21:in <code>header'_
+_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in</code>eval&#8217;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in <code>block in result'_
+_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in</code>call&#8217;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in <code>result'_
+_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in</code>header&#8217;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in <code>show'_
+_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in</code>run&#8217;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
+_from Run:4:in</code><main>&lsquo;</em></p>
+
+<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn&rsquo;t the textmate 2  ship with these files.</p>
+
+<ol>
+<li><p>Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p></li>
+<li><p>Extract it to anywhere you like, I put it in:  ~/Library/Application Support/Avian</p></li>
+<li><p>Create a new environment variable called &lsquo;TM_THEME_PATH&#8217;  under Preferences &ndash;> Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p></li>
+</ol>
+
+
+<p>TM_THEME_PATH=$HOME/Library/Application Support/Avian/themes/</p>
+
+<p>Enjoy the powerful editor brought by community of open source!</p>
 ]]></content>
   </entry>
   

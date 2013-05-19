@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Hello world - Jeff Li</title>
+  <title>Bundles command error in TextMate 2 - Jeff Li</title>
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="The first post written by markdown!
-">
+  <meta name="description" content="When getting the news that the famous text editor in Max OS platform&mdash;TextMate 2 had been released as an open source software in github, I &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://bluesalt.github.io/blog/2013/05/19/hello-world">
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
@@ -69,7 +68,7 @@
   
   <header>
     
-      <h1 class="entry-title">Hello World</h1>
+      <h1 class="entry-title">Bundles Command Error in TextMate 2</h1>
     
     
       <p class="meta">
@@ -85,14 +84,39 @@
   
 
 
-<time datetime="2013-05-19T13:59:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2013</time>
+<time datetime="2012-08-18T22:43:52+08:00" pubdate data-updated="true">Aug 18<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><h3>The first post written by markdown!</h3>
+<div class="entry-content"><p>When getting the news that the famous text editor in Max OS platform&mdash;TextMate 2 had been released as an open source software in github, I couldn&rsquo;t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
+
+<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in <code>e_url': undefined method</code>gsub&#8217; for nil:NilClass (NoMethodError)</em>
+<em>from (erb):21:in <code>header'_
+_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in</code>eval&#8217;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in <code>block in result'_
+_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in</code>call&#8217;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in <code>result'_
+_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in</code>header&#8217;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in <code>show'_
+_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in</code>run&#8217;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
+_from Run:4:in</code><main>&lsquo;</em></p>
+
+<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn&rsquo;t the textmate 2  ship with these files.</p>
+
+<ol>
+<li><p>Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p></li>
+<li><p>Extract it to anywhere you like, I put it in:  ~/Library/Application Support/Avian</p></li>
+<li><p>Create a new environment variable called &lsquo;TM_THEME_PATH&#8217;  under Preferences &ndash;> Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p></li>
+</ol>
+
+
+<p>TM_THEME_PATH=$HOME/Library/Application Support/Avian/themes/</p>
+
+<p>Enjoy the powerful editor brought by community of open source!</p>
 </div>
 
 
@@ -115,8 +139,14 @@
   
 
 
-<time datetime="2013-05-19T13:59:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2013</time>
+<time datetime="2012-08-18T22:43:52+08:00" pubdate data-updated="true">Aug 18<span>th</span>, 2012</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/coolstuff/'>CoolStuff</a>
+  
+</span>
 
 
     </p>
@@ -130,8 +160,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/" title="Previous Post: Test if a value implements an interface in golang">&laquo; Test if a value implements an interface in golang</a>
+        <a class="basic-alignment left" href="/blog/2011/11/22/ecug-con-2011/" title="Previous Post: ECUG Con 2011">&laquo; ECUG Con 2011</a>
       
+      
+        <a class="basic-alignment right" href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/" title="Next Post: Test if a value implements an interface in golang">Test if a value implements an interface in golang &raquo;</a>
       
     </p>
   </footer>
@@ -193,8 +225,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://bluesalt.github.io/blog/2013/05/19/hello-world/';
-        var disqus_url = 'http://bluesalt.github.io/blog/2013/05/19/hello-world/';
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2/';
         var disqus_script = 'embed.js';
       
     (function () {
