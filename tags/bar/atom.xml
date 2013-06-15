@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: bar | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/bar/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2013-06-15T22:52:26+08:00</updated>
+  <updated>2013-06-15T23:24:40+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -19,6 +19,41 @@
     <updated>2013-05-19T13:59:00+08:00</updated>
     <id>http://bluesalt.github.io/blog/2013/05/19/hello-world</id>
     <content type="html"><![CDATA[<h3>The first post written by markdown!</h3>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ECUG Con 2011]]></title>
+    <link href="http://bluesalt.github.io/blog/2011/11/22/ecug-con-2011/"/>
+    <updated>2011-11-22T20:11:46+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2011/11/22/ecug-con-2011</id>
+    <content type="html"><![CDATA[<p>从买域名到空间终于把博客搭好了，以后再慢慢弄wordpress。第一篇blog，严格的说应该是独立博客的第一篇，以后再慢慢研究要不要吧javaeye上的blog迁移过来，写点ECUG的吧，第一次参加这样的会议。</p>
+
+<p>第一天去了，第二天身体不大舒服，就没有去，想想还是有点遗憾。会议的主题是关于Go语言的应用，这个会议之前是关于Erlang，听许式伟的介绍，他在实践中发现Go语言比Erlang更适合他的项目使用需求，因此转向Go。关于语言的好坏真的是很难讲，几年前对语言还挺感兴趣，这几天虽然也关注语言的发展，当自己的兴趣已经更多的转移到服务器后端架构上了，所以对于Erlang与Go语言孰好孰坏也不作评价了。</p>
+
+<p>第一场演讲是黄东的系统工程师的非专业课，主要是宽带的计费的，互动很多，听听挺有意思，原来宽带的计费学问还挺大的。</p>
+
+<p><img src="http://pic.yupoo.com/bluesalt/Bxnj2cTq/medish.jpg" alt="" /></p>
+
+<p>接下来老莫的云储存。分布式存储一直是感兴趣的方向，因此听得格外仔细。当然由于公司原因，自然不会提到太多的细节。让我记住的一点是做网络相关服务器应用要保守，不需要采用太trick的算法，可靠性才是首要考虑目标，而不是性能。</p>
+
+<p><img src="http://pic.yupoo.com/bluesalt/BxnjbiQD/medish.jpg" alt="" /></p>
+
+<p>下午第一场是新浪微博田琪的关于redis的，这方面俺完全不懂。。</p>
+
+<p><img src="http://pic.yupoo.com/bluesalt/Bxnjklnq/medish.jpg" alt="" /></p>
+
+<p>上海商派的王磊讲关于他们自己开发的PaaS平台的。说实话，国内公司做这一方面开发而且愿意拿出来分享，我真的觉得挺意外的。。</p>
+
+<p><img src="http://pic.yupoo.com/bluesalt/BxnjsvfS/medish.jpg" alt="" /></p>
+
+<p>第一天最后一场：韦光京的关于Go语言的</p>
+
+<p><img src="http://pic.yupoo.com/bluesalt/BxnjBrZf/medish.jpg" alt="" /></p>
+
+<p>小花絮：参加ECUG的最小听众~</p>
+
+<p><img src="http://pic.yupoo.com/bluesalt/BxnjM8JR/medish.jpg" alt="" /></p>
 ]]></content>
   </entry>
   
