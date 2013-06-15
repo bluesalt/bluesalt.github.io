@@ -2,25 +2,29 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://bluesalt.github.io/blog/2011/11/22/ecug-con-2011/</loc>
-        <lastmod>2013-05-19T16:30:28+08:00</lastmod>
+        <lastmod>2013-06-15T21:17:30+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2/</loc>
-        <lastmod>2013-05-19T16:32:12+08:00</lastmod>
+        <lastmod>2013-06-15T21:17:30+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/
         </loc>
-        <lastmod>2013-05-19T17:06:41+08:00</lastmod>
+        <lastmod>2013-06-15T21:17:30+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2013/05/19/hello-world/</loc>
-        <lastmod>2013-05-19T14:02:35+08:00</lastmod>
+        <lastmod>2013-06-15T22:52:17+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://bluesalt.github.io/about/</loc>
+        <lastmod>2013-05-24T15:23:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/archives/</loc>
-        <lastmod>2013-05-19T17:06:41+08:00</lastmod>
+        <lastmod>2013-06-15T22:52:17+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/chinese-posts/</loc>
@@ -28,7 +32,7 @@
     </url>
     <url>
         <loc>http://bluesalt.github.io/</loc>
-        <lastmod>2013-05-22T23:07:07+08:00</lastmod>
+        <lastmod>2013-06-15T22:52:17+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/robots.txt</loc>
