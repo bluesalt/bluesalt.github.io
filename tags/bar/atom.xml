@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: bar | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/bar/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2013-06-20T08:13:23+08:00</updated>
+  <updated>2013-06-20T08:35:49+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -12,15 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Hello world]]></title>
-    <link href="http://bluesalt.github.io/blog/2013/05/19/hello-world/"/>
-    <updated>2013-05-19T13:59:00+08:00</updated>
-    <id>http://bluesalt.github.io/blog/2013/05/19/hello-world</id>
-    <content type="html"><![CDATA[<h3>The first post written by markdown!</h3>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[ECUG Con 2011]]></title>
