@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Jeff Li</title>
+  <title>jetty-maven-plugin and https support - Jeff Li</title>
   <meta name="author" content="Jeff Li">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://bluesalt.github.io">
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
@@ -65,15 +65,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Jetty-maven-plugin and Https Support</a></h1>
+      <h1 class="entry-title">Jetty-maven-plugin and Https Support</h1>
     
     
       <p class="meta">
@@ -96,7 +93,7 @@
   </header>
 
 
-  <div class="entry-content"><h3>Introduction</h3>
+<div class="entry-content"><h3>Introduction</h3>
 
 <p><code>jetty-maven-plugin</code>(formerly known as <code>maven-jetty-plugin</code>)is a maven plugin which enables the jetty container in maven project. It is very convenient in development environment since you can start the web app by issue only one command <code>mvn jetty:run</code>. By default it only supports http protocol. Additional configuration is necessary if https is required. Roughly we needs:</p>
 
@@ -228,75 +225,16 @@ It should be noted that the plugin has evolved a lot since version 7. The config
 
 <p>Every thing should be ready now. If you are using Postman as your test tool, please navigate to <code>https://loocalhost:8443/context</code> to accept the certificate before you make further tests after running <code>mvn jetty:run</code>.</p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/06/17/add-tags-and-tag-cloud-support-to-octopress/">Add Tags and Tag Cloud Support to Octopress</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
 
-<time datetime="2013-06-17T07:55:00+08:00" pubdate data-updated="true">Jun 17<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><span class='caption-wrapper left'><img class='caption' src='/images/tags.png' width='500' height='250' alt='Fig-1: Tags' title='Fig-1: Tags'><span class='caption-text'>Fig-1: Tags</span></span>
-<span class='caption-wrapper right'><img class='caption' src='/images/tag-cloud.png' width='250' height='500' alt='Fig-2: Tag Cloud' title='Fig-2: Tag Cloud'><span class='caption-text'>Fig-2: Tag Cloud</span></span></p>
-
-<h3>Basic Usage</h3>
-
-<p>After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
-
-<p>Here I don&rsquo;t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
-
-<h3>Trouble Shooting</h3>
-
-<p>When playing with the tag-cloud plugin, I encounter the trouble when I try to run <code>rake generate</code>:</p>
-
-<p><code>Liquid Exception: comparison of Array with Array failed in page</code></p>
-
-<p>This would occur when every tag is applied for only ONCE. Not sure if this is a bug. Anyway you can simply apply one of the tags on more than one post.</p>
-
-<p>P.S. When composing this post, I have found another useful plugin which add caption to image. Refer this post for the details:<a href="http://blog.zerosharp.com/image-captions-for-octopress/">Image Captions for Octopress</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/19/hello-world/">Hello World</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -308,205 +246,51 @@ It should be noted that the plugin has evolved a lot since version 7. The config
   
 
 
-<time datetime="2013-05-19T13:59:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>The first post written by markdown!</h3>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2013-07-29T22:46:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/">Test if a Value Implements an Interface in Golang</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="categories">
   
-
-
-<time datetime="2012-09-25T06:11:00+08:00" pubdate data-updated="true">Sep 25<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>We all know that type assert could be used to cast a interface type variable to its actual type value. In the other way, golang allows you to query if a value has implement an interface. This could be used when writing unit test cases, for example, you want to make sure that a struct actually implements certain interfaces.</p>
-
-<ul>
-<li><p>Assign the value to an empty interface variable</p></li>
-<li><p>Use type assert: assert the empty interface type to any specific interface you are interested</p></li>
-</ul>
-
-
-<p>Here is a small while complete example</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kn">package</span> <span class="nx">main</span>
-</span><span class='line'>
-</span><span class='line'><span class="kn">import</span> <span class="p">(</span>
-</span><span class='line'>  <span class="p">.</span> <span class="s">&quot;launchpad.net/gocheck&quot;</span>
-</span><span class='line'>  <span class="s">&quot;testing&quot;</span>
-</span><span class='line'><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">func</span> <span class="nx">Test</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">TestingT</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">type</span> <span class="nx">MySuite</span> <span class="kd">struct</span><span class="p">{}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">Suite</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">MySuite</span><span class="p">{})</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">type</span> <span class="nx">IFoobar</span> <span class="kd">interface</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">foobar</span><span class="p">()</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">type</span> <span class="nx">Foobar</span> <span class="kd">struct</span> <span class="p">{</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">Foobar</span><span class="p">)</span> <span class="nx">foobar</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">MySuite</span><span class="p">)</span> <span class="nx">TestFoobar</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">C</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">v</span> <span class="o">:=</span> <span class="nx">Foobar</span><span class="p">{}</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">i</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">=</span> <span class="nx">v</span>
-</span><span class='line'>  <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">i</span><span class="p">.(</span><span class="nx">IFoobar</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">c</span><span class="p">.</span><span class="nx">Assert</span><span class="p">(</span><span class="nx">ok</span><span class="p">,</span> <span class="nx">Equals</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">p</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">v</span>
-</span><span class='line'>  <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.(</span><span class="nx">IFoobar</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">c</span><span class="p">.</span><span class="nx">Assert</span><span class="p">(</span><span class="nx">ok</span><span class="p">,</span> <span class="nx">Equals</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
+    <a class='category' href='/blog/categories/java/'>Java</a>
   
-  
+</span>
 
 
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/18/bundles-command-error-in-textmate-2/">Bundles Command Error in TextMate 2</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="tags">
   
+    <a class='tag' href='/tags/https/'>https</a>, <a class='tag' href='/tags/java/'>java</a>, <a class='tag' href='/tags/jetty/'>jetty</a>, <a class='tag' href='/tags/maven/'>maven</a>
+  
+</span>
 
 
-<time datetime="2012-08-18T22:43:52+08:00" pubdate data-updated="true">Aug 18<span>th</span>, 2012</time>
-        
-      </p>
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><p>When getting the news that the famous text editor in Max OS platform&mdash;TextMate 2 had been released as an open source software in github, I couldn&rsquo;t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
-
-<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in <code>e_url': undefined method</code>gsub&#8217; for nil:NilClass (NoMethodError)</em>
-<em>from (erb):21:in <code>header'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in</code>eval&#8217;</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in <code>block in result'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in</code>call&#8217;</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in <code>result'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in</code>header&#8217;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in <code>show'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in</code>run&#8217;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
-_from Run:4:in</code><main>&lsquo;</em></p>
-
-<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn&rsquo;t the textmate 2  ship with these files.</p>
-
-<ol>
-<li><p>Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p></li>
-<li><p>Extract it to anywhere you like, I put it in:  ~/Library/Application Support/Avian</p></li>
-<li><p>Create a new environment variable called &lsquo;TM_THEME_PATH&#8217;  under Preferences &ndash;> Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p></li>
-</ol>
-
-
-<p>TM_THEME_PATH=$HOME/Library/Application Support/Avian/themes/</p>
-
-<p>Enjoy the powerful editor brought by community of open source!</p>
+      <div class="sharing">
+  
+  
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/06/17/add-tags-and-tag-cloud-support-to-octopress/" title="Previous Post: add tags and tag cloud support to octopress">&laquo; add tags and tag cloud support to octopress</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
+  </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -569,6 +353,7 @@ _from Run:4:in</code><main>&lsquo;</em></p>
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -583,7 +368,10 @@ _from Run:4:in</code><main>&lsquo;</em></p>
       var disqus_shortname = 'bluesalt';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

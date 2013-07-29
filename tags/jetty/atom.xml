@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: jetty | Jeff Li]]></title>
+  <link href="http://bluesalt.github.io/tags/jetty/atom.xml" rel="self"/>
+  <link href="http://bluesalt.github.io/"/>
+  <updated>2013-07-29T23:20:08+08:00</updated>
+  <id>http://bluesalt.github.io/</id>
+  <author>
+    <name><![CDATA[Jeff Li]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[jetty-maven-plugin and https support]]></title>
+    <link href="http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support/"/>
+    <updated>2013-07-29T22:46:00+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support</id>
+    <content type="html"><![CDATA[<h3>Introduction</h3>
+
+<p><code>jetty-maven-plugin</code>(formerly known as <code>maven-jetty-plugin</code>)is a maven plugin which enables the jetty container in maven project. It is very convenient in development environment since you can start the web app by issue only one command <code>mvn jetty:run</code>. By default it only supports http protocol. Additional configuration is necessary if https is required. Roughly we needs:</p>
+
+<ul>
+<li>A development certificate</li>
+<li>Instruct the jetty plugin to use the certificate</li>
+</ul>
+
+
+<p>Besides <code>jetty-maven-plugin</code>, another maven plugin called <code>keytool-maven-plugin</code> is also needed to generate the certificate.
+It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version.</p>
+
+<h3>V6</h3>
+
+<p>If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
+
+<h3>V8</h3>
+
+<p>Add following sections to the <plugins> section in your pom.xml file:</p>
+
+<p>```xml</p>
+
+<pre><code>     &lt;plugin&gt;
+        &lt;groupId&gt;org.mortbay.jetty&lt;/groupId&gt;
+        &lt;artifactId&gt;jetty-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;8.1.11.v20130520&lt;/version&gt;
+        &lt;configuration&gt;
+           &lt;scanIntervalSeconds&gt;5&lt;/scanIntervalSeconds&gt;
+           &lt;webApp&gt;
+              &lt;contextPath&gt;/context&lt;/contextPath&gt;
+           &lt;/webApp&gt;
+           &lt;connectors&gt;
+              &lt;connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector"&gt;
+                 &lt;port&gt;8080&lt;/port&gt;
+                 &lt;maxIdleTime&gt;60000&lt;/maxIdleTime&gt;
+              &lt;/connector&gt;
+              &lt;connector implementation="org.eclipse.jetty.server.ssl.SslSelectChannelConnector"&gt;
+                 &lt;port&gt;8443&lt;/port&gt;
+                 &lt;maxIdleTime&gt;60000&lt;/maxIdleTime&gt;
+                 &lt;keystore&gt;${project.build.directory}/jetty-ssl.keystore&lt;/keystore&gt;
+                 &lt;password&gt;jetty8&lt;/password&gt;
+                 &lt;keyPassword&gt;jetty8&lt;/keyPassword&gt;
+              &lt;/connector&gt;
+           &lt;/connectors&gt;
+        &lt;/configuration&gt;
+     &lt;/plugin&gt;
+
+     &lt;plugin&gt;
+        &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+        &lt;artifactId&gt;keytool-maven-plugin&lt;/artifactId&gt;
+        &lt;executions&gt;
+           &lt;execution&gt;
+              &lt;phase&gt;generate-resources&lt;/phase&gt;
+              &lt;id&gt;clean&lt;/id&gt;
+              &lt;goals&gt;
+                 &lt;goal&gt;clean&lt;/goal&gt;
+              &lt;/goals&gt;
+           &lt;/execution&gt;
+           &lt;execution&gt;
+              &lt;phase&gt;generate-resources&lt;/phase&gt;
+              &lt;id&gt;genkey&lt;/id&gt;
+              &lt;goals&gt;
+                 &lt;goal&gt;generateKeyPair&lt;/goal&gt;
+              &lt;/goals&gt;
+           &lt;/execution&gt;
+        &lt;/executions&gt;
+        &lt;configuration&gt;
+           &lt;keystore&gt;${project.build.directory}/jetty-ssl.keystore&lt;/keystore&gt;
+           &lt;dname&gt;cn=localhost&lt;/dname&gt;
+           &lt;keypass&gt;jetty8&lt;/keypass&gt;
+           &lt;storepass&gt;jetty8&lt;/storepass&gt;
+           &lt;alias&gt;jetty8&lt;/alias&gt;
+           &lt;keyalg&gt;RSA&lt;/keyalg&gt;
+        &lt;/configuration&gt;
+     &lt;/plugin&gt;
+</code></pre>
+
+<p><code>``
+Every thing should be ready now. If you are using Postman as your test tool, please navigate to</code><a href="https://loocalhost:8443/context">https://loocalhost:8443/context</a><code>to accept the certificate before you make further tests after running</code>mvn jetty:run`.</p>
+]]></content>
+  </entry>
+  
+</feed>
