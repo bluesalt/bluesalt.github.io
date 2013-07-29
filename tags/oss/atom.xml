@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Tag: jetty | Jeff Li]]></title>
-  <link href="http://bluesalt.github.io/tags/jetty/atom.xml" rel="self"/>
+  <title><![CDATA[Tag: oss | Jeff Li]]></title>
+  <link href="http://bluesalt.github.io/tags/oss/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
   <updated>2013-07-29T23:22:17+08:00</updated>
   <id>http://bluesalt.github.io/</id>
