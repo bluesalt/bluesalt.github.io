@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-03-30T10:27:37+08:00</updated>
+  <updated>2014-03-30T10:38:26+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -108,16 +108,16 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'>{
-</span><span class='line'> &quot;namespace&quot;: &quot;me.jeffli.avrosamples.model&quot;,
-</span><span class='line'> &quot;type&quot;: &quot;record&quot;,
-</span><span class='line'> &quot;name&quot;: &quot;LogEntry&quot;,
-</span><span class='line'> &quot;fields&quot;: [
-</span><span class='line'>     {&quot;name&quot;: &quot;name&quot;, &quot;type&quot;: &quot;string&quot;},
-</span><span class='line'>     {&quot;name&quot;: &quot;resource&quot;,  &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]},
-</span><span class='line'>     {&quot;name&quot;: &quot;ip&quot;, &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]}
-</span><span class='line'> ]
-</span><span class='line'>}
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'> <span class="nt">&quot;namespace&quot;</span><span class="p">:</span> <span class="s2">&quot;me.jeffli.avrosamples.model&quot;</span><span class="p">,</span>
+</span><span class='line'> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;record&quot;</span><span class="p">,</span>
+</span><span class='line'> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;LogEntry&quot;</span><span class="p">,</span>
+</span><span class='line'> <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+</span><span class='line'>     <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+</span><span class='line'>     <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;null&quot;</span><span class="p">]},</span>
+</span><span class='line'>     <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;ip&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;null&quot;</span><span class="p">]}</span>
+</span><span class='line'> <span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p>Save the content as <code>${project.basedir}/src/main/avro/LogEntry.avsc</code>. After running <code>mvn compile</code>, a Java class <code>me.jeffli.avrosamples.model.LogEntry</code> will be generated automatically thank to the Avro Maven plugin.  </p>

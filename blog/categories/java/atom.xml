@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Java | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/blog/categories/java/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-03-30T10:27:37+08:00</updated>
+  <updated>2014-03-30T10:38:26+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -78,7 +78,7 @@ mvn archetype:generate -DgroupId=me.jeffli -DartifactId=avrosamples -Dversion=0.
 <h2>Recipe 2: Define a Schema</h2>
 
 <p>Assume that you want to log every access of your server, to make it simple, we only define 3 attributes in a log entry, namely the username, resource and ip. So the schema can be defined as :
-<code>
+<code>json
 {
  &quot;namespace&quot;: &quot;me.jeffli.avrosamples.model&quot;,
  &quot;type&quot;: &quot;record&quot;,
