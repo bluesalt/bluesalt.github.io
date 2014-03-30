@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Softwares | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/blog/categories/softwares/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2013-07-31T21:42:27+08:00</updated>
+  <updated>2014-03-30T10:27:37+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -18,30 +18,29 @@
     <link href="http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2/"/>
     <updated>2012-08-18T22:43:52+08:00</updated>
     <id>http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2</id>
-    <content type="html"><![CDATA[<p>When getting the news that the famous text editor in Max OS platform&mdash;TextMate 2 had been released as an open source software in github, I couldn&rsquo;t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
+    <content type="html"><![CDATA[<p>When getting the news that the famous text editor in Max OS platform--TextMate 2 had been released as an open source software in github, I couldn&#39;t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
 
-<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in <code>e_url': undefined method</code>gsub' for nil:NilClass (NoMethodError)</em>
-<em>from (erb):21:in <code>header'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in</code>eval'</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in <code>block in result'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in</code>call'</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in <code>result'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in</code>header'</em>
-<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in <code>show'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in</code>run'</em>
-<em>from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
-_from Run:4:in</code><main>&lsquo;</em></p>
+<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in `e</em>url&#39;: undefined method <code>gsub&#39; for nil:NilClass (NoMethodError)_
+_from (erb):21:in</code>header&#39;_
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in `eval&#39;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in `block in result&#39;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in `call&#39;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in `result&#39;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in `header&#39;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in `show&#39;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in `run&#39;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in `launch&#39;</em>
+<em>from Run:4:in `<main>&#39;</em></p>
 
-<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn&rsquo;t the textmate 2  ship with these files.</p>
+<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn&#39;t the textmate 2  ship with these files.</p>
 
 <ol>
 <li><p>Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p></li>
 <li><p>Extract it to anywhere you like, I put it in:  ~/Library/Application Support/Avian</p></li>
-<li><p>Create a new environment variable called &lsquo;TM_THEME_PATH'  under Preferences &ndash;> Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p></li>
+<li><p>Create a new environment variable called &#39;TM<em>THEME</em>PATH&#39;  under Preferences -&gt; Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p></li>
 </ol>
 
-
-<p>TM_THEME_PATH=$HOME/Library/Application Support/Avian/themes/</p>
+<p>TM<em>THEME</em>PATH=$HOME/Library/Application Support/Avian/themes/</p>
 
 <p>Enjoy the powerful editor brought by community of open source!</p>
 ]]></content>

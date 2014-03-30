@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Avro Cookbook : Part I - Jeff Li</title>
+  <meta name="author" content="Jeff Li">
+
+  
+  <meta name="description" content="Avro is a data serialization framework. It is an Apache project led by Doug Cutting who is also the author of several other open source projects such &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2014/02/06/avro-cookbook-part-i">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jeff Li</a></h1>
+  
+    <h2>Be another Jeff</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bluesalt.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/categories/chinese-posts">Chinese Posts</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Avro Cookbook : Part I</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-06T15:49:00+08:00" pubdate data-updated="true">Feb 6<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Avro is a data serialization framework. It is an Apache project led by Doug Cutting who is also the author of several other open source projects such as Hadoop, Lucene. Recently I need to leverage Avro to serialize/deserialize some data, however, I found its document is too poor, at least too poor for newbies like me who don&#39;t have much experience on data exchange format frameworks. </p>
+
+<p>In fact, it is very easy to understand what Avro can do. It helps to convert Java objects into bytes and vice versa. The key information the framework needs to know is the format of the date, namely &#39;Schema&#39; in Avro. In this article, I won&#39;t spend any time on explaining what Avro is. </p>
+
+<h2>Recipe 1: Create a Maven Avro Project</h2>
+
+<p>Intellij IDEA is my favorite Java IDE. The free Community edition has less features than the commercial Ultimate edition, however, great experience may be gained when the free community IDEA works with Maven. They complete each other. So the examples in this article will use Maven and Intellij IDEA as the IDE. Besides, <strong>TestNG</strong> instead of JUnit will be used as the test framework.</p>
+
+<h3>Initialize the project structure</h3>
+
+<ul>
+<li>Create an project with quickstart archetype:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn archetype:generate -DgroupId=me.jeffli -DartifactId=avrosamples -Dversion=0.01 -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false</span></code></pre></td></tr></table></div></figure></li>
+</ul>
+
+<h3>Tweak the pom.xml</h3>
+
+<ul>
+<li><p>Add Avro dependency:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;groupId&gt;</span>org.apache.avro<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;artifactId&gt;</span>avro<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;version&gt;</span>1.7.5<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p></li>
+<li><p>Use Avro Maven plugin
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;groupId&gt;</span>org.apache.avro<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;artifactId&gt;</span>avro-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;version&gt;</span>1.7.5<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;executions&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;execution&gt;</span>
+</span><span class='line'>         <span class="nt">&lt;phase&gt;</span>generate-sources<span class="nt">&lt;/phase&gt;</span>
+</span><span class='line'>         <span class="nt">&lt;goals&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;goal&gt;</span>schema<span class="nt">&lt;/goal&gt;</span>
+</span><span class='line'>         <span class="nt">&lt;/goals&gt;</span>
+</span><span class='line'>         <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>            <span class="c">&lt;!-- make sure the directory is created --&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;sourceDirectory&gt;</span>${project.basedir}/src/main/avro/<span class="nt">&lt;/sourceDirectory&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;outputDirectory&gt;</span>${project.basedir}/src/main/java/<span class="nt">&lt;/outputDirectory&gt;</span>
+</span><span class='line'>         <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/execution&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;/executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p></li>
+</ul>
+
+<p>It should be noted that the directory <code>${project.basedir}/src/main/avro/</code> must be created even it is empty at first. It is used to place the Avro schema files. The whole pom.xml has been posted to <a href="https://gist.github.com/bluesalt/9807306">github gist</a>.</p>
+
+<h3>Import the project into Intellij IDEA</h3>
+
+<p>IDEA provides full support to Maven, so it is very easy to import the Maven project as a IDEA project. Click &quot;Import Project&quot; in the &#39;Quick Start&#39; panel. I suggest enable the Maven Auto-Import feature of IDEA before completing the importing process.</p>
+
+<h2>Recipe 2: Define a Schema</h2>
+
+<p>Assume that you want to log every access of your server, to make it simple, we only define 3 attributes in a log entry, namely the username, resource and ip. So the schema can be defined as :
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>{
+</span><span class='line'> &quot;namespace&quot;: &quot;me.jeffli.avrosamples.model&quot;,
+</span><span class='line'> &quot;type&quot;: &quot;record&quot;,
+</span><span class='line'> &quot;name&quot;: &quot;LogEntry&quot;,
+</span><span class='line'> &quot;fields&quot;: [
+</span><span class='line'>     {&quot;name&quot;: &quot;name&quot;, &quot;type&quot;: &quot;string&quot;},
+</span><span class='line'>     {&quot;name&quot;: &quot;resource&quot;,  &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]},
+</span><span class='line'>     {&quot;name&quot;: &quot;ip&quot;, &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]}
+</span><span class='line'> ]
+</span><span class='line'>}
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Save the content as <code>${project.basedir}/src/main/avro/LogEntry.avsc</code>. After running <code>mvn compile</code>, a Java class <code>me.jeffli.avrosamples.model.LogEntry</code> will be generated automatically thank to the Avro Maven plugin.  </p>
+
+<h2>Recipe 3: Serialize the Log Data to Disk File</h2>
+
+<p>Assume we want to store the log data to a disk file <code>/tmp/log</code>. The code snippet would be like this:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSerializeLogEntries</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">LogEntry</span> <span class="n">entry1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LogEntry</span><span class="o">();</span>
+</span><span class='line'>   <span class="n">entry1</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="s">&quot;Jeff&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry1</span><span class="o">.</span><span class="na">setResource</span><span class="o">(</span><span class="s">&quot;readme.txt&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry1</span><span class="o">.</span><span class="na">setIp</span><span class="o">(</span><span class="s">&quot;192.168.1.1&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">LogEntry</span> <span class="n">entry2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LogEntry</span><span class="o">();</span>
+</span><span class='line'>   <span class="n">entry2</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry2</span><span class="o">.</span><span class="na">setResource</span><span class="o">(</span><span class="s">&quot;readme.md&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry2</span><span class="o">.</span><span class="na">setIp</span><span class="o">(</span><span class="s">&quot;192.168.1.2&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">DatumWriter</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">&gt;</span> <span class="n">logEntryDatumWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SpecificDatumWriter</span><span class="o">&lt;&gt;(</span><span class="n">LogEntry</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DataFileWriter</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">&gt;</span> <span class="n">dataFileWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataFileWriter</span><span class="o">&lt;&gt;(</span><span class="n">logEntryDatumWriter</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">File</span> <span class="n">file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;/tmp/log&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">dataFileWriter</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">entry1</span><span class="o">.</span><span class="na">getSchema</span><span class="o">(),</span> <span class="n">file</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">dataFileWriter</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">entry1</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">dataFileWriter</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">entry2</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">dataFileWriter</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>  </p>
+
+<h2>Recipe 4: Deserialize the Log Data from Disk File</h2>
+
+<p>Assume you need to parse the log data from disk files <code>/tmp/log</code>. Then the code snippet would be:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span> <span class="o">(</span><span class="n">dependsOnMethods</span> <span class="o">=</span> <span class="s">&quot;testSerializeLogEntries&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeSerializeLogEntries</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">DatumReader</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">&gt;</span> <span class="n">logEntryDatumReader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SpecificDatumReader</span><span class="o">&lt;&gt;(</span><span class="n">LogEntry</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">File</span> <span class="n">file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;/tmp/log&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DataFileReader</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">&gt;</span> <span class="n">dataFileReader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataFileReader</span><span class="o">&lt;&gt;(</span><span class="n">file</span><span class="o">,</span> <span class="n">logEntryDatumReader</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">LogEntry</span> <span class="n">entry</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>   <span class="k">while</span> <span class="o">(</span><span class="n">dataFileReader</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">entry</span> <span class="o">=</span> <span class="n">dataFileReader</span><span class="o">.</span><span class="na">next</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>   </p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-06T15:49:00+08:00" pubdate data-updated="true">Feb 6<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/java/'>Java</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/" title="Previous Post: jetty-maven-plugin and https support">&laquo; jetty-maven-plugin and https support</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : Part I</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Jetty-maven-plugin and Https Support</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/17/add-tags-and-tag-cloud-support-to-octopress/">Add Tags and Tag Cloud Support to Octopress</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/05/19/hello-world/">Hello World</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/">Test if a Value Implements an Interface in Golang</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
+<li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
+<li class='category'><a href='/blog/categories/java/'>Java (2)</a></li>
+<li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
+<li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
+
+  </ul>
+</section>
+<section>
+  <h1>Topics</h1>
+  <ul class="tag-cloud">
+    <a style="font-size: 90%" href="/tags/avro/">avro</a>
+<a style="font-size: 210%" href="/tags/cool/">cool</a>
+<a style="font-size: 90%" href="/tags/go/">go</a>
+<a style="font-size: 90%" href="/tags/https/">https</a>
+<a style="font-size: 210%" href="/tags/java/">java</a>
+<a style="font-size: 90%" href="/tags/jetty/">jetty</a>
+<a style="font-size: 90%" href="/tags/mac/">mac</a>
+<a style="font-size: 90%" href="/tags/maven/">maven</a>
+<a style="font-size: 90%" href="/tags/octopress/">octopress</a>
+<a style="font-size: 210%" href="/tags/oss/">oss</a>
+<a style="font-size: 90%" href="/tags/textmate/">textmate</a>
+
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Jeff Li -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'bluesalt';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2014/02/06/avro-cookbook-part-i/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2014/02/06/avro-cookbook-part-i/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

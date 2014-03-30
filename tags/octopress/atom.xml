@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: octopress | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/octopress/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2013-07-31T21:42:27+08:00</updated>
+  <updated>2014-03-30T10:27:37+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -25,7 +25,7 @@
 
 <p>After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
 
-<p>Here I don&rsquo;t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
+<p>Here I don&#39;t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
 
 <h3>Trouble Shooting</h3>
 

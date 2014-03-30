@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Bundles command error in TextMate 2 - Jeff Li</title>
+  <title>Bundles Command Error in TextMate 2 - Jeff Li</title>
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="When getting the news that the famous text editor in Max OS platform&mdash;TextMate 2 had been released as an open source software in github, I &hellip;">
+  <meta name="description" content="When getting the news that the famous text editor in Max OS platform&#8211;TextMate 2 had been released as an open source software in github, I &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -24,7 +24,7 @@
   <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
@@ -93,30 +93,29 @@
   </header>
 
 
-<div class="entry-content"><p>When getting the news that the famous text editor in Max OS platform&mdash;TextMate 2 had been released as an open source software in github, I couldn&rsquo;t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
+<div class="entry-content"><p>When getting the news that the famous text editor in Max OS platform&#8211;TextMate 2 had been released as an open source software in github, I couldn&#39;t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
 
-<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in <code>e_url': undefined method</code>gsub&#8217; for nil:NilClass (NoMethodError)</em>
-<em>from (erb):21:in <code>header'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in</code>eval&#8217;</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in <code>block in result'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in</code>call&#8217;</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in <code>result'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in</code>header&#8217;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in <code>show'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in</code>run&#8217;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
-_from Run:4:in</code><main>&lsquo;</em></p>
+<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in `e</em>url&#39;: undefined method <code>gsub&#39; for nil:NilClass (NoMethodError)_
+_from (erb):21:in</code>header&#39;_
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in `eval&#39;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in `block in result&#39;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in `call&#39;</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in `result&#39;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in `header&#39;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in `show&#39;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in `run&#39;</em>
+<em>from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in `launch&#39;</em>
+<em>from Run:4:in `<main>&#39;</em></p>
 
-<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn&rsquo;t the textmate 2  ship with these files.</p>
+<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn&#39;t the textmate 2  ship with these files.</p>
 
 <ol>
 <li><p>Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p></li>
 <li><p>Extract it to anywhere you like, I put it in:  ~/Library/Application Support/Avian</p></li>
-<li><p>Create a new environment variable called &lsquo;TM_THEME_PATH&#8217;  under Preferences &ndash;> Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p></li>
+<li><p>Create a new environment variable called &#39;TM<em>THEME</em>PATH&#39;  under Preferences -&gt; Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p></li>
 </ol>
 
-
-<p>TM_THEME_PATH=$HOME/Library/Application Support/Avian/themes/</p>
+<p>TM<em>THEME</em>PATH=$HOME/Library/Application Support/Avian/themes/</p>
 
 <p>Enjoy the powerful editor brought by community of open source!</p>
 </div>
@@ -147,15 +146,6 @@ _from Run:4:in</code><main>&lsquo;</em></p>
 <span class="categories">
   
     <a class='category' href='/blog/categories/softwares/'>Softwares</a>
-  
-</span>
-
-
-      
-
-<span class="tags">
-  
-    <a class='tag' href='/tags/cool/'>cool</a>, <a class='tag' href='/tags/mac/'>mac</a>, <a class='tag' href='/tags/textmate/'>textmate</a>
   
 </span>
 
@@ -195,6 +185,10 @@ _from Run:4:in</code><main>&lsquo;</em></p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : Part I</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Jetty-maven-plugin and Https Support</a>
       </li>
     
@@ -210,10 +204,6 @@ _from Run:4:in</code><main>&lsquo;</em></p>
         <a href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/">Test if a Value Implements an Interface in Golang</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/08/18/bundles-command-error-in-textmate-2/">Bundles Command Error in TextMate 2</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -225,7 +215,7 @@ _from Run:4:in</code><main>&lsquo;</em></p>
   <ul id="categories">
     <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
 <li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
-<li class='category'><a href='/blog/categories/java/'>Java (1)</a></li>
+<li class='category'><a href='/blog/categories/java/'>Java (2)</a></li>
 <li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
 <li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
 
@@ -234,15 +224,16 @@ _from Run:4:in</code><main>&lsquo;</em></p>
 <section>
   <h1>Topics</h1>
   <ul class="tag-cloud">
-    <a style="font-size: 210%" href="/tags/cool/">cool</a>
+    <a style="font-size: 90%" href="/tags/avro/">avro</a>
+<a style="font-size: 210%" href="/tags/cool/">cool</a>
 <a style="font-size: 90%" href="/tags/go/">go</a>
 <a style="font-size: 90%" href="/tags/https/">https</a>
-<a style="font-size: 90%" href="/tags/java/">java</a>
+<a style="font-size: 210%" href="/tags/java/">java</a>
 <a style="font-size: 90%" href="/tags/jetty/">jetty</a>
 <a style="font-size: 90%" href="/tags/mac/">mac</a>
 <a style="font-size: 90%" href="/tags/maven/">maven</a>
 <a style="font-size: 90%" href="/tags/octopress/">octopress</a>
-<a style="font-size: 90%" href="/tags/oss/">oss</a>
+<a style="font-size: 210%" href="/tags/oss/">oss</a>
 <a style="font-size: 90%" href="/tags/textmate/">textmate</a>
 
   </ul>
@@ -255,7 +246,7 @@ _from Run:4:in</code><main>&lsquo;</em></p>
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Jeff Li -
+  Copyright &copy; 2014 - Jeff Li -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
@@ -273,7 +264,7 @@ _from Run:4:in</code><main>&lsquo;</em></p>
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

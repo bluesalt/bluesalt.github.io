@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: go | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/go/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2013-07-31T21:42:27+08:00</updated>
+  <updated>2014-03-30T10:27:37+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -25,14 +25,13 @@
 <li><p>Use type assert: assert the empty interface type to any specific interface you are interested</p></li>
 </ul>
 
-
 <p>Here is a small while complete example
 ```go
 package main</p>
 
 <p>import (
-  . &ldquo;launchpad.net/gocheck&rdquo;
-  &ldquo;testing&rdquo;
+  . &quot;launchpad.net/gocheck&quot;
+  &quot;testing&quot;
 )</p>
 
 <p>func Test(t *testing.T) {
@@ -53,13 +52,13 @@ package main</p>
 <p>func (f *Foobar) foobar() {
 }</p>
 
-<p>func (s <em>MySuite) TestFoobar(c </em>C) {
+<p>func (s *MySuite) TestFoobar(c *C) {
   v := Foobar{}
   var i interface{} = v
   _, ok := i.(IFoobar)
   c.Assert(ok, Equals, false)</p>
 
-<p>  var p interface{} = &amp;v
+<p>var p interface{} = &amp;v
   _, ok = p.(IFoobar)
   c.Assert(ok, Equals, true)
 }
