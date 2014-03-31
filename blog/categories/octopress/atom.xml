@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-03-30T10:38:26+08:00</updated>
+  <updated>2014-03-31T21:06:15+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -14,20 +14,22 @@
 
   
   <entry>
-    <title type="html"><![CDATA[add tags and tag cloud support to octopress]]></title>
-    <link href="http://bluesalt.github.io/blog/2013/06/17/add-tags-and-tag-cloud-support-to-octopress/"/>
+    <title type="html"><![CDATA[Tips about Octopress]]></title>
+    <link href="http://bluesalt.github.io/blog/2013/06/17/tips-about-octopress/"/>
     <updated>2013-06-17T07:55:00+08:00</updated>
-    <id>http://bluesalt.github.io/blog/2013/06/17/add-tags-and-tag-cloud-support-to-octopress</id>
-    <content type="html"><![CDATA[<p><span class='caption-wrapper left'><img class='caption' src='/images/tags.png' width='500' height='250' alt='Fig-1: Tags' title='Fig-1: Tags'><span class='caption-text'>Fig-1: Tags</span></span>
+    <id>http://bluesalt.github.io/blog/2013/06/17/tips-about-octopress</id>
+    <content type="html"><![CDATA[<h2>Add Tags and Tag Cloud Support to Octopress</h2>
+
+<p><span class='caption-wrapper left'><img class='caption' src='/images/tags.png' width='500' height='250' alt='Fig-1: Tags' title='Fig-1: Tags'><span class='caption-text'>Fig-1: Tags</span></span>
 <span class='caption-wrapper right'><img class='caption' src='/images/tag-cloud.png' width='250' height='500' alt='Fig-2: Tag Cloud' title='Fig-2: Tag Cloud'><span class='caption-text'>Fig-2: Tag Cloud</span></span></p>
 
-<h3>Basic Usage</h3>
+<h4>Basic Usage</h4>
 
 <p>After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
 
 <p>Here I don&#39;t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
 
-<h3>Trouble Shooting</h3>
+<h4>Trouble Shooting</h4>
 
 <p>When playing with the tag-cloud plugin, I encounter the trouble when I try to run <code>rake generate</code>:</p>
 
@@ -36,6 +38,12 @@
 <p>This would occur when every tag is applied for only ONCE. Not sure if this is a bug. Anyway you can simply apply one of the tags on more than one post.</p>
 
 <p>P.S. When composing this post, I have found another useful plugin which add caption to image. Refer this post for the details:<a href="http://blog.zerosharp.com/image-captions-for-octopress/">Image Captions for Octopress</a></p>
+
+<h2>Use Redcarpet Markdown Engine</h2>
+
+<p>As a programmer, I have got quite familiar with the markdown syntax which Github is used, the so called <em>Github Flavored Markdown</em>(GFM). Unfortunately, the default Markdown engine used by Octopress doesn&#39;t support GFM. Good news is that it is very switch the Markdown engine in Octopress now. First upgrade jekyll to ~&gt; 0.12.1, then add &#39;redcarpet&#39; gem to Gemfile and finally modify the _config.yml to switch the Markdown engine from <strong>rdiscount</strong> to <strong>redcarpet</strong>. Refer <a href="https://github.com/bluesalt/bluesalt.github.io/commit/305a3d4b6ef55dd3230498aa06617a6c5bb0f8fd">this commit</a> for more detail.</p>
+
+<p>Have fun!</p>
 ]]></content>
   </entry>
   
