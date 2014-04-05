@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-04-03T23:02:40+08:00</updated>
+  <updated>2014-04-05T13:35:35+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -365,7 +365,11 @@ It should be noted that the plugin has evolved a lot since version 7. The config
 
 <h2>Use Redcarpet Markdown Engine</h2>
 
-<p>As a programmer, I have got quite familiar with the markdown syntax which Github is used, the so called <em>Github Flavored Markdown</em>(GFM). Unfortunately, the default Markdown engine used by Octopress doesn&#39;t support GFM. Good news is that it is very switch the Markdown engine in Octopress now. First upgrade jekyll to ~&gt; 0.12.1, then add &#39;redcarpet&#39; gem to Gemfile and finally modify the _config.yml to switch the Markdown engine from <strong>rdiscount</strong> to <strong>redcarpet</strong>. Refer <a href="https://github.com/bluesalt/bluesalt.github.io/commit/305a3d4b6ef55dd3230498aa06617a6c5bb0f8fd">this commit</a> for more detail.</p>
+<p>As a programmer, I have got quite familiar with the markdown syntax which Github is used, the so called <em>Github Flavored Markdown</em>(GFM). Unfortunately, the default Markdown engine used by Octopress doesn&#39;t support GFM. Good news is that it is very switch the Markdown engine in Octopress now. First upgrade jekyll to ~&gt; 0.12.1, then add &#39;redcarpet&#39; gem to Gemfile and finally modify the _config.yml to switch the Markdown engine from <strong>rdiscount</strong> to <strong>redcarpet</strong>. Refer this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/305a3d4b6ef55dd3230498aa06617a6c5bb0f8fd">commit</a> for more detail.</p>
+
+<h2>Add Clicky Web Analysis Tool</h2>
+
+<p>Clicky is similar to Google Web Analysis. Unfortunately Octopress does not support Clicky by default, however, it is very easy to add Clicky analysis widget to your Octopress site. After registering your website from <a href="getclicky.com">Clicky</a>, a piece of Html code will be generated. All you need to do is add  the Html code snippet to <code>source/_includes/custom/after_footer.html</code>. Refer to this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/648b13bafcd47a7499e5db0c296f7be9b8c3ed9b">commit</a> for more detail.</p>
 
 <p>Have fun!</p>
 ]]></content>
