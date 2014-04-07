@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: java | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/java/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-04-05T13:35:35+08:00</updated>
+  <updated>2014-04-07T17:06:20+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -12,6 +12,140 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Avro Cookbook : Part II]]></title>
+    <link href="http://bluesalt.github.io/blog/2014/04/05/avro-cookbook-part-ii/"/>
+    <updated>2014-04-05T18:31:35+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2014/04/05/avro-cookbook-part-ii</id>
+    <content type="html"><![CDATA[<h2>Recipe 5: Serialize data without Code Generation</h2>
+
+<p>In formal recipes, before using Avro to serialize/deserialize data, schema files have to be defined to be leveraged by Avro code generation facility to generate the Java classes. This is also recommended when using Avro in Java. However, it is not required. Actually, you can parse the schema on the fly without code generation.</p>
+
+<h3>Parse Schema from String</h3>
+
+<p>The schema looks like this:
+<code>json
+{
+ &quot;namespace&quot;: &quot;me.jeffli.avrosamples.model&quot;,
+ &quot;type&quot;: &quot;record&quot;,
+ &quot;name&quot;: &quot;LogEntry2&quot;,
+ &quot;fields&quot;: [
+     {&quot;name&quot;: &quot;name&quot;, &quot;type&quot;: &quot;string&quot;},
+     {&quot;name&quot;: &quot;resource&quot;,  &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]},
+     {&quot;name&quot;: &quot;ip&quot;, &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]}
+ ]
+}
+</code>
+Define the schema as a Java String:
+<pre>
+String schemaDesc = &quot;{\n&quot; +
+           &quot; \&quot;namespace\&quot;: \&quot;me.jeffli.avrosamples.model\&quot;,\n&quot; +
+           &quot; \&quot;type\&quot;: \&quot;record\&quot;,\n&quot; +
+           &quot; \&quot;name\&quot;: \&quot;LogEntry2\&quot;,\n&quot; +
+           &quot; \&quot;fields\&quot;: [\n&quot; +
+           &quot;     {\&quot;name\&quot;: \&quot;name\&quot;, \&quot;type\&quot;: \&quot;string\&quot;},\n&quot; +
+           &quot;     {\&quot;name\&quot;: \&quot;resource\&quot;,  \&quot;type\&quot;: [\&quot;string\&quot;, \&quot;null\&quot;]},\n&quot; +
+           &quot;     {\&quot;name\&quot;: \&quot;ip\&quot;, \&quot;type\&quot;: [\&quot;string\&quot;, \&quot;null\&quot;]}\n&quot; +
+           &quot; ]\n&quot; +
+           &quot;}&quot;;
+</pre></p>
+
+<p>Then the code to serialize the data would be this:
+```java
+@Test
+public void testSerializeOnTheFly() throws IOException {
+   Schema schema = new Schema.Parser().parse(schemaDesc);
+   GenericRecord entry1 = new GenericData.Record(schema);
+   entry1.put(&quot;name&quot;, &quot;Jeffrey&quot;);
+   entry1.put(&quot;resource&quot;, &quot;README&quot;);
+   entry1.put(&quot;ip&quot;, &quot;192.168.2.1&quot;);</p>
+
+<p>GenericRecord entry2 = new GenericData.Record(schema);
+   entry2.put(&quot;name&quot;, &quot;Johnson&quot;);
+   entry2.put(&quot;resource&quot;, &quot;readme.markdown&quot;);
+   entry2.put(&quot;ip&quot;, &quot;192.168.2.2&quot;);</p>
+
+<p>DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter&lt;&gt;(schema);
+   DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter&lt;&gt;(datumWriter);
+   File file = new File(&quot;/tmp/log2&quot;);
+   dataFileWriter.create(schema, file);</p>
+
+<p>dataFileWriter.append(entry1);
+   dataFileWriter.append(entry2);
+   dataFileWriter.close();
+}
+```
+From the example, we can see that we don&#39;t need to define any external schema file and no external Java classed are generated.</p>
+
+<h3>Parse Schema from Disk File</h3>
+
+<p>In the above example, we parse the schema from String. Since the schema is defined with JSON language, it is cumbersome to define the schema as a Java String. Fortunately Avro Schema.Paser also provides other API to parse the schema from disk file or existing Java class :</p>
+<div class="highlight"><pre><code class="java"><span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;src/test/resources/LogEntry2.avsc&quot;</span><span class="o">));</span>
+</code></pre></div>
+<h3>Parse Schema from Existing Java Class</h3>
+
+<p>Per the JSON Schema definition, a equivalent Java class would look like this:
+```java
+public class LogEntry3 {
+   private String name;
+   private String resource;
+   private String ip;</p>
+
+<p>public LogEntry3(String name, String resource, String ip) {
+      this.name = name;
+      this.resource = resource;
+      this.ip = ip;
+   }</p>
+
+<p>public String getName() {
+      return name;
+   }</p>
+
+<p>public void setName(String name) {
+      this.name = name;
+   }</p>
+
+<p>public String getResource() {
+      return resource;
+   }</p>
+
+<p>public void setResource(String resource) {
+      this.resource = resource;
+   }</p>
+
+<p>public String getIp() {
+      return ip;
+   }</p>
+
+<p>public void setIp(String ip) {
+      this.ip = ip;
+   }
+}
+```</p>
+
+<p>Then the Schema can be fetched easily:
+<code>java
+Schema schema = ReflectData.get().getSchema(LogEntry3.class);
+</code></p>
+
+<h2>Recipe 6: Deserialize data without Code Generation</h2>
+
+<p>Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the <strong>schema</strong>. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code.</p>
+<div class="highlight"><pre><code class="java"><span class="nd">@Test</span><span class="o">(</span><span class="n">dependsOnMethods</span> <span class="o">=</span> <span class="s">&quot;testSerializeOnTheFly&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeserializeOnTheFly</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;src/test/resources/LogEntry2.avsc&quot;</span><span class="o">));</span>
+   <span class="n">DatumReader</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">datumReader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumReader</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+   <span class="n">File</span> <span class="n">file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;/tmp/log2&quot;</span><span class="o">);</span>
+   <span class="n">DataFileReader</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">dataFileReader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataFileReader</span><span class="o">&lt;&gt;(</span><span class="n">file</span><span class="o">,</span> <span class="n">datumReader</span><span class="o">);</span>
+   <span class="n">GenericRecord</span> <span class="n">entry</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+   <span class="k">while</span> <span class="o">(</span><span class="n">dataFileReader</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+      <span class="n">entry</span> <span class="o">=</span> <span class="n">dataFileReader</span><span class="o">.</span><span class="na">next</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
+      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
+   <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Avro Cookbook : Part I]]></title>

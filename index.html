@@ -9,7 +9,7 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Avro is a data serialization framework. It is an Apache project led by Doug Cutting who is also the author of several other open source projects such &hellip;">
+  <meta name="description" content="Recipe 5: Serialize data without Code Generation In formal recipes, before using Avro to serialize/deserialize data, schema files have to be defined &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +67,248 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-05T18:31:35+08:00" pubdate data-updated="true">Apr 5<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Recipe 5: Serialize data without Code Generation</h2>
+
+<p>In formal recipes, before using Avro to serialize/deserialize data, schema files have to be defined to be leveraged by Avro code generation facility to generate the Java classes. This is also recommended when using Avro in Java. However, it is not required. Actually, you can parse the schema on the fly without code generation.</p>
+
+<h3>Parse Schema from String</h3>
+
+<p>The schema looks like this:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'> <span class="nt">&quot;namespace&quot;</span><span class="p">:</span> <span class="s2">&quot;me.jeffli.avrosamples.model&quot;</span><span class="p">,</span>
+</span><span class='line'> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;record&quot;</span><span class="p">,</span>
+</span><span class='line'> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;LogEntry2&quot;</span><span class="p">,</span>
+</span><span class='line'> <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+</span><span class='line'>     <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+</span><span class='line'>     <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;null&quot;</span><span class="p">]},</span>
+</span><span class='line'>     <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;ip&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;null&quot;</span><span class="p">]}</span>
+</span><span class='line'> <span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+Define the schema as a Java String:
+<pre>
+String schemaDesc = &quot;{\n&quot; +
+           &quot; \&quot;namespace\&quot;: \&quot;me.jeffli.avrosamples.model\&quot;,\n&quot; +
+           &quot; \&quot;type\&quot;: \&quot;record\&quot;,\n&quot; +
+           &quot; \&quot;name\&quot;: \&quot;LogEntry2\&quot;,\n&quot; +
+           &quot; \&quot;fields\&quot;: [\n&quot; +
+           &quot;     {\&quot;name\&quot;: \&quot;name\&quot;, \&quot;type\&quot;: \&quot;string\&quot;},\n&quot; +
+           &quot;     {\&quot;name\&quot;: \&quot;resource\&quot;,  \&quot;type\&quot;: [\&quot;string\&quot;, \&quot;null\&quot;]},\n&quot; +
+           &quot;     {\&quot;name\&quot;: \&quot;ip\&quot;, \&quot;type\&quot;: [\&quot;string\&quot;, \&quot;null\&quot;]}\n&quot; +
+           &quot; ]\n&quot; +
+           &quot;}&quot;;
+</pre></p>
+
+<p>Then the code to serialize the data would be this:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSerializeOnTheFly</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="n">schemaDesc</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">GenericRecord</span> <span class="n">entry1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry1</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">,</span> <span class="s">&quot;Jeffrey&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry1</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;resource&quot;</span><span class="o">,</span> <span class="s">&quot;README&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry1</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;ip&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.2.1&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">GenericRecord</span> <span class="n">entry2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry2</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">,</span> <span class="s">&quot;Johnson&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry2</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;resource&quot;</span><span class="o">,</span> <span class="s">&quot;readme.markdown&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">entry2</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;ip&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.2.2&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">DatumWriter</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">datumWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumWriter</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DataFileWriter</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">dataFileWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataFileWriter</span><span class="o">&lt;&gt;(</span><span class="n">datumWriter</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">File</span> <span class="n">file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;/tmp/log2&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">dataFileWriter</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">file</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">dataFileWriter</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">entry1</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">dataFileWriter</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">entry2</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">dataFileWriter</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+From the example, we can see that we don&#39;t need to define any external schema file and no external Java classed are generated.</p>
+
+<h3>Parse Schema from Disk File</h3>
+
+<p>In the above example, we parse the schema from String. Since the schema is defined with JSON language, it is cumbersome to define the schema as a Java String. Fortunately Avro Schema.Paser also provides other API to parse the schema from disk file or existing Java class :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;src/test/resources/LogEntry2.avsc&quot;</span><span class="o">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<h3>Parse Schema from Existing Java Class</h3>
+
+<p>Per the JSON Schema definition, a equivalent Java class would look like this:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LogEntry3</span> <span class="o">{</span>
+</span><span class='line'>   <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+</span><span class='line'>   <span class="kd">private</span> <span class="n">String</span> <span class="n">resource</span><span class="o">;</span>
+</span><span class='line'>   <span class="kd">private</span> <span class="n">String</span> <span class="n">ip</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="nf">LogEntry3</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">resource</span><span class="o">,</span> <span class="n">String</span> <span class="n">ip</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">resource</span> <span class="o">=</span> <span class="n">resource</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">ip</span> <span class="o">=</span> <span class="n">ip</span><span class="o">;</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="n">String</span> <span class="nf">getResource</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">resource</span><span class="o">;</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setResource</span><span class="o">(</span><span class="n">String</span> <span class="n">resource</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">resource</span> <span class="o">=</span> <span class="n">resource</span><span class="o">;</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="n">String</span> <span class="nf">getIp</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">ip</span><span class="o">;</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setIp</span><span class="o">(</span><span class="n">String</span> <span class="n">ip</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">ip</span> <span class="o">=</span> <span class="n">ip</span><span class="o">;</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Then the Schema can be fetched easily:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Recipe 6: Deserialize data without Code Generation</h2>
+
+<p>Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the <strong>schema</strong>. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span><span class="o">(</span><span class="n">dependsOnMethods</span> <span class="o">=</span> <span class="s">&quot;testSerializeOnTheFly&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeserializeOnTheFly</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;src/test/resources/LogEntry2.avsc&quot;</span><span class="o">));</span>
+</span><span class='line'>   <span class="n">DatumReader</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">datumReader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumReader</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">File</span> <span class="n">file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;/tmp/log2&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DataFileReader</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">dataFileReader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataFileReader</span><span class="o">&lt;&gt;(</span><span class="n">file</span><span class="o">,</span> <span class="n">datumReader</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">GenericRecord</span> <span class="n">entry</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>   <span class="k">while</span> <span class="o">(</span><span class="n">dataFileReader</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">entry</span> <span class="o">=</span> <span class="n">dataFileReader</span><span class="o">.</span><span class="na">next</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -734,6 +976,10 @@ _from (erb):21:in</code>header&#39;_
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : Part I</a>
       </li>
     
@@ -749,10 +995,6 @@ _from (erb):21:in</code>header&#39;_
         <a href="/blog/2013/05/19/hello-world/">Hello World</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/">Test if a Value Implements an Interface in Golang</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -764,7 +1006,7 @@ _from (erb):21:in</code>header&#39;_
   <ul id="categories">
     <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
 <li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
-<li class='category'><a href='/blog/categories/java/'>Java (2)</a></li>
+<li class='category'><a href='/blog/categories/java/'>Java (3)</a></li>
 <li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
 <li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
 
@@ -773,8 +1015,8 @@ _from (erb):21:in</code>header&#39;_
 <section>
   <h1>Topics</h1>
   <ul class="tag-cloud">
-    <a style="font-size: 90%" href="/tags/avro/">avro</a>
-<a style="font-size: 210%" href="/tags/cool/">cool</a>
+    <a style="font-size: 166%" href="/tags/avro/">avro</a>
+<a style="font-size: 166%" href="/tags/cool/">cool</a>
 <a style="font-size: 90%" href="/tags/go/">go</a>
 <a style="font-size: 90%" href="/tags/https/">https</a>
 <a style="font-size: 210%" href="/tags/java/">java</a>
