@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: avro | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/avro/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-04-07T19:06:52+08:00</updated>
+  <updated>2014-04-08T17:14:15+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -131,7 +131,7 @@ Schema schema = ReflectData.get().getSchema(LogEntry3.class);
 
 <h2>Recipe 6: Deserialize data without Code Generation</h2>
 
-<p>Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the <strong>schema</strong>. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code.</p>
+<p>Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the <strong>schema</strong>. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code. It should be noted that if the schema is parsed on the fly without any code generation, then when deserializing the data, you can only use the generic datum reader. </p>
 <div class="highlight"><pre><code class="java"><span class="nd">@Test</span><span class="o">(</span><span class="n">dependsOnMethods</span> <span class="o">=</span> <span class="s">&quot;testSerializeOnTheFly&quot;</span><span class="o">)</span>
 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeserializeOnTheFly</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
    <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;src/test/resources/LogEntry2.avsc&quot;</span><span class="o">));</span>

@@ -285,7 +285,7 @@ From the example, we can see that we don&#39;t need to define any external schem
 
 <h2>Recipe 6: Deserialize data without Code Generation</h2>
 
-<p>Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the <strong>schema</strong>. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code.</p>
+<p>Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the <strong>schema</strong>. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code. It should be noted that if the schema is parsed on the fly without any code generation, then when deserializing the data, you can only use the generic datum reader. </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -478,11 +478,6 @@ From the example, we can see that we don&#39;t need to define any external schem
 
 
 
-<a title="Real Time Web Analytics" href="http://clicky.com/100723499"><img alt="Real Time Web Analytics" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
-<script src="//static.getclicky.com/js" type="text/javascript"></script>
-<script type="text/javascript">try{ clicky.init(100723499); }catch(e){}</script>
-<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100723499ns.gif" /></p></noscript>
- { % include google_analytics.html %}
 
 
 </body>
