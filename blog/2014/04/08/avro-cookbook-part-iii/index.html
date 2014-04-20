@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Avro Cookbook : Part III - Jeff Li</title>
+  <meta name="author" content="Jeff Li">
+
+  
+  <meta name="description" content="Recipe 6: Serialize data as JSON data In Avro Cookbook : part I, if you open the file /tmp/log created by recipe 3, you would find that it is &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2014/04/08/avro-cookbook-part-iii">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-49767927-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jeff Li</a></h1>
+  
+    <h2>Be another Jeff</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bluesalt.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/categories/chinese-posts">Chinese Posts</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Avro Cookbook : Part III</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-08T17:24:45+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Recipe 6: Serialize data as JSON data</h2>
+
+<p>In <a href="http://jeffli.me/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : part I</a>, if you open the file <code>/tmp/log</code> created by recipe 3, you would find that it is definitely not a human readable text format. Avro provides the encoder/decoder mechanism which helps to serial the data to text format as JSON data. Actually, if I want to serial the POJOs to JSON data, I would rather use <a href="https://code.google.com/p/google-gson/">Google Gson</a>. Anyway, this is a post about Avro, right ?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSerializeToJson</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">ByteArrayOutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
+</span><span class='line'>   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">Encoder</span> <span class="n">encoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">EncoderFactory</span><span class="o">().</span><span class="na">jsonEncoder</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">outputStream</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DatumWriter</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;</span> <span class="n">writer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReflectDatumWriter</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">LogEntry3</span> <span class="n">entry1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;Jeff&quot;</span><span class="o">,</span> <span class="s">&quot;readme.md&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.4.1&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">LogEntry3</span> <span class="n">entry2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;readme.txt&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.4.2&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">entry1</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">entry2</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">encoder</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">outputStream</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">()));</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Refer to the <a href="http://localhost:4000/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a> for the what class <code>LogEntry3</code> looks like. Here is the output:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Jeff&quot;</span><span class="p">,</span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="s2">&quot;readme.md&quot;</span><span class="p">,</span><span class="nt">&quot;ip&quot;</span><span class="p">:</span><span class="s2">&quot;192.168.4.1&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;John&quot;</span><span class="p">,</span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="s2">&quot;readme.txt&quot;</span><span class="p">,</span><span class="nt">&quot;ip&quot;</span><span class="p">:</span><span class="s2">&quot;192.168.4.2&quot;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Recipe 7: Deserialize JSON data</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeserializeFromJson</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">String</span> <span class="n">input</span> <span class="o">=</span> <span class="s">&quot;{\&quot;name\&quot;:\&quot;Jeff\&quot;,\&quot;resource\&quot;:\&quot;readme.md\&quot;,\&quot;ip\&quot;:\&quot;192.168.4.1\&quot;}&quot;</span> <span class="o">+</span>
+</span><span class='line'>           <span class="s">&quot;{\&quot;name\&quot;:\&quot;John\&quot;,\&quot;resource\&quot;:\&quot;readme.txt\&quot;,\&quot;ip\&quot;:\&quot;192.168.4.2\&quot;}&quot;</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">ByteArrayInputStream</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayInputStream</span><span class="o">(</span><span class="n">input</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+</span><span class='line'>   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">JsonDecoder</span> <span class="n">decoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DecoderFactory</span><span class="o">().</span><span class="na">jsonDecoder</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">inputStream</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DatumReader</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumReader</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">GenericRecord</span> <span class="n">entry</span><span class="o">;</span>
+</span><span class='line'>   <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>         <span class="n">entry</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">decoder</span><span class="o">);</span>
+</span><span class='line'>         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">EOFException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>         <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>If you look at the code carefully, you will find several interesting things. </p>
+
+<p>First, there is no explicit separator between every JSON record. That means the Avro JSON decoder can decode the JSON data in the form of <strong>stream</strong>. This could be very helpful when you have to deserialize a whole bunch of JSON records without any explicit separator between records.</p>
+
+<p>Second, when parsing the JSON data, the generic reader <code>DatumReader&lt;GenericRecord&gt;</code> instead of specific reader <code>DatumReader&lt;LogEntry3&gt;</code> is used. I tried to use the specific reader but it was not able to work with the error:
+<pre>
+org.apache.avro.AvroTypeException: Expected start-union. Got VALUE_STRING
+    at org.apache.avro.io.JsonDecoder.error(JsonDecoder.java:697)
+    at org.apache.avro.io.JsonDecoder.readIndex(JsonDecoder.java:441)
+    at org.apache.avro.io.ResolvingDecoder.doAction(ResolvingDecoder.java:229)
+    at org.apache.avro.io.parsing.Parser.advance(Parser.java:88)
+    at org.apache.avro.io.ResolvingDecoder.readIndex(ResolvingDecoder.java:206)
+    at org.apache.avro.generic.GenericDatumReader.read(GenericDatumReader.java:155)
+    at org.apache.avro.generic.GenericDatumReader.readField(GenericDatumReader.java:193)
+    at org.apache.avro.reflect.ReflectDatumReader.readField(ReflectDatumReader.java:230)
+    at org.apache.avro.generic.GenericDatumReader.readRecord(GenericDatumReader.java:183)
+    at org.apache.avro.generic.GenericDatumReader.read(GenericDatumReader.java:151)
+    at org.apache.avro.generic.GenericDatumReader.read(GenericDatumReader.java:142)
+</pre>
+It turned out that the Avro JSON decoder can only parse JSON data like this
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Jeff&quot;</span><span class="p">,</span><span class="nt">&quot;resource&quot;</span><span class="p">:{</span><span class="nt">&quot;string&quot;</span><span class="p">:</span><span class="s2">&quot;readme.md&quot;</span><span class="p">},</span><span class="nt">&quot;ip&quot;</span><span class="p">:{</span><span class="nt">&quot;string&quot;</span><span class="p">:</span><span class="s2">&quot;192.168.4.1&quot;</span><span class="p">}}</span>
+</span><span class='line'><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;John&quot;</span><span class="p">,</span><span class="nt">&quot;resource&quot;</span><span class="p">:{</span><span class="nt">&quot;string&quot;</span><span class="p">:</span><span class="s2">&quot;readme.txt&quot;</span><span class="p">},</span><span class="nt">&quot;ip&quot;</span><span class="p">:{</span><span class="nt">&quot;string&quot;</span><span class="p">:</span><span class="s2">&quot;192.168.4.2&quot;</span><span class="p">}}</span>
+</span></code></pre></td></tr></table></div></figure>
+but will not work on data like this
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Jeff&quot;</span><span class="p">,</span> <span class="nt">&quot;resource&quot;</span><span class="p">:</span> <span class="s2">&quot;readme.md&quot;</span><span class="p">,</span> <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;192.168.4.1&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="nt">&quot;resource&quot;</span><span class="p">:</span> <span class="s2">&quot;readme.txt&quot;</span><span class="p">,</span> <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;192.168.4.2&quot;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+After googling the issue, I found this: <a href="http://grokbase.com/t/avro/user/1345c5t7h1/issue-writing-union-in-avro">Issue writing union in avro</a>. So my suggestion is that don&#39;t use Avro for json serialization and deserialization if you have other choices. </p>
+
+<h2>Recipe 8: Serialize array in JSON</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSerializeArray</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="o">.</span><span class="na">createArray</span><span class="o">(</span><span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+</span><span class='line'>   <span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;</span> <span class="n">logs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;&gt;(</span><span class="mi">2</span><span class="o">,</span> <span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">logs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;Jeff&quot;</span><span class="o">,</span> <span class="s">&quot;readme.md&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.5.1&quot;</span><span class="o">));</span>
+</span><span class='line'>   <span class="n">logs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;readme.txt&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.5.2&quot;</span><span class="o">));</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">ByteArrayOutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
+</span><span class='line'>   <span class="n">Encoder</span> <span class="n">encoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">EncoderFactory</span><span class="o">().</span><span class="na">jsonEncoder</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">outputStream</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DatumWriter</span><span class="o">&lt;</span><span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;&gt;</span> <span class="n">writer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReflectDatumWriter</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">logs</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">encoder</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">outputStream</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">()));</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure> 
+
+<p>In the code above, not code generation is required, the <code>LogEntry3</code> is just a normal Java class. The serialized data would be
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">[{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Jeff&quot;</span><span class="p">,</span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="s2">&quot;readme.md&quot;</span><span class="p">,</span><span class="nt">&quot;ip&quot;</span><span class="p">:</span><span class="s2">&quot;192.168.5.1&quot;</span><span class="p">},{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;John&quot;</span><span class="p">,</span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="s2">&quot;readme.txt&quot;</span><span class="p">,</span><span class="nt">&quot;ip&quot;</span><span class="p">:</span><span class="s2">&quot;192.168.5.2&quot;</span><span class="p">}]</span>
+</span></code></pre></td></tr></table></div></figure>
+However, if the type of element of the array is generated from schema defintion(See <a href="http://localhost:4000/blog/2014/02/06/avro-cookbook-part-i/">Recipe 2</a>), the output would be different:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">[{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Jeff&quot;</span><span class="p">,</span><span class="nt">&quot;resource&quot;</span><span class="p">:{</span><span class="nt">&quot;string&quot;</span><span class="p">:</span><span class="s2">&quot;readme.md&quot;</span><span class="p">},</span><span class="nt">&quot;ip&quot;</span><span class="p">:{</span><span class="nt">&quot;string&quot;</span><span class="p">:</span><span class="s2">&quot;192.168.5.1&quot;</span><span class="p">}},{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;John&quot;</span><span class="p">,</span><span class="nt">&quot;resource&quot;</span><span class="p">:{</span><span class="nt">&quot;string&quot;</span><span class="p">:</span><span class="s2">&quot;readme.txt&quot;</span><span class="p">},</span><span class="nt">&quot;ip&quot;</span><span class="p">:{</span><span class="nt">&quot;string&quot;</span><span class="p">:</span><span class="s2">&quot;192.168.5.2&quot;</span><span class="p">}}]</span>
+</span></code></pre></td></tr></table></div></figure>
+Still, I will not choose Avro to serialize data to JSON if I can use gson. However, this recipe is intended to demonstrate how to serialize a array without code generation from predefined schema. </p>
+
+<h2>Recipe 9: Deserialize JSON array data</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeserializeArray</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="o">.</span><span class="na">createArray</span><span class="o">(</span><span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+</span><span class='line'>   <span class="n">String</span> <span class="n">input</span> <span class="o">=</span> <span class="s">&quot;[{\&quot;name\&quot;:\&quot;Jeff\&quot;,\&quot;resource\&quot;:\&quot;readme.md\&quot;,\&quot;ip\&quot;:\&quot;192.168.5.1\&quot;},{\&quot;name\&quot;:\&quot;John\&quot;,\&quot;resource\&quot;:\&quot;readme.txt\&quot;,\&quot;ip\&quot;:\&quot;192.168.5.2\&quot;}]&quot;</span><span class="o">;</span>
+</span><span class='line'>   <span class="n">Decoder</span> <span class="n">decoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DecoderFactory</span><span class="o">().</span><span class="na">jsonDecoder</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">input</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DatumReader</span><span class="o">&lt;</span><span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">&gt;&gt;</span> <span class="n">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumReader</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">&gt;</span> <span class="n">logs</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">decoder</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">logs</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Note, we can use only generic reader, have not figured out how to use a specific reader yet. Maybe it would be ok for the binary encoder to use specific reader.</p>
+
+<h2>Recipe 10: Deserialize data stream</h2>
+
+<p>The word <strong>stream</strong> means that the size of the source data is unknown. For example. if you want to serialize data like this
+<pre>
+[
+   {
+      &quot;name&quot;:&quot;Jeff&quot;,
+      &quot;resource&quot;:&quot;readme.md&quot;,
+      &quot;ip&quot;:&quot;192.168.5.1&quot;
+   },
+   {
+      &quot;name&quot;:&quot;John&quot;,
+      &quot;resource&quot;:&quot;readme.txt&quot;,
+      &quot;ip&quot;:&quot;192.168.5.2&quot;
+   }
+][
+   {
+      &quot;name&quot;:&quot;Joe&quot;,
+      &quot;resource&quot;:&quot;readme.md&quot;,
+      &quot;ip&quot;:&quot;192.168.5.3&quot;
+   },
+   {
+      &quot;name&quot;:&quot;James&quot;,
+      &quot;resource&quot;:&quot;readme.txt&quot;,
+      &quot;ip&quot;:&quot;192.168.5.4&quot;
+   }
+]
+</pre>
+The data have several unusual characteristics due to which gson can not be simply applied. 
+ * The whole data is not a valid JSON. Instead it is JSON records set. Besides, the size of data could be very large.
+ * There is no explicit separator between records. If the records are separated by character such as <code>\n</code>, then one record can be read and parsed easily. </p>
+
+<p>The format of the data is so poor which should be avoided in practice. However, sometimes, we ourselves are just the data consumers. We can parse the data with Avro like this:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeserializeStream</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="o">.</span><span class="na">createArray</span><span class="o">(</span><span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+</span><span class='line'>   <span class="n">String</span> <span class="n">input</span> <span class="o">=</span> <span class="s">&quot;[{&quot;</span><span class="n">name</span><span class="s">&quot;:&quot;</span><span class="n">Jeff</span><span class="s">&quot;,&quot;</span><span class="n">resource</span><span class="s">&quot;:&quot;</span><span class="n">readme</span><span class="o">.</span><span class="na">md</span><span class="s">&quot;,&quot;</span><span class="n">ip</span><span class="s">&quot;:&quot;</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">5.1</span><span class="s">&quot;},{&quot;</span><span class="n">name</span><span class="s">&quot;:&quot;</span><span class="n">John</span><span class="s">&quot;,&quot;</span><span class="n">resource</span><span class="s">&quot;:&quot;</span><span class="n">readme</span><span class="o">.</span><span class="na">txt</span><span class="s">&quot;,&quot;</span><span class="n">ip</span><span class="s">&quot;:&quot;</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">5.2</span><span class="s">&quot;}][{&quot;</span><span class="n">name</span><span class="s">&quot;:&quot;</span><span class="n">Joe</span><span class="s">&quot;,&quot;</span><span class="n">resource</span><span class="s">&quot;:&quot;</span><span class="n">readme</span><span class="o">.</span><span class="na">md</span><span class="s">&quot;,&quot;</span><span class="n">ip</span><span class="s">&quot;:&quot;</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">5.3</span><span class="s">&quot;},{&quot;</span><span class="n">name</span><span class="s">&quot;:&quot;</span><span class="n">James</span><span class="s">&quot;,&quot;</span><span class="n">resource</span><span class="s">&quot;:&quot;</span><span class="n">readme</span><span class="o">.</span><span class="na">txt</span><span class="s">&quot;,&quot;</span><span class="n">ip</span><span class="s">&quot;:&quot;</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">5.4</span><span class="s">&quot;}]</span>
+</span><span class='line'><span class="s">&quot;</span><span class="o">;</span>
+</span><span class='line'>   <span class="n">Decoder</span> <span class="n">decoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DecoderFactory</span><span class="o">().</span><span class="na">jsonDecoder</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">input</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DatumReader</span><span class="o">&lt;</span><span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;&gt;</span> <span class="n">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumReader</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;</span> <span class="n">parsedRecords</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>   <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>         <span class="c1">// We can iterate the parsedRecords to get every individual record</span>
+</span><span class='line'>         <span class="n">parsedRecords</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">decoder</span><span class="o">);</span>
+</span><span class='line'>         <span class="n">count</span> <span class="o">+=</span> <span class="n">parsedRecords</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">EOFException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>         <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">Assert</span><span class="o">.</span><span class="na">assertEquals</span><span class="o">(</span><span class="n">count</span><span class="o">,</span> <span class="mi">4</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Summary</h2>
+
+<p>This post is the last part of the three part series on Avro. To be honest, I myself use Avro rarely and I am not a Avro expert, thus the code examples may not be the most appropriate. They are just intended to help the starters to play with Avro quickly. Anyone who uses Avro frequently should spend more time on looking deeper into the Avro framework. It would be great if they are helpful to you!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-08T17:24:45+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/java/'>Java</a>
+  
+</span>
+
+
+      
+
+<span class="tags">
+  
+    <a class='tag' href='/tags/avro/'>avro</a>, <a class='tag' href='/tags/java/'>java</a>, <a class='tag' href='/tags/oss/'>oss</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/04/05/avro-cookbook-part-ii/" title="Previous Post: Avro Cookbook : Part II">&laquo; Avro Cookbook : Part II</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/04/08/avro-cookbook-part-iii/">Avro Cookbook : Part III</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : Part I</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Jetty-maven-plugin and Https Support</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/17/tips-about-octopress/">Tips About Octopress</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
+<li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
+<li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
+<li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
+<li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
+
+  </ul>
+</section>
+<section>
+  <h1>Topics</h1>
+  <ul class="tag-cloud">
+    <a style="font-size: 185%" href="/tags/avro/">avro</a>
+<a style="font-size: 150%" href="/tags/cool/">cool</a>
+<a style="font-size: 90%" href="/tags/go/">go</a>
+<a style="font-size: 90%" href="/tags/https/">https</a>
+<a style="font-size: 210%" href="/tags/java/">java</a>
+<a style="font-size: 90%" href="/tags/jetty/">jetty</a>
+<a style="font-size: 90%" href="/tags/mac/">mac</a>
+<a style="font-size: 90%" href="/tags/maven/">maven</a>
+<a style="font-size: 90%" href="/tags/octopress/">octopress</a>
+<a style="font-size: 210%" href="/tags/oss/">oss</a>
+<a style="font-size: 90%" href="/tags/textmate/">textmate</a>
+
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Jeff Li -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'bluesalt';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2014/04/08/avro-cookbook-part-iii/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2014/04/08/avro-cookbook-part-iii/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

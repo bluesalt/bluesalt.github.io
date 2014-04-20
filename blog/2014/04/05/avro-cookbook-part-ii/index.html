@@ -281,11 +281,39 @@ From the example, we can see that we don&#39;t need to define any external schem
 <p>Then the Schema can be fetched easily:
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+What is more, you can use ReflectDatumWriter to append specific type objects to the target:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSerializeData</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span><span class='line'>   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">File</span> <span class="n">file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;/tmp/log3&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">LogEntry3</span> <span class="n">entry1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;Jeff&quot;</span><span class="o">,</span> <span class="s">&quot;readme.txt&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.3.1&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">LogEntry3</span> <span class="n">entry2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;readme.md&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.3.2&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">ReflectDatumWriter</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;</span> <span class="n">reflectDatumWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReflectDatumWriter</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">DataFileWriter</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;</span> <span class="n">writer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataFileWriter</span><span class="o">&lt;&gt;(</span><span class="n">reflectDatumWriter</span><span class="o">).</span><span class="na">create</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">file</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">writer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">entry1</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">writer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">entry2</span><span class="o">);</span>
+</span><span class='line'>   <span class="n">writer</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
 <h2>Recipe 6: Deserialize data without Code Generation</h2>
 
-<p>Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the <strong>schema</strong>. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code. It should be noted that if the schema is parsed on the fly without any code generation, then when deserializing the data, you can only use the generic datum reader. </p>
+<p>Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the <strong>schema</strong>. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code. It should be noted that if the schema is parsed on the fly without any code generation, then when deserializing the data, you can only use the generic datum reader even if you attempt with <strong>ReflectDatumReader</strong>. </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -367,6 +395,8 @@ From the example, we can see that we don&#39;t need to define any external schem
         <a class="basic-alignment left" href="/blog/2014/02/06/avro-cookbook-part-i/" title="Previous Post: Avro Cookbook : Part I">&laquo; Avro Cookbook : Part I</a>
       
       
+        <a class="basic-alignment right" href="/blog/2014/04/08/avro-cookbook-part-iii/" title="Next Post: Avro Cookbook : Part III">Avro Cookbook : Part III &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -386,6 +416,10 @@ From the example, we can see that we don&#39;t need to define any external schem
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/04/08/avro-cookbook-part-iii/">Avro Cookbook : Part III</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a>
       </li>
     
@@ -401,10 +435,6 @@ From the example, we can see that we don&#39;t need to define any external schem
         <a href="/blog/2013/06/17/tips-about-octopress/">Tips About Octopress</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/05/19/hello-world/">Hello World</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -416,7 +446,7 @@ From the example, we can see that we don&#39;t need to define any external schem
   <ul id="categories">
     <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
 <li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
-<li class='category'><a href='/blog/categories/java/'>Java (3)</a></li>
+<li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
 <li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
 <li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
 
@@ -425,8 +455,8 @@ From the example, we can see that we don&#39;t need to define any external schem
 <section>
   <h1>Topics</h1>
   <ul class="tag-cloud">
-    <a style="font-size: 166%" href="/tags/avro/">avro</a>
-<a style="font-size: 166%" href="/tags/cool/">cool</a>
+    <a style="font-size: 185%" href="/tags/avro/">avro</a>
+<a style="font-size: 150%" href="/tags/cool/">cool</a>
 <a style="font-size: 90%" href="/tags/go/">go</a>
 <a style="font-size: 90%" href="/tags/https/">https</a>
 <a style="font-size: 210%" href="/tags/java/">java</a>
