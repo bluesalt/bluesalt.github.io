@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: oss | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/oss/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-08-31T09:51:21+08:00</updated>
+  <updated>2014-08-31T10:52:50+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -18,169 +18,190 @@
     <link href="http://bluesalt.github.io/blog/2014/04/08/avro-cookbook-part-iii/"/>
     <updated>2014-04-08T17:24:45+08:00</updated>
     <id>http://bluesalt.github.io/blog/2014/04/08/avro-cookbook-part-iii</id>
-    <content type="html"><![CDATA[<h2>Recipe 6: Serialize data as JSON data</h2>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#recipe-6-serialize-data-as-json-data">Recipe 6: Serialize data as JSON data</a></li>
+  <li><a href="#recipe-7-deserialize-json-data">Recipe 7: Deserialize JSON data</a></li>
+  <li><a href="#recipe-8-serialize-array-in-json">Recipe 8: Serialize array in JSON</a></li>
+  <li><a href="#recipe-9-deserialize-json-array-data">Recipe 9: Deserialize JSON array data</a></li>
+  <li><a href="#recipe-10-deserialize-data-stream">Recipe 10: Deserialize data stream</a></li>
+  <li><a href="#summary">Summary</a></li>
+</ul>
 
+<h2 id="recipe-6-serialize-data-as-json-data">Recipe 6: Serialize data as JSON data</h2>
 <p>In <a href="http://jeffli.me/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : part I</a>, if you open the file <code>/tmp/log</code> created by recipe 3, you would find that it is definitely not a human readable text format. Avro provides the encoder/decoder mechanism which helps to serial the data to text format as JSON data. Actually, if I want to serial the POJOs to JSON data, I would rather use <a href="https://code.google.com/p/google-gson/">Google Gson</a>. Anyway, this is a post about Avro, right ?</p>
-<div class="highlight"><pre><code class="java"><span class="nd">@Test</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSerializeToJson</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-   <span class="n">ByteArrayOutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
-   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 
-   <span class="n">Encoder</span> <span class="n">encoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">EncoderFactory</span><span class="o">().</span><span class="na">jsonEncoder</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">outputStream</span><span class="o">);</span>
-   <span class="n">DatumWriter</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;</span> <span class="n">writer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReflectDatumWriter</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
+<p>```java
+@Test
+public void testSerializeToJson() throws Exception {
+   ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+   Schema schema = ReflectData.get().getSchema(LogEntry3.class);</p>
 
-   <span class="n">LogEntry3</span> <span class="n">entry1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;Jeff&quot;</span><span class="o">,</span> <span class="s">&quot;readme.md&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.4.1&quot;</span><span class="o">);</span>
-   <span class="n">LogEntry3</span> <span class="n">entry2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;readme.txt&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.4.2&quot;</span><span class="o">);</span>
+<p>Encoder encoder = new EncoderFactory().jsonEncoder(schema, outputStream);
+   DatumWriter<logentry3> writer = new ReflectDatumWriter&lt;&gt;(schema);</logentry3></p>
 
-   <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">entry1</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
-   <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">entry2</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
-   <span class="n">encoder</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+<p>LogEntry3 entry1 = new LogEntry3(“Jeff”, “readme.md”, “192.168.4.1”);
+   LogEntry3 entry2 = new LogEntry3(“John”, “readme.txt”, “192.168.4.2”);</p>
 
-   <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">outputStream</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">()));</span>
-<span class="o">}</span>
-</code></pre></div>
-<p>Refer to the <a href="http://localhost:4000/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a> for the what class <code>LogEntry3</code> looks like. Here is the output:
-<code>json
-{&quot;name&quot;:&quot;Jeff&quot;,&quot;resource&quot;:&quot;readme.md&quot;,&quot;ip&quot;:&quot;192.168.4.1&quot;}
-{&quot;name&quot;:&quot;John&quot;,&quot;resource&quot;:&quot;readme.txt&quot;,&quot;ip&quot;:&quot;192.168.4.2&quot;}
+<p>writer.write(entry1, encoder);
+   writer.write(entry2, encoder);
+   encoder.flush();</p>
+
+<p>System.out.println(new String(outputStream.toByteArray()));
+}
+```
+Refer to the <a href="http://localhost:4000/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a> for the what class <code>LogEntry3</code> looks like. Here is the output:</p>
+
+<p><code>json
+{"name":"Jeff","resource":"readme.md","ip":"192.168.4.1"}
+{"name":"John","resource":"readme.txt","ip":"192.168.4.2"}
 </code></p>
 
-<h2>Recipe 7: Deserialize JSON data</h2>
-<div class="highlight"><pre><code class="java"><span class="nd">@Test</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeserializeFromJson</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-   <span class="n">String</span> <span class="n">input</span> <span class="o">=</span> <span class="s">&quot;{\&quot;name\&quot;:\&quot;Jeff\&quot;,\&quot;resource\&quot;:\&quot;readme.md\&quot;,\&quot;ip\&quot;:\&quot;192.168.4.1\&quot;}&quot;</span> <span class="o">+</span>
-           <span class="s">&quot;{\&quot;name\&quot;:\&quot;John\&quot;,\&quot;resource\&quot;:\&quot;readme.txt\&quot;,\&quot;ip\&quot;:\&quot;192.168.4.2\&quot;}&quot;</span><span class="o">;</span>
+<h2 id="recipe-7-deserialize-json-data">Recipe 7: Deserialize JSON data</h2>
 
-   <span class="n">ByteArrayInputStream</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayInputStream</span><span class="o">(</span><span class="n">input</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
-   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<p>```java
+@Test
+public void testDeserializeFromJson() throws Exception {
+   String input = “{"name":"Jeff","resource":"readme.md","ip":"192.168.4.1"}” +
+           “{"name":"John","resource":"readme.txt","ip":"192.168.4.2"}”;</p>
 
-   <span class="n">JsonDecoder</span> <span class="n">decoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DecoderFactory</span><span class="o">().</span><span class="na">jsonDecoder</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">inputStream</span><span class="o">);</span>
-   <span class="n">DatumReader</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumReader</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
-   <span class="n">GenericRecord</span> <span class="n">entry</span><span class="o">;</span>
-   <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">try</span> <span class="o">{</span>
-         <span class="n">entry</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">decoder</span><span class="o">);</span>
-         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
-      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">EOFException</span> <span class="n">exception</span><span class="o">)</span> <span class="o">{</span>
-         <span class="k">break</span><span class="o">;</span>
-      <span class="o">}</span>
-   <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div>
-<p>If you look at the code carefully, you will find several interesting things. </p>
+<p>ByteArrayInputStream inputStream = new ByteArrayInputStream(input.getBytes());
+   Schema schema = ReflectData.get().getSchema(LogEntry3.class);</p>
+
+<p>JsonDecoder decoder = new DecoderFactory().jsonDecoder(schema, inputStream);
+   DatumReader<genericrecord> reader = new GenericDatumReader&lt;&gt;(schema);
+   GenericRecord entry;
+   while (true) {
+      try {
+         entry = reader.read(null, decoder);
+         System.out.println(entry);
+      } catch (EOFException exception) {
+         break;
+      }
+   }
+}
+```
+If you look at the code carefully, you will find several interesting things. </genericrecord></p>
 
 <p>First, there is no explicit separator between every JSON record. That means the Avro JSON decoder can decode the JSON data in the form of <strong>stream</strong>. This could be very helpful when you have to deserialize a whole bunch of JSON records without any explicit separator between records.</p>
 
-<p>Second, when parsing the JSON data, the generic reader <code>DatumReader&lt;GenericRecord&gt;</code> instead of specific reader <code>DatumReader&lt;LogEntry3&gt;</code> is used. I tried to use the specific reader but it was not able to work with the error:
+<p>Second, when parsing the JSON data, the generic reader <code>DatumReader&lt;GenericRecord&gt;</code> instead of specific reader <code>DatumReader&lt;LogEntry3&gt;</code> is used. I tried to use the specific reader but it was not able to work with the error:</p>
 <pre>
 org.apache.avro.AvroTypeException: Expected start-union. Got VALUE_STRING
-    at org.apache.avro.io.JsonDecoder.error(JsonDecoder.java:697)
-    at org.apache.avro.io.JsonDecoder.readIndex(JsonDecoder.java:441)
-    at org.apache.avro.io.ResolvingDecoder.doAction(ResolvingDecoder.java:229)
-    at org.apache.avro.io.parsing.Parser.advance(Parser.java:88)
-    at org.apache.avro.io.ResolvingDecoder.readIndex(ResolvingDecoder.java:206)
-    at org.apache.avro.generic.GenericDatumReader.read(GenericDatumReader.java:155)
-    at org.apache.avro.generic.GenericDatumReader.readField(GenericDatumReader.java:193)
-    at org.apache.avro.reflect.ReflectDatumReader.readField(ReflectDatumReader.java:230)
-    at org.apache.avro.generic.GenericDatumReader.readRecord(GenericDatumReader.java:183)
-    at org.apache.avro.generic.GenericDatumReader.read(GenericDatumReader.java:151)
-    at org.apache.avro.generic.GenericDatumReader.read(GenericDatumReader.java:142)
+	at org.apache.avro.io.JsonDecoder.error(JsonDecoder.java:697)
+	at org.apache.avro.io.JsonDecoder.readIndex(JsonDecoder.java:441)
+	at org.apache.avro.io.ResolvingDecoder.doAction(ResolvingDecoder.java:229)
+	at org.apache.avro.io.parsing.Parser.advance(Parser.java:88)
+	at org.apache.avro.io.ResolvingDecoder.readIndex(ResolvingDecoder.java:206)
+	at org.apache.avro.generic.GenericDatumReader.read(GenericDatumReader.java:155)
+	at org.apache.avro.generic.GenericDatumReader.readField(GenericDatumReader.java:193)
+	at org.apache.avro.reflect.ReflectDatumReader.readField(ReflectDatumReader.java:230)
+	at org.apache.avro.generic.GenericDatumReader.readRecord(GenericDatumReader.java:183)
+	at org.apache.avro.generic.GenericDatumReader.read(GenericDatumReader.java:151)
+	at org.apache.avro.generic.GenericDatumReader.read(GenericDatumReader.java:142)
 </pre>
-It turned out that the Avro JSON decoder can only parse JSON data like this
-<code>json
-{&quot;name&quot;:&quot;Jeff&quot;,&quot;resource&quot;:{&quot;string&quot;:&quot;readme.md&quot;},&quot;ip&quot;:{&quot;string&quot;:&quot;192.168.4.1&quot;}}
-{&quot;name&quot;:&quot;John&quot;,&quot;resource&quot;:{&quot;string&quot;:&quot;readme.txt&quot;},&quot;ip&quot;:{&quot;string&quot;:&quot;192.168.4.2&quot;}}
-</code>
-but will not work on data like this
-<code>json
-{&quot;name&quot;: &quot;Jeff&quot;, &quot;resource&quot;: &quot;readme.md&quot;, &quot;ip&quot;: &quot;192.168.4.1&quot;}
-{&quot;name&quot;: &quot;John&quot;, &quot;resource&quot;: &quot;readme.txt&quot;, &quot;ip&quot;: &quot;192.168.4.2&quot;}
-</code>
-After googling the issue, I found this: <a href="http://grokbase.com/t/avro/user/1345c5t7h1/issue-writing-union-in-avro">Issue writing union in avro</a>. So my suggestion is that don&#39;t use Avro for json serialization and deserialization if you have other choices. </p>
+<p>It turned out that the Avro JSON decoder can only parse JSON data like this</p>
 
-<h2>Recipe 8: Serialize array in JSON</h2>
-<div class="highlight"><pre><code class="java"><span class="nd">@Test</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSerializeArray</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="o">.</span><span class="na">createArray</span><span class="o">(</span><span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
-   <span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;</span> <span class="n">logs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;&gt;(</span><span class="mi">2</span><span class="o">,</span> <span class="n">schema</span><span class="o">);</span>
-   <span class="n">logs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;Jeff&quot;</span><span class="o">,</span> <span class="s">&quot;readme.md&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.5.1&quot;</span><span class="o">));</span>
-   <span class="n">logs</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">LogEntry3</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;readme.txt&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.5.2&quot;</span><span class="o">));</span>
-
-   <span class="n">ByteArrayOutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
-   <span class="n">Encoder</span> <span class="n">encoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">EncoderFactory</span><span class="o">().</span><span class="na">jsonEncoder</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">outputStream</span><span class="o">);</span>
-   <span class="n">DatumWriter</span><span class="o">&lt;</span><span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">LogEntry3</span><span class="o">&gt;&gt;</span> <span class="n">writer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReflectDatumWriter</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
-   <span class="n">writer</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">logs</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
-   <span class="n">encoder</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
-
-   <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">outputStream</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">()));</span>
-<span class="o">}</span>
-</code></pre></div>
-<p>In the code above, not code generation is required, the <code>LogEntry3</code> is just a normal Java class. The serialized data would be
-<code>json
-[{&quot;name&quot;:&quot;Jeff&quot;,&quot;resource&quot;:&quot;readme.md&quot;,&quot;ip&quot;:&quot;192.168.5.1&quot;},{&quot;name&quot;:&quot;John&quot;,&quot;resource&quot;:&quot;readme.txt&quot;,&quot;ip&quot;:&quot;192.168.5.2&quot;}]
+<p><code>json
+{"name":"Jeff","resource":{"string":"readme.md"},"ip":{"string":"192.168.4.1"}}
+{"name":"John","resource":{"string":"readme.txt"},"ip":{"string":"192.168.4.2"}}
 </code>
-However, if the type of element of the array is generated from schema defintion(See <a href="http://localhost:4000/blog/2014/02/06/avro-cookbook-part-i/">Recipe 2</a>), the output would be different:
-<code>json
-[{&quot;name&quot;:&quot;Jeff&quot;,&quot;resource&quot;:{&quot;string&quot;:&quot;readme.md&quot;},&quot;ip&quot;:{&quot;string&quot;:&quot;192.168.5.1&quot;}},{&quot;name&quot;:&quot;John&quot;,&quot;resource&quot;:{&quot;string&quot;:&quot;readme.txt&quot;},&quot;ip&quot;:{&quot;string&quot;:&quot;192.168.5.2&quot;}}]
+but will not work on data like this</p>
+
+<p><code>json
+{"name": "Jeff", "resource": "readme.md", "ip": "192.168.4.1"}
+{"name": "John", "resource": "readme.txt", "ip": "192.168.4.2"}
+</code>
+After googling the issue, I found this: <a href="http://grokbase.com/t/avro/user/1345c5t7h1/issue-writing-union-in-avro">Issue writing union in avro</a>. So my suggestion is that don’t use Avro for json serialization and deserialization if you have other choices. </p>
+
+<h2 id="recipe-8-serialize-array-in-json">Recipe 8: Serialize array in JSON</h2>
+
+<p>```java
+@Test
+public void testSerializeArray() throws IOException {
+   Schema schema = Schema.createArray(ReflectData.get().getSchema(LogEntry3.class));
+   GenericData.Array<logentry3> logs = new GenericData.Array&lt;&gt;(2, schema);
+   logs.add(new LogEntry3("Jeff", "readme.md", "192.168.5.1"));
+   logs.add(new LogEntry3("John", "readme.txt", "192.168.5.2"));</logentry3></p>
+
+<p>ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+   Encoder encoder = new EncoderFactory().jsonEncoder(schema, outputStream);
+   DatumWriter&lt;GenericData.Array<logentry3>&gt; writer = new ReflectDatumWriter&lt;&gt;(schema);
+   writer.write(logs, encoder);
+   encoder.flush();</logentry3></p>
+
+<p>System.out.println(new String(outputStream.toByteArray()));
+}
+``` 
+In the code above, not code generation is required, the <code>LogEntry3</code> is just a normal Java class. The serialized data would be</p>
+
+<p><code>json
+[{"name":"Jeff","resource":"readme.md","ip":"192.168.5.1"},{"name":"John","resource":"readme.txt","ip":"192.168.5.2"}]
+</code>
+However, if the type of element of the array is generated from schema defintion(See <a href="http://localhost:4000/blog/2014/02/06/avro-cookbook-part-i/">Recipe 2</a>), the output would be different:</p>
+
+<p><code>json
+[{"name":"Jeff","resource":{"string":"readme.md"},"ip":{"string":"192.168.5.1"}},{"name":"John","resource":{"string":"readme.txt"},"ip":{"string":"192.168.5.2"}}]
 </code>
 Still, I will not choose Avro to serialize data to JSON if I can use gson. However, this recipe is intended to demonstrate how to serialize a array without code generation from predefined schema. </p>
 
-<h2>Recipe 9: Deserialize JSON array data</h2>
-<div class="highlight"><pre><code class="java"><span class="nd">@Test</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeserializeArray</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="o">.</span><span class="na">createArray</span><span class="o">(</span><span class="n">ReflectData</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getSchema</span><span class="o">(</span><span class="n">LogEntry3</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
-   <span class="n">String</span> <span class="n">input</span> <span class="o">=</span> <span class="s">&quot;[{\&quot;name\&quot;:\&quot;Jeff\&quot;,\&quot;resource\&quot;:\&quot;readme.md\&quot;,\&quot;ip\&quot;:\&quot;192.168.5.1\&quot;},{\&quot;name\&quot;:\&quot;John\&quot;,\&quot;resource\&quot;:\&quot;readme.txt\&quot;,\&quot;ip\&quot;:\&quot;192.168.5.2\&quot;}]&quot;</span><span class="o">;</span>
-   <span class="n">Decoder</span> <span class="n">decoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DecoderFactory</span><span class="o">().</span><span class="na">jsonDecoder</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">input</span><span class="o">);</span>
-   <span class="n">DatumReader</span><span class="o">&lt;</span><span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">&gt;&gt;</span> <span class="n">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumReader</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
-   <span class="n">GenericData</span><span class="o">.</span><span class="na">Array</span><span class="o">&lt;</span><span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span><span class="o">&gt;</span> <span class="n">logs</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">decoder</span><span class="o">);</span>
-   <span class="n">GenericData</span><span class="o">.</span><span class="na">Record</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">logs</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
-   <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></div>
-<p>Note, we can use only generic reader, have not figured out how to use a specific reader yet. Maybe it would be ok for the binary encoder to use specific reader.</p>
+<h2 id="recipe-9-deserialize-json-array-data">Recipe 9: Deserialize JSON array data</h2>
 
-<h2>Recipe 10: Deserialize data stream</h2>
+<p><code>java
+@Test
+public void testDeserializeArray() throws Exception {
+   Schema schema = Schema.createArray(ReflectData.get().getSchema(LogEntry3.class));
+   String input = "[{\"name\":\"Jeff\",\"resource\":\"readme.md\",\"ip\":\"192.168.5.1\"},{\"name\":\"John\",\"resource\":\"readme.txt\",\"ip\":\"192.168.5.2\"}]";
+   Decoder decoder = new DecoderFactory().jsonDecoder(schema, input);
+   DatumReader&lt;GenericData.Array&lt;GenericData.Record&gt;&gt; reader = new GenericDatumReader&lt;&gt;(schema);
+   GenericData.Array&lt;GenericData.Record&gt; logs = reader.read(null, decoder);
+   GenericData.Record entry = logs.get(0);
+   System.out.println(entry);
+}
+</code>
+Note, we can use only generic reader, have not figured out how to use a specific reader yet. Maybe it would be ok for the binary encoder to use specific reader.</p>
 
-<p>The word <strong>stream</strong> means that the size of the source data is unknown. For example. if you want to serialize data like this
+<h2 id="recipe-10-deserialize-data-stream">Recipe 10: Deserialize data stream</h2>
+<p>The word <strong>stream</strong> means that the size of the source data is unknown. For example. if you want to serialize data like this</p>
 <pre>
 [
    {
-      &quot;name&quot;:&quot;Jeff&quot;,
-      &quot;resource&quot;:&quot;readme.md&quot;,
-      &quot;ip&quot;:&quot;192.168.5.1&quot;
+      "name":"Jeff",
+      "resource":"readme.md",
+      "ip":"192.168.5.1"
    },
    {
-      &quot;name&quot;:&quot;John&quot;,
-      &quot;resource&quot;:&quot;readme.txt&quot;,
-      &quot;ip&quot;:&quot;192.168.5.2&quot;
+      "name":"John",
+      "resource":"readme.txt",
+      "ip":"192.168.5.2"
    }
 ][
    {
-      &quot;name&quot;:&quot;Joe&quot;,
-      &quot;resource&quot;:&quot;readme.md&quot;,
-      &quot;ip&quot;:&quot;192.168.5.3&quot;
+      "name":"Joe",
+      "resource":"readme.md",
+      "ip":"192.168.5.3"
    },
    {
-      &quot;name&quot;:&quot;James&quot;,
-      &quot;resource&quot;:&quot;readme.txt&quot;,
-      &quot;ip&quot;:&quot;192.168.5.4&quot;
+      "name":"James",
+      "resource":"readme.txt",
+      "ip":"192.168.5.4"
    }
 ]
 </pre>
-The data have several unusual characteristics due to which gson can not be simply applied. 
+<p>The data have several unusual characteristics due to which gson can not be simply applied. 
  * The whole data is not a valid JSON. Instead it is JSON records set. Besides, the size of data could be very large.
  * There is no explicit separator between records. If the records are separated by character such as <code>\n</code>, then one record can be read and parsed easily. </p>
 
-<p>The format of the data is so poor which should be avoided in practice. However, sometimes, we ourselves are just the data consumers. We can parse the data with Avro like this:
-```java
+<p>The format of the data is so poor which should be avoided in practice. However, sometimes, we ourselves are just the data consumers. We can parse the data with Avro like this:</p>
+
+<p>```java
 @Test
 public void testDeserializeStream() throws Exception {
    Schema schema = Schema.createArray(ReflectData.get().getSchema(LogEntry3.class));
-   String input = &quot;[{&quot;name&quot;:&quot;Jeff&quot;,&quot;resource&quot;:&quot;readme.md&quot;,&quot;ip&quot;:&quot;192.168.5.1&quot;},{&quot;name&quot;:&quot;John&quot;,&quot;resource&quot;:&quot;readme.txt&quot;,&quot;ip&quot;:&quot;192.168.5.2&quot;}][{&quot;name&quot;:&quot;Joe&quot;,&quot;resource&quot;:&quot;readme.md&quot;,&quot;ip&quot;:&quot;192.168.5.3&quot;},{&quot;name&quot;:&quot;James&quot;,&quot;resource&quot;:&quot;readme.txt&quot;,&quot;ip&quot;:&quot;192.168.5.4&quot;}]
-&quot;;
+   String input = “[{“name”:”Jeff”,”resource”:”readme.md”,”ip”:”192.168.5.1”},{“name”:”John”,”resource”:”readme.txt”,”ip”:”192.168.5.2”}][{“name”:”Joe”,”resource”:”readme.md”,”ip”:”192.168.5.3”},{“name”:”James”,”resource”:”readme.txt”,”ip”:”192.168.5.4”}]
+“;
    Decoder decoder = new DecoderFactory().jsonDecoder(schema, input);
-   DatumReader<GenericData.Array<LogEntry3>&gt; reader = new GenericDatumReader&lt;&gt;(schema);
-   GenericData.Array<LogEntry3> parsedRecords;</p>
+   DatumReader&lt;GenericData.Array<logentry3>&gt; reader = new GenericDatumReader&lt;&gt;(schema);
+   GenericData.Array<logentry3> parsedRecords;</logentry3></logentry3></p>
 
 <p>int count = 0;
    while (true) {
@@ -197,8 +218,7 @@ public void testDeserializeStream() throws Exception {
 }
 ```</p>
 
-<h2>Summary</h2>
-
+<h2 id="summary">Summary</h2>
 <p>This post is the last part of the three part series on Avro. To be honest, I myself use Avro rarely and I am not a Avro expert, thus the code examples may not be the most appropriate. They are just intended to help the starters to play with Avro quickly. Anyone who uses Avro frequently should spend more time on looking deeper into the Avro framework. It would be great if they are helpful to you!</p>
 ]]></content>
   </entry>
@@ -208,75 +228,87 @@ public void testDeserializeStream() throws Exception {
     <link href="http://bluesalt.github.io/blog/2014/04/05/avro-cookbook-part-ii/"/>
     <updated>2014-04-05T18:31:35+08:00</updated>
     <id>http://bluesalt.github.io/blog/2014/04/05/avro-cookbook-part-ii</id>
-    <content type="html"><![CDATA[<h2>Recipe 5: Serialize data without Code Generation</h2>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#recipe-5-serialize-data-without-code-generation">Recipe 5: Serialize data without Code Generation</a>    <ul>
+      <li><a href="#parse-schema-from-string">Parse Schema from String</a></li>
+      <li><a href="#parse-schema-from-disk-file">Parse Schema from Disk File</a></li>
+      <li><a href="#parse-schema-from-existing-java-class">Parse Schema from Existing Java Class</a></li>
+    </ul>
+  </li>
+</ul>
 
+<h2 id="recipe-5-serialize-data-without-code-generation">Recipe 5: Serialize data without Code Generation</h2>
 <p>In formal recipes, before using Avro to serialize/deserialize data, schema files have to be defined to be leveraged by Avro code generation facility to generate the Java classes. This is also recommended when using Avro in Java. However, it is not required. Actually, you can parse the schema on the fly without code generation.</p>
 
-<h3>Parse Schema from String</h3>
+<h3 id="parse-schema-from-string">Parse Schema from String</h3>
+<p>The schema looks like this:</p>
 
-<p>The schema looks like this:
-<code>json
+<p><code>json
 {
- &quot;namespace&quot;: &quot;me.jeffli.avrosamples.model&quot;,
- &quot;type&quot;: &quot;record&quot;,
- &quot;name&quot;: &quot;LogEntry2&quot;,
- &quot;fields&quot;: [
-     {&quot;name&quot;: &quot;name&quot;, &quot;type&quot;: &quot;string&quot;},
-     {&quot;name&quot;: &quot;resource&quot;,  &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]},
-     {&quot;name&quot;: &quot;ip&quot;, &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]}
+ "namespace": "me.jeffli.avrosamples.model",
+ "type": "record",
+ "name": "LogEntry2",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "resource",  "type": ["string", "null"]},
+     {"name": "ip", "type": ["string", "null"]}
  ]
 }
-</code>
-Define the schema as a Java String:
-<pre>
-String schemaDesc = &quot;{\n&quot; +
-           &quot; \&quot;namespace\&quot;: \&quot;me.jeffli.avrosamples.model\&quot;,\n&quot; +
-           &quot; \&quot;type\&quot;: \&quot;record\&quot;,\n&quot; +
-           &quot; \&quot;name\&quot;: \&quot;LogEntry2\&quot;,\n&quot; +
-           &quot; \&quot;fields\&quot;: [\n&quot; +
-           &quot;     {\&quot;name\&quot;: \&quot;name\&quot;, \&quot;type\&quot;: \&quot;string\&quot;},\n&quot; +
-           &quot;     {\&quot;name\&quot;: \&quot;resource\&quot;,  \&quot;type\&quot;: [\&quot;string\&quot;, \&quot;null\&quot;]},\n&quot; +
-           &quot;     {\&quot;name\&quot;: \&quot;ip\&quot;, \&quot;type\&quot;: [\&quot;string\&quot;, \&quot;null\&quot;]}\n&quot; +
-           &quot; ]\n&quot; +
-           &quot;}&quot;;
-</pre></p>
+</code></p>
 
-<p>Then the code to serialize the data would be this:
-```java
+<p>Define the schema as a Java String:</p>
+<pre>
+String schemaDesc = "{\n" +
+           " \"namespace\": \"me.jeffli.avrosamples.model\",\n" +
+           " \"type\": \"record\",\n" +
+           " \"name\": \"LogEntry2\",\n" +
+           " \"fields\": [\n" +
+           "     {\"name\": \"name\", \"type\": \"string\"},\n" +
+           "     {\"name\": \"resource\",  \"type\": [\"string\", \"null\"]},\n" +
+           "     {\"name\": \"ip\", \"type\": [\"string\", \"null\"]}\n" +
+           " ]\n" +
+           "}";
+</pre>
+
+<p>Then the code to serialize the data would be this:</p>
+
+<p>```java
 @Test
 public void testSerializeOnTheFly() throws IOException {
    Schema schema = new Schema.Parser().parse(schemaDesc);
    GenericRecord entry1 = new GenericData.Record(schema);
-   entry1.put(&quot;name&quot;, &quot;Jeffrey&quot;);
-   entry1.put(&quot;resource&quot;, &quot;README&quot;);
-   entry1.put(&quot;ip&quot;, &quot;192.168.2.1&quot;);</p>
+   entry1.put(“name”, “Jeffrey”);
+   entry1.put(“resource”, “README”);
+   entry1.put(“ip”, “192.168.2.1”);</p>
 
 <p>GenericRecord entry2 = new GenericData.Record(schema);
-   entry2.put(&quot;name&quot;, &quot;Johnson&quot;);
-   entry2.put(&quot;resource&quot;, &quot;readme.markdown&quot;);
-   entry2.put(&quot;ip&quot;, &quot;192.168.2.2&quot;);</p>
+   entry2.put(“name”, “Johnson”);
+   entry2.put(“resource”, “readme.markdown”);
+   entry2.put(“ip”, “192.168.2.2”);</p>
 
-<p>DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter&lt;&gt;(schema);
-   DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter&lt;&gt;(datumWriter);
-   File file = new File(&quot;/tmp/log2&quot;);
-   dataFileWriter.create(schema, file);</p>
+<p>DatumWriter<genericrecord> datumWriter = new GenericDatumWriter&lt;&gt;(schema);
+   DataFileWriter<genericrecord> dataFileWriter = new DataFileWriter&lt;&gt;(datumWriter);
+   File file = new File("/tmp/log2");
+   dataFileWriter.create(schema, file);</genericrecord></genericrecord></p>
 
 <p>dataFileWriter.append(entry1);
    dataFileWriter.append(entry2);
    dataFileWriter.close();
 }
 ```
-From the example, we can see that we don&#39;t need to define any external schema file and no external Java classed are generated.</p>
+From the example, we can see that we don’t need to define any external schema file and no external Java classed are generated.</p>
 
-<h3>Parse Schema from Disk File</h3>
-
+<h3 id="parse-schema-from-disk-file">Parse Schema from Disk File</h3>
 <p>In the above example, we parse the schema from String. Since the schema is defined with JSON language, it is cumbersome to define the schema as a Java String. Fortunately Avro Schema.Paser also provides other API to parse the schema from disk file or existing Java class :</p>
-<div class="highlight"><pre><code class="java"><span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;src/test/resources/LogEntry2.avsc&quot;</span><span class="o">));</span>
-</code></pre></div>
-<h3>Parse Schema from Existing Java Class</h3>
 
-<p>Per the JSON Schema definition, a equivalent Java class would look like this:
-```java
+<p><code>java
+Schema schema = new Schema.Parser().parse(new File("src/test/resources/LogEntry2.avsc"));
+</code></p>
+
+<h3 id="parse-schema-from-existing-java-class">Parse Schema from Existing Java Class</h3>
+<p>Per the JSON Schema definition, a equivalent Java class would look like this:</p>
+
+<p>```java
 public class LogEntry3 {
    private String name;
    private String resource;
@@ -312,45 +344,48 @@ public class LogEntry3 {
       this.ip = ip;
    }
 }
-```</p>
+```
+Then the Schema can be fetched easily:</p>
 
-<p>Then the Schema can be fetched easily:
-<code>java
+<p><code>java
 Schema schema = ReflectData.get().getSchema(LogEntry3.class);
-</code>
-What is more, you can use ReflectDatumWriter to append specific type objects to the target:
-```java
+</code></p>
+
+<p>What is more, you can use ReflectDatumWriter to append specific type objects to the target:</p>
+
+<p>```java
 @Test
 public void testSerializeData() throws IOException {
    Schema schema = ReflectData.get().getSchema(LogEntry3.class);
-   File file = new File(&quot;/tmp/log3&quot;);
-   LogEntry3 entry1 = new LogEntry3(&quot;Jeff&quot;, &quot;readme.txt&quot;, &quot;192.168.3.1&quot;);
-   LogEntry3 entry2 = new LogEntry3(&quot;John&quot;, &quot;readme.md&quot;, &quot;192.168.3.2&quot;);</p>
+   File file = new File(“/tmp/log3”);
+   LogEntry3 entry1 = new LogEntry3(“Jeff”, “readme.txt”, “192.168.3.1”);
+   LogEntry3 entry2 = new LogEntry3(“John”, “readme.md”, “192.168.3.2”);</p>
 
-<p>ReflectDatumWriter<LogEntry3> reflectDatumWriter = new ReflectDatumWriter&lt;&gt;(schema);
-   DataFileWriter<LogEntry3> writer = new DataFileWriter&lt;&gt;(reflectDatumWriter).create(schema, file);
+<p>ReflectDatumWriter<logentry3> reflectDatumWriter = new ReflectDatumWriter&lt;&gt;(schema);
+   DataFileWriter<logentry3> writer = new DataFileWriter&lt;&gt;(reflectDatumWriter).create(schema, file);
    writer.append(entry1);
    writer.append(entry2);
    writer.close();
 }
-```</p>
+```
+## Recipe 6: Deserialize data without Code Generation
+Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the **schema**. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code. It should be noted that if the schema is parsed on the fly without any code generation, then when deserializing the data, you can only use the generic datum reader even if you attempt with **ReflectDatumReader**. </logentry3></logentry3></p>
 
-<h2>Recipe 6: Deserialize data without Code Generation</h2>
-
-<p>Deserializing data without code generation is pretty easy. The only difference with Recipe 4 is how it get the <strong>schema</strong>. Thus the ways to fetch schemas in Recipe 5 are also applicable in this recipe. Here is only the example to load schema from disk file. I am pretty sure that you can finish the rest code. It should be noted that if the schema is parsed on the fly without any code generation, then when deserializing the data, you can only use the generic datum reader even if you attempt with <strong>ReflectDatumReader</strong>. </p>
-<div class="highlight"><pre><code class="java"><span class="nd">@Test</span><span class="o">(</span><span class="n">dependsOnMethods</span> <span class="o">=</span> <span class="s">&quot;testSerializeOnTheFly&quot;</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDeserializeOnTheFly</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-   <span class="n">Schema</span> <span class="n">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Schema</span><span class="o">.</span><span class="na">Parser</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;src/test/resources/LogEntry2.avsc&quot;</span><span class="o">));</span>
-   <span class="n">DatumReader</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">datumReader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GenericDatumReader</span><span class="o">&lt;&gt;(</span><span class="n">schema</span><span class="o">);</span>
-   <span class="n">File</span> <span class="n">file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&quot;/tmp/log2&quot;</span><span class="o">);</span>
-   <span class="n">DataFileReader</span><span class="o">&lt;</span><span class="n">GenericRecord</span><span class="o">&gt;</span> <span class="n">dataFileReader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataFileReader</span><span class="o">&lt;&gt;(</span><span class="n">file</span><span class="o">,</span> <span class="n">datumReader</span><span class="o">);</span>
-   <span class="n">GenericRecord</span> <span class="n">entry</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-   <span class="k">while</span> <span class="o">(</span><span class="n">dataFileReader</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
-      <span class="n">entry</span> <span class="o">=</span> <span class="n">dataFileReader</span><span class="o">.</span><span class="na">next</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
-      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">entry</span><span class="o">);</span>
-   <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div>]]></content>
+<p><code>java
+@Test(dependsOnMethods = "testSerializeOnTheFly")
+public void testDeserializeOnTheFly() throws IOException {
+   Schema schema = new Schema.Parser().parse(new File("src/test/resources/LogEntry2.avsc"));
+   DatumReader&lt;GenericRecord&gt; datumReader = new GenericDatumReader&lt;&gt;(schema);
+   File file = new File("/tmp/log2");
+   DataFileReader&lt;GenericRecord&gt; dataFileReader = new DataFileReader&lt;&gt;(file, datumReader);
+   GenericRecord entry = null;
+   while (dataFileReader.hasNext()) {
+      entry = dataFileReader.next(entry);
+      System.out.println(entry);
+   }
+}
+</code></p>
+]]></content>
   </entry>
   
   <entry>
@@ -358,101 +393,115 @@ public void testSerializeData() throws IOException {
     <link href="http://bluesalt.github.io/blog/2014/02/06/avro-cookbook-part-i/"/>
     <updated>2014-02-06T15:49:00+08:00</updated>
     <id>http://bluesalt.github.io/blog/2014/02/06/avro-cookbook-part-i</id>
-    <content type="html"><![CDATA[<p>Avro is a data serialization framework. It is an Apache project led by Doug Cutting who is also the author of several other open source projects such as Hadoop, Lucene. Recently I need to leverage Avro to serialize/deserialize some data, however, I found its document is too poor, at least too poor for newbies like me who don&#39;t have much experience on data exchange format frameworks. </p>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#recipe-1-create-a-maven-avro-project">Recipe 1: Create a Maven Avro Project</a>    <ul>
+      <li><a href="#initialize-the-project-structure">Initialize the project structure</a></li>
+      <li><a href="#tweak-the-pomxml">Tweak the pom.xml</a></li>
+      <li><a href="#import-the-project-into-intellij-idea">Import the project into Intellij IDEA</a></li>
+    </ul>
+  </li>
+  <li><a href="#recipe-2-define-a-schema">Recipe 2: Define a Schema</a></li>
+  <li><a href="#recipe-3-serialize-the-log-data-to-disk-file">Recipe 3: Serialize the Log Data to Disk File</a></li>
+  <li><a href="#recipe-4-deserialize-the-log-data-from-disk-file">Recipe 4: Deserialize the Log Data from Disk File</a></li>
+</ul>
 
-<p>In fact, it is very easy to understand what Avro can do. It helps to convert Java objects into bytes and vice versa. The key information the framework needs to know is the format of the date, namely &#39;Schema&#39; in Avro. In this article, I won&#39;t spend any time on explaining what Avro is. </p>
+<p>Avro is a data serialization framework. It is an Apache project led by Doug Cutting who is also the author of several other open source projects such as Hadoop, Lucene. Recently I need to leverage Avro to serialize/deserialize some data, however, I found its document is too poor, at least too poor for newbies like me who don’t have much experience on data exchange format frameworks. </p>
 
-<h2>Recipe 1: Create a Maven Avro Project</h2>
+<p>In fact, it is very easy to understand what Avro can do. It helps to convert Java objects into bytes and vice versa. The key information the framework needs to know is the format of the date, namely ‘Schema’ in Avro. In this article, I won’t spend any time on explaining what Avro is. </p>
 
+<h2 id="recipe-1-create-a-maven-avro-project">Recipe 1: Create a Maven Avro Project</h2>
 <p>Intellij IDEA is my favorite Java IDE. The free Community edition has less features than the commercial Ultimate edition, however, great experience may be gained when the free community IDEA works with Maven. They complete each other. So the examples in this article will use Maven and Intellij IDEA as the IDE. Besides, <strong>TestNG</strong> instead of JUnit will be used as the test framework.</p>
 
-<h3>Initialize the project structure</h3>
-
+<h3 id="initialize-the-project-structure">Initialize the project structure</h3>
 <ul>
-<li>Create an project with quickstart archetype:
-<code>
+  <li>Create an project with quickstart archetype:</li>
+</ul>
+
+<p><code>
 mvn archetype:generate -DgroupId=me.jeffli -DartifactId=avrosamples -Dversion=0.01 -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
-</code></li>
+</code></p>
+
+<h3 id="tweak-the-pomxml">Tweak the pom.xml</h3>
+<ul>
+  <li>Add Avro dependency:</li>
 </ul>
 
-<h3>Tweak the pom.xml</h3>
+<p>```xml</p>
+<dependency>
+   <groupid>org.apache.avro</groupid>
+   <artifactid>avro</artifactid>
+   <version>1.7.5</version>
+</dependency>
+<p>```</p>
 
 <ul>
-<li><p>Add Avro dependency:
-<code>xml
-&lt;dependency&gt;
-&lt;groupId&gt;org.apache.avro&lt;/groupId&gt;
-&lt;artifactId&gt;avro&lt;/artifactId&gt;
-&lt;version&gt;1.7.5&lt;/version&gt;
-&lt;/dependency&gt;
-</code></p></li>
-<li><p>Use Avro Maven plugin
-<code>xml
-&lt;plugin&gt;
-&lt;groupId&gt;org.apache.avro&lt;/groupId&gt;
-&lt;artifactId&gt;avro-maven-plugin&lt;/artifactId&gt;
-&lt;version&gt;1.7.5&lt;/version&gt;
-&lt;executions&gt;
-  &lt;execution&gt;
-     &lt;phase&gt;generate-sources&lt;/phase&gt;
-     &lt;goals&gt;
-        &lt;goal&gt;schema&lt;/goal&gt;
-     &lt;/goals&gt;
-     &lt;configuration&gt;
-        &lt;!-- make sure the directory is created --&gt;
-        &lt;sourceDirectory&gt;${project.basedir}/src/main/avro/&lt;/sourceDirectory&gt;
-        &lt;outputDirectory&gt;${project.basedir}/src/main/java/&lt;/outputDirectory&gt;
-     &lt;/configuration&gt;
-  &lt;/execution&gt;
-&lt;/executions&gt;
-&lt;/plugin&gt;
-</code></p></li>
+  <li>Use Avro Maven plugin</li>
 </ul>
+
+<p>```xml</p>
+<plugin>
+   <groupid>org.apache.avro</groupid>
+   <artifactid>avro-maven-plugin</artifactid>
+   <version>1.7.5</version>
+   <executions>
+      <execution>
+         <phase>generate-sources</phase>
+         <goals>
+            <goal>schema</goal>
+         </goals>
+         <configuration>
+            <!-- make sure the directory is created -->
+            <sourcedirectory>${project.basedir}/src/main/avro/</sourcedirectory>
+            <outputdirectory>${project.basedir}/src/main/java/</outputdirectory>
+         </configuration>
+      </execution>
+   </executions>
+</plugin>
+<p>```</p>
 
 <p>It should be noted that the directory <code>${project.basedir}/src/main/avro/</code> must be created even it is empty at first. It is used to place the Avro schema files. The whole pom.xml has been posted to <a href="https://gist.github.com/bluesalt/9807306">github gist</a>.</p>
 
-<h3>Import the project into Intellij IDEA</h3>
+<h3 id="import-the-project-into-intellij-idea">Import the project into Intellij IDEA</h3>
+<p>IDEA provides full support to Maven, so it is very easy to import the Maven project as a IDEA project. Click “Import Project” in the ‘Quick Start’ panel. I suggest enable the Maven Auto-Import feature of IDEA before completing the importing process.</p>
 
-<p>IDEA provides full support to Maven, so it is very easy to import the Maven project as a IDEA project. Click &quot;Import Project&quot; in the &#39;Quick Start&#39; panel. I suggest enable the Maven Auto-Import feature of IDEA before completing the importing process.</p>
+<h2 id="recipe-2-define-a-schema">Recipe 2: Define a Schema</h2>
+<p>Assume that you want to log every access of your server, to make it simple, we only define 3 attributes in a log entry, namely the username, resource and ip. So the schema can be defined as :</p>
 
-<h2>Recipe 2: Define a Schema</h2>
-
-<p>Assume that you want to log every access of your server, to make it simple, we only define 3 attributes in a log entry, namely the username, resource and ip. So the schema can be defined as :
-<code>json
+<p><code>json
 {
- &quot;namespace&quot;: &quot;me.jeffli.avrosamples.model&quot;,
- &quot;type&quot;: &quot;record&quot;,
- &quot;name&quot;: &quot;LogEntry&quot;,
- &quot;fields&quot;: [
-     {&quot;name&quot;: &quot;name&quot;, &quot;type&quot;: &quot;string&quot;},
-     {&quot;name&quot;: &quot;resource&quot;,  &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]},
-     {&quot;name&quot;: &quot;ip&quot;, &quot;type&quot;: [&quot;string&quot;, &quot;null&quot;]}
+ "namespace": "me.jeffli.avrosamples.model",
+ "type": "record",
+ "name": "LogEntry",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "resource",  "type": ["string", "null"]},
+     {"name": "ip", "type": ["string", "null"]}
  ]
 }
 </code></p>
 
 <p>Save the content as <code>${project.basedir}/src/main/avro/LogEntry.avsc</code>. After running <code>mvn compile</code>, a Java class <code>me.jeffli.avrosamples.model.LogEntry</code> will be generated automatically thank to the Avro Maven plugin.  </p>
 
-<h2>Recipe 3: Serialize the Log Data to Disk File</h2>
+<h2 id="recipe-3-serialize-the-log-data-to-disk-file">Recipe 3: Serialize the Log Data to Disk File</h2>
+<p>Assume we want to store the log data to a disk file <code>/tmp/log</code>. The code snippet would be like this:</p>
 
-<p>Assume we want to store the log data to a disk file <code>/tmp/log</code>. The code snippet would be like this:
-```java
+<p>```java
 @Test
 public void testSerializeLogEntries() throws IOException {
    LogEntry entry1 = new LogEntry();
-   entry1.setName(&quot;Jeff&quot;);
-   entry1.setResource(&quot;readme.txt&quot;);
-   entry1.setIp(&quot;192.168.1.1&quot;);</p>
+   entry1.setName(“Jeff”);
+   entry1.setResource(“readme.txt”);
+   entry1.setIp(“192.168.1.1”);</p>
 
 <p>LogEntry entry2 = new LogEntry();
-   entry2.setName(&quot;John&quot;);
-   entry2.setResource(&quot;readme.md&quot;);
-   entry2.setIp(&quot;192.168.1.2&quot;);</p>
+   entry2.setName(“John”);
+   entry2.setResource(“readme.md”);
+   entry2.setIp(“192.168.1.2”);</p>
 
-<p>DatumWriter<LogEntry> logEntryDatumWriter = new SpecificDatumWriter&lt;&gt;(LogEntry.class);
-   DataFileWriter<LogEntry> dataFileWriter = new DataFileWriter&lt;&gt;(logEntryDatumWriter);
-   File file = new File(&quot;/tmp/log&quot;);
-   dataFileWriter.create(entry1.getSchema(), file);</p>
+<p>DatumWriter<logentry> logEntryDatumWriter = new SpecificDatumWriter&lt;&gt;(LogEntry.class);
+   DataFileWriter<logentry> dataFileWriter = new DataFileWriter&lt;&gt;(logEntryDatumWriter);
+   File file = new File("/tmp/log");
+   dataFileWriter.create(entry1.getSchema(), file);</logentry></logentry></p>
 
 <p>dataFileWriter.append(entry1);
    dataFileWriter.append(entry2);</p>
@@ -461,14 +510,14 @@ public void testSerializeLogEntries() throws IOException {
 }
 ```  </p>
 
-<h2>Recipe 4: Deserialize the Log Data from Disk File</h2>
+<h2 id="recipe-4-deserialize-the-log-data-from-disk-file">Recipe 4: Deserialize the Log Data from Disk File</h2>
+<p>Assume you need to parse the log data from disk files <code>/tmp/log</code>. Then the code snippet would be:</p>
 
-<p>Assume you need to parse the log data from disk files <code>/tmp/log</code>. Then the code snippet would be:
-<code>java
-@Test (dependsOnMethods = &quot;testSerializeLogEntries&quot;)
+<p><code>java
+@Test (dependsOnMethods = "testSerializeLogEntries")
 public void testDeSerializeLogEntries() throws IOException {
    DatumReader&lt;LogEntry&gt; logEntryDatumReader = new SpecificDatumReader&lt;&gt;(LogEntry.class);
-   File file = new File(&quot;/tmp/log&quot;);
+   File file = new File("/tmp/log");
    DataFileReader&lt;LogEntry&gt; dataFileReader = new DataFileReader&lt;&gt;(file, logEntryDatumReader);
    LogEntry entry = null;
    while (dataFileReader.hasNext()) {
@@ -477,6 +526,7 @@ public void testDeSerializeLogEntries() throws IOException {
    }
 }
 </code>   </p>
+
 ]]></content>
   </entry>
   
@@ -485,79 +535,85 @@ public void testDeSerializeLogEntries() throws IOException {
     <link href="http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support/"/>
     <updated>2013-07-29T22:46:00+08:00</updated>
     <id>http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support</id>
-    <content type="html"><![CDATA[<h3>Introduction</h3>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#v6">V6</a></li>
+  <li><a href="#v8">V8</a></li>
+</ul>
 
+<h3 id="introduction">Introduction</h3>
 <p><code>jetty-maven-plugin</code>(formerly known as <code>maven-jetty-plugin</code>)is a maven plugin which enables the jetty container in maven project. It is very convenient in development environment since you can start the web app by issue only one command <code>mvn jetty:run</code>. By default it only supports http protocol. Additional configuration is necessary if https is required. Roughly we needs:</p>
 
 <ul>
-<li>A development certificate</li>
-<li>Instruct the jetty plugin to use the certificate</li>
+  <li>A development certificate</li>
+  <li>Instruct the jetty plugin to use the certificate</li>
 </ul>
 
 <p>Besides <code>jetty-maven-plugin</code>, another maven plugin called <code>keytool-maven-plugin</code> is also needed to generate the certificate.
 It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. </p>
 
-<h3>V6</h3>
-
+<h3 id="v6">V6</h3>
 <p>If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
 
-<h3>V8</h3>
+<h3 id="v8">V8</h3>
+<p>Add following sections to the <plugins> section in your pom.xml file(Pay attention to `Line 7 - Line9`, `Line 41`, `Line 47`):</plugins></p>
 
-<p>Add following sections to the <plugins> section in your pom.xml file(Pay attention to <code>Line 7 - Line9</code>, <code>Line 41</code>, <code>Line 47</code>):</p>
-<div class="highlight"><pre><code class="xml"><span class="nt">&lt;plugin&gt;</span>
-   <span class="nt">&lt;groupId&gt;</span>org.mortbay.jetty<span class="nt">&lt;/groupId&gt;</span>
-   <span class="nt">&lt;artifactId&gt;</span>jetty-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
-   <span class="nt">&lt;version&gt;</span>8.1.11.v20130520<span class="nt">&lt;/version&gt;</span>
-   <span class="nt">&lt;configuration&gt;</span>
-      <span class="nt">&lt;scanIntervalSeconds&gt;</span>5<span class="nt">&lt;/scanIntervalSeconds&gt;</span>
-      <span class="nt">&lt;webApp&gt;</span>
-         <span class="nt">&lt;contextPath&gt;</span>/context<span class="nt">&lt;/contextPath&gt;</span>
-      <span class="nt">&lt;/webApp&gt;</span>
-      <span class="nt">&lt;connectors&gt;</span>
-         <span class="nt">&lt;connector</span> <span class="na">implementation=</span><span class="s">&quot;org.eclipse.jetty.server.nio.SelectChannelConnector&quot;</span><span class="nt">&gt;</span>
-            <span class="nt">&lt;port&gt;</span>8080<span class="nt">&lt;/port&gt;</span>
-            <span class="nt">&lt;maxIdleTime&gt;</span>60000<span class="nt">&lt;/maxIdleTime&gt;</span>
-         <span class="nt">&lt;/connector&gt;</span>
-         <span class="nt">&lt;connector</span> <span class="na">implementation=</span><span class="s">&quot;org.eclipse.jetty.server.ssl.SslSelectChannelConnector&quot;</span><span class="nt">&gt;</span>
-            <span class="nt">&lt;port&gt;</span>8443<span class="nt">&lt;/port&gt;</span>
-            <span class="nt">&lt;maxIdleTime&gt;</span>60000<span class="nt">&lt;/maxIdleTime&gt;</span>
-            <span class="nt">&lt;keystore&gt;</span>${project.build.directory}/jetty-ssl.keystore<span class="nt">&lt;/keystore&gt;</span>
-            <span class="nt">&lt;password&gt;</span>jetty8<span class="nt">&lt;/password&gt;</span>
-            <span class="nt">&lt;keyPassword&gt;</span>jetty8<span class="nt">&lt;/keyPassword&gt;</span>
-         <span class="nt">&lt;/connector&gt;</span>
-      <span class="nt">&lt;/connectors&gt;</span>
-   <span class="nt">&lt;/configuration&gt;</span>
-<span class="nt">&lt;/plugin&gt;</span>
+<p>``` xml</p>
+<plugin>
+   <groupid>org.mortbay.jetty</groupid>
+   <artifactid>jetty-maven-plugin</artifactid>
+   <version>8.1.11.v20130520</version>
+   <configuration>
+      <scanintervalseconds>5</scanintervalseconds>
+      <webapp>
+         <contextpath>/context</contextpath>
+      </webapp>
+      <connectors>
+         <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+            <port>8080</port>
+            <maxidletime>60000</maxidletime>
+         </connector>
+         <connector implementation="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
+            <port>8443</port>
+            <maxidletime>60000</maxidletime>
+            <keystore>${project.build.directory}/jetty-ssl.keystore</keystore>
+            <password>jetty8</password>
+            <keypassword>jetty8</keypassword>
+         </connector>
+      </connectors>
+   </configuration>
+</plugin>
 
-<span class="nt">&lt;plugin&gt;</span>
-   <span class="nt">&lt;groupId&gt;</span>org.codehaus.mojo<span class="nt">&lt;/groupId&gt;</span>
-   <span class="nt">&lt;artifactId&gt;</span>keytool-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
-   <span class="nt">&lt;executions&gt;</span>
-      <span class="nt">&lt;execution&gt;</span>
-         <span class="nt">&lt;phase&gt;</span>generate-resources<span class="nt">&lt;/phase&gt;</span>
-         <span class="nt">&lt;id&gt;</span>clean<span class="nt">&lt;/id&gt;</span>
-         <span class="nt">&lt;goals&gt;</span>
-            <span class="nt">&lt;goal&gt;</span>clean<span class="nt">&lt;/goal&gt;</span>
-         <span class="nt">&lt;/goals&gt;</span>
-      <span class="nt">&lt;/execution&gt;</span>
-      <span class="nt">&lt;execution&gt;</span>
-         <span class="nt">&lt;phase&gt;</span>generate-resources<span class="nt">&lt;/phase&gt;</span>
-         <span class="nt">&lt;id&gt;</span>genkey<span class="nt">&lt;/id&gt;</span>
-         <span class="nt">&lt;goals&gt;</span>
-            <span class="nt">&lt;goal&gt;</span>generateKeyPair<span class="nt">&lt;/goal&gt;</span>
-         <span class="nt">&lt;/goals&gt;</span>
-      <span class="nt">&lt;/execution&gt;</span>
-   <span class="nt">&lt;/executions&gt;</span>
-   <span class="nt">&lt;configuration&gt;</span>
-      <span class="nt">&lt;keystore&gt;</span>${project.build.directory}/jetty-ssl.keystore<span class="nt">&lt;/keystore&gt;</span>
-      <span class="nt">&lt;dname&gt;</span>cn=localhost<span class="nt">&lt;/dname&gt;</span>
-      <span class="nt">&lt;keypass&gt;</span>jetty8<span class="nt">&lt;/keypass&gt;</span>
-      <span class="nt">&lt;storepass&gt;</span>jetty8<span class="nt">&lt;/storepass&gt;</span>
-      <span class="nt">&lt;alias&gt;</span>jetty8<span class="nt">&lt;/alias&gt;</span>
-      <span class="nt">&lt;keyalg&gt;</span>RSA<span class="nt">&lt;/keyalg&gt;</span>
-   <span class="nt">&lt;/configuration&gt;</span>
-<span class="nt">&lt;/plugin&gt;</span>
-</code></pre></div>
+<plugin>
+   <groupid>org.codehaus.mojo</groupid>
+   <artifactid>keytool-maven-plugin</artifactid>
+   <executions>
+      <execution>
+         <phase>generate-resources</phase>
+         <id>clean</id>
+         <goals>
+            <goal>clean</goal>
+         </goals>
+      </execution>
+      <execution>
+         <phase>generate-resources</phase>
+         <id>genkey</id>
+         <goals>
+            <goal>generateKeyPair</goal>
+         </goals>
+      </execution>
+   </executions>
+   <configuration>
+      <keystore>${project.build.directory}/jetty-ssl.keystore</keystore>
+      <dname>cn=localhost</dname>
+      <keypass>jetty8</keypass>
+      <storepass>jetty8</storepass>
+      <alias>jetty8</alias>
+      <keyalg>RSA</keyalg>
+   </configuration>
+</plugin>
+<p>```</p>
+
 <p>Every thing should be ready now. If you are using Postman as your test tool, please navigate to <code>https://loocalhost:8443/context</code> to accept the certificate before you make further tests after running <code>mvn jetty:run</code>.</p>
 ]]></content>
   </entry>

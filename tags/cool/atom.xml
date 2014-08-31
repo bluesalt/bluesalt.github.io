@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: cool | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/cool/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-08-31T09:51:21+08:00</updated>
+  <updated>2014-08-31T10:52:50+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -18,19 +18,24 @@
     <link href="http://bluesalt.github.io/blog/2013/06/17/tips-about-octopress/"/>
     <updated>2013-06-17T07:55:00+08:00</updated>
     <id>http://bluesalt.github.io/blog/2013/06/17/tips-about-octopress</id>
-    <content type="html"><![CDATA[<h2>Add Tags and Tag Cloud Support to Octopress</h2>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</a>    <ul>
+      <li><a href="#trouble-shooting">Trouble Shooting</a></li>
+    </ul>
+  </li>
+  <li><a href="#use-redcarpet-markdown-engine">Use Redcarpet Markdown Engine</a></li>
+  <li><a href="#add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</a></li>
+</ul>
 
+<h2 id="add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</h2>
 <p><span class='caption-wrapper left'><img class='caption' src='/images/tags.png' width='500' height='250' alt='Fig-1: Tags' title='Fig-1: Tags'><span class='caption-text'>Fig-1: Tags</span></span>
-<span class='caption-wrapper right'><img class='caption' src='/images/tag-cloud.png' width='250' height='500' alt='Fig-2: Tag Cloud' title='Fig-2: Tag Cloud'><span class='caption-text'>Fig-2: Tag Cloud</span></span></p>
+<span class='caption-wrapper right'><img class='caption' src='/images/tag-cloud.png' width='250' height='500' alt='Fig-2: Tag Cloud' title='Fig-2: Tag Cloud'><span class='caption-text'>Fig-2: Tag Cloud</span></span>
+#### Basic Usage
+After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
 
-<h4>Basic Usage</h4>
+<p>Here I don’t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
 
-<p>After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
-
-<p>Here I don&#39;t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
-
-<h4>Trouble Shooting</h4>
-
+<h4 id="trouble-shooting">Trouble Shooting</h4>
 <p>When playing with the tag-cloud plugin, I encounter the trouble when I try to run <code>rake generate</code>:</p>
 
 <p><code>Liquid Exception: comparison of Array with Array failed in page</code></p>
@@ -39,12 +44,10 @@
 
 <p>P.S. When composing this post, I have found another useful plugin which add caption to image. Refer this post for the details:<a href="http://blog.zerosharp.com/image-captions-for-octopress/">Image Captions for Octopress</a></p>
 
-<h2>Use Redcarpet Markdown Engine</h2>
+<h2 id="use-redcarpet-markdown-engine">Use Redcarpet Markdown Engine</h2>
+<p>As a programmer, I have got quite familiar with the markdown syntax which Github is used, the so called <em>Github Flavored Markdown</em>(GFM). Unfortunately, the default Markdown engine used by Octopress doesn’t support GFM. Good news is that it is very switch the Markdown engine in Octopress now. First upgrade jekyll to ~&gt; 0.12.1, then add ‘redcarpet’ gem to Gemfile and finally modify the _config.yml to switch the Markdown engine from <strong>rdiscount</strong> to <strong>redcarpet</strong>. Refer this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/305a3d4b6ef55dd3230498aa06617a6c5bb0f8fd">commit</a> for more detail.</p>
 
-<p>As a programmer, I have got quite familiar with the markdown syntax which Github is used, the so called <em>Github Flavored Markdown</em>(GFM). Unfortunately, the default Markdown engine used by Octopress doesn&#39;t support GFM. Good news is that it is very switch the Markdown engine in Octopress now. First upgrade jekyll to ~&gt; 0.12.1, then add &#39;redcarpet&#39; gem to Gemfile and finally modify the _config.yml to switch the Markdown engine from <strong>rdiscount</strong> to <strong>redcarpet</strong>. Refer this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/305a3d4b6ef55dd3230498aa06617a6c5bb0f8fd">commit</a> for more detail.</p>
-
-<h2>Add Clicky Web Analysis Tool</h2>
-
+<h2 id="add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</h2>
 <p>Clicky is similar to Google Web Analysis. Unfortunately Octopress does not support Clicky by default, however, it is very easy to add Clicky analysis widget to your Octopress site. After registering your website from <a href="getclicky.com">Clicky</a>, a piece of Html code will be generated. All you need to do is add  the Html code snippet to <code>source/_includes/custom/after_footer.html</code>. Refer to this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/648b13bafcd47a7499e5db0c296f7be9b8c3ed9b">commit</a> for more detail.</p>
 
 <p>Have fun!</p>
@@ -56,31 +59,38 @@
     <link href="http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2/"/>
     <updated>2012-08-18T22:43:52+08:00</updated>
     <id>http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2</id>
-    <content type="html"><![CDATA[<p>When getting the news that the famous text editor in Max OS platform--TextMate 2 had been released as an open source software in github, I couldn&#39;t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
+    <content type="html"><![CDATA[<p>When getting the news that the famous text editor in Max OS platform–TextMate 2 had been released as an open source software in github, I couldn’t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
 
-<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in `e</em>url&#39;: undefined method <code>gsub&#39; for nil:NilClass (NoMethodError)_
-_from (erb):21:in</code>header&#39;_
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in `eval&#39;</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in `block in result&#39;</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in `call&#39;</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in `result&#39;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in `header&#39;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in `show&#39;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in `run&#39;</em>
-<em>from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in `launch&#39;</em>
-<em>from Run:4:in `<main>&#39;</em></p>
+<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in <code>e_url': undefined method </code>gsub’ for nil:NilClass (NoMethodError)</em>
+<em>from (erb):21:in <code>header'_
+_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in </code>eval’</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in <code>block in result'_
+_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in </code>call’</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in <code>result'_
+_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in </code>header’</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in <code>show'_
+_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in </code>run’</em>
+_from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
+_from Run:4:in </code><main>'_</main></p>
 
-<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn&#39;t the textmate 2  ship with these files.</p>
+<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn’t the textmate 2  ship with these files.</p>
 
 <ol>
-<li><p>Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p></li>
-<li><p>Extract it to anywhere you like, I put it in:  ~/Library/Application Support/Avian</p></li>
-<li><p>Create a new environment variable called &#39;TM<em>THEME</em>PATH&#39;  under Preferences -&gt; Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p></li>
+  <li>
+    <p>Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p>
+  </li>
+  <li>
+    <p>Extract it to anywhere you like, I put it in:  ~/Library/Application Support/Avian</p>
+  </li>
+  <li>
+    <p>Create a new environment variable called ‘TM_THEME_PATH’  under Preferences -&gt; Variables. Fill the path where you put your themes in the value field. In my case, the entry is this :</p>
+  </li>
 </ol>
 
-<p>TM<em>THEME</em>PATH=$HOME/Library/Application Support/Avian/themes/</p>
+<p>TM_THEME_PATH=$HOME/Library/Application Support/Avian/themes/</p>
 
 <p>Enjoy the powerful editor brought by community of open source!</p>
+
 ]]></content>
   </entry>
   

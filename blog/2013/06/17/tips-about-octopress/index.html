@@ -9,8 +9,7 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Add Tags and Tag Cloud Support to Octopress Fig-1: Tags
-Fig-2: Tag Cloud Basic Usage After migrating my blog system from WordPress to Octopress, I &hellip;">
+  <meta name="description" content="Add Tags and Tag Cloud Support to Octopress Trouble Shooting Use Redcarpet Markdown Engine Add Clicky Web Analysis Tool Add Tags and Tag Cloud &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -106,19 +105,24 @@ Fig-2: Tag Cloud Basic Usage After migrating my blog system from WordPress to Oc
   </header>
 
 
-<div class="entry-content"><h2>Add Tags and Tag Cloud Support to Octopress</h2>
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</a>    <ul>
+      <li><a href="#trouble-shooting">Trouble Shooting</a></li>
+    </ul>
+  </li>
+  <li><a href="#use-redcarpet-markdown-engine">Use Redcarpet Markdown Engine</a></li>
+  <li><a href="#add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</a></li>
+</ul>
 
-<p><span class='caption-wrapper left'><img class='caption' src='/images/tags.png' width='500' height='250' alt='Fig-1: Tags' title='Fig-1: Tags'><span class='caption-text'>Fig-1: Tags</span></span>
-<span class='caption-wrapper right'><img class='caption' src='/images/tag-cloud.png' width='250' height='500' alt='Fig-2: Tag Cloud' title='Fig-2: Tag Cloud'><span class='caption-text'>Fig-2: Tag Cloud</span></span></p>
+<h2 id="add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</h2>
+<p><span class="caption-wrapper left"><img class="caption" src="/images/tags.png" width="500" height="250" alt="Fig-1: Tags" title="Fig-1: Tags" /><span class="caption-text">Fig-1: Tags</span></span>
+<span class="caption-wrapper right"><img class="caption" src="/images/tag-cloud.png" width="250" height="500" alt="Fig-2: Tag Cloud" title="Fig-2: Tag Cloud" /><span class="caption-text">Fig-2: Tag Cloud</span></span>
+#### Basic Usage
+After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
 
-<h4>Basic Usage</h4>
+<p>Here I don’t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
 
-<p>After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
-
-<p>Here I don&#39;t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
-
-<h4>Trouble Shooting</h4>
-
+<h4 id="trouble-shooting">Trouble Shooting</h4>
 <p>When playing with the tag-cloud plugin, I encounter the trouble when I try to run <code>rake generate</code>:</p>
 
 <p><code>Liquid Exception: comparison of Array with Array failed in page</code></p>
@@ -127,12 +131,10 @@ Fig-2: Tag Cloud Basic Usage After migrating my blog system from WordPress to Oc
 
 <p>P.S. When composing this post, I have found another useful plugin which add caption to image. Refer this post for the details:<a href="http://blog.zerosharp.com/image-captions-for-octopress/">Image Captions for Octopress</a></p>
 
-<h2>Use Redcarpet Markdown Engine</h2>
+<h2 id="use-redcarpet-markdown-engine">Use Redcarpet Markdown Engine</h2>
+<p>As a programmer, I have got quite familiar with the markdown syntax which Github is used, the so called <em>Github Flavored Markdown</em>(GFM). Unfortunately, the default Markdown engine used by Octopress doesn’t support GFM. Good news is that it is very switch the Markdown engine in Octopress now. First upgrade jekyll to ~&gt; 0.12.1, then add ‘redcarpet’ gem to Gemfile and finally modify the _config.yml to switch the Markdown engine from <strong>rdiscount</strong> to <strong>redcarpet</strong>. Refer this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/305a3d4b6ef55dd3230498aa06617a6c5bb0f8fd">commit</a> for more detail.</p>
 
-<p>As a programmer, I have got quite familiar with the markdown syntax which Github is used, the so called <em>Github Flavored Markdown</em>(GFM). Unfortunately, the default Markdown engine used by Octopress doesn&#39;t support GFM. Good news is that it is very switch the Markdown engine in Octopress now. First upgrade jekyll to ~&gt; 0.12.1, then add &#39;redcarpet&#39; gem to Gemfile and finally modify the _config.yml to switch the Markdown engine from <strong>rdiscount</strong> to <strong>redcarpet</strong>. Refer this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/305a3d4b6ef55dd3230498aa06617a6c5bb0f8fd">commit</a> for more detail.</p>
-
-<h2>Add Clicky Web Analysis Tool</h2>
-
+<h2 id="add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</h2>
 <p>Clicky is similar to Google Web Analysis. Unfortunately Octopress does not support Clicky by default, however, it is very easy to add Clicky analysis widget to your Octopress site. After registering your website from <a href="getclicky.com">Clicky</a>, a piece of Html code will be generated. All you need to do is add  the Html code snippet to <code>source/_includes/custom/after_footer.html</code>. Refer to this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/648b13bafcd47a7499e5db0c296f7be9b8c3ed9b">commit</a> for more detail.</p>
 
 <p>Have fun!</p>

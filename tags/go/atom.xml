@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: go | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/go/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-08-31T09:51:21+08:00</updated>
+  <updated>2014-08-31T10:52:50+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -21,17 +21,22 @@
     <content type="html"><![CDATA[<p>We all know that type assert could be used to cast a interface type variable to its actual type value. In the other way, golang allows you to query if a value has implement an interface. This could be used when writing unit test cases, for example, you want to make sure that a struct actually implements certain interfaces.</p>
 
 <ul>
-<li><p>Assign the value to an empty interface variable</p></li>
-<li><p>Use type assert: assert the empty interface type to any specific interface you are interested</p></li>
+  <li>
+    <p>Assign the value to an empty interface variable</p>
+  </li>
+  <li>
+    <p>Use type assert: assert the empty interface type to any specific interface you are interested</p>
+  </li>
 </ul>
 
-<p>Here is a small while complete example
-```go
+<p>Here is a small while complete example</p>
+
+<p>```go
 package main</p>
 
 <p>import (
-  . &quot;launchpad.net/gocheck&quot;
-  &quot;testing&quot;
+  . “launchpad.net/gocheck”
+  “testing”
 )</p>
 
 <p>func Test(t *testing.T) {
