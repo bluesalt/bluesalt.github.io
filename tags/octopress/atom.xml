@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: octopress | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/octopress/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-08-31T13:34:20+08:00</updated>
+  <updated>2014-08-31T14:34:46+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -26,6 +26,8 @@
   </li>
   <li><a href="#use-redcarpet-markdown-engine">Use Redcarpet Markdown Engine</a></li>
   <li><a href="#add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</a></li>
+  <li><a href="#add-table-of-content-to-the-post">Add Table of Content to the post</a></li>
+  <li><a href="#shorten-the-homepage">Shorten the homepage</a></li>
 </ul>
 
 <!--more-->
@@ -53,6 +55,12 @@
 
 <h2 id="add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</h2>
 <p>Clicky is similar to Google Web Analysis. Unfortunately Octopress does not support Clicky by default, however, it is very easy to add Clicky analysis widget to your Octopress site. After registering your website from <a href="getclicky.com">Clicky</a>, a piece of Html code will be generated. All you need to do is add  the Html code snippet to <code>source/_includes/custom/after_footer.html</code>. Refer to this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/648b13bafcd47a7499e5db0c296f7be9b8c3ed9b">commit</a> for more detail.</p>
+
+<h2 id="add-table-of-content-to-the-post">Add Table of Content to the post</h2>
+<p>Table of content can improve the read experience greatly. After goolging the topic for a short time, the most easy easy I found is <a href="http://blog.riemann.cc/2013/04/10/table-of-contents-in-octopress/">Robert Riemann’s tutorial</a>. If that is not clear, refer to the change set in my <a href="https://github.com/bluesalt/bluesalt.github.io/commit/77d28a7c7557b117e80094a2fc74de842a6af057">github repo</a>. It should be mentioned that after change the markdown engine from <code>redcarpet</code> to <code>kramdown</code>, the engine can’t parse the code block correctly. A blank line is required to be placed in front of the code block. </p>
+
+<h2 id="shorten-the-homepage">Shorten the homepage</h2>
+<p>By default, when you access the homepage of your blog, you will see every blog post will be displayed completely which is not so friendly to readers. A simple way is use the <code>&lt;!--more--&gt;</code> tag to customize excerpts which are shown in the homepage from the posts.</p>
 
 <p>Have fun!</p>
 ]]></content>
