@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: fuse | Jeff Li]]></title>
+  <link href="http://bluesalt.github.io/tags/fuse/atom.xml" rel="self"/>
+  <link href="http://bluesalt.github.io/"/>
+  <updated>2014-08-31T09:51:21+08:00</updated>
+  <id>http://bluesalt.github.io/</id>
+  <author>
+    <name><![CDATA[Jeff Li]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Use GDB to Understand FUSE File System]]></title>
+    <link href="http://bluesalt.github.io/blog/2014/08/30/use-gdb-to-understand-fuse-file-system/"/>
+    <updated>2014-08-30T10:17:46+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2014/08/30/use-gdb-to-understand-fuse-file-system</id>
+    <content type="html"><![CDATA[<p>During the past years, I have been involved in several storage related projects from which I have learned a lot about the world of storage. Definitely the journey is interesting. However, it is not awesome because almost all the work I have been involved is about applications of storage. Then I decided to dig more deeper in the storage world. It turned out that it is really wonderful to explore in the world of storage. </p>
+
+<p>Actually I have heard about FUSE before but did not spend time to explore it because I thought FUSE would bring a lot of overhead and hence won&#39;t get too much application in system design. During the past months, I have seen the implementations of a few storage solutions, both open source and commercial ones. To my surprise, FUSE is used in those solutions. It is time to get acquainted with it. Per my experience, debugging is the very very useful way to learn a new technology. In this post, I will show how to use GDB to debug the hello example. You can set break points, use single step execution to observe the behavior of the FUSE application. </p>
+
+<p><strong>CLAIM</strong>: I am not an expert on GDB or FUSE and I can&#39;t guarantee that it is practical in debugging your real world solution.</p>
+
+<h2>Introduction to FUSE</h2>
+
+<p>From the OS course in undergraduate school, your are told that file system is part of the kernel and it is almost true in the real world. That means typically if you want to create your own file system in a real world OS such as Linux, you have to program at the <strong>kernel space</strong>. However you can create your own file system totally in <strong>user space</strong> with the help of FUSE: Filesystem in Userspace. What is the difference? Well, there is much more restriction in kernel space programming than user space. For example, no call to third parties library such as glibc, limited recursive depth. Since Linux kernel is monolithic, a crashed kernel space program(kernel module) could make the whole OS crash too.</p>
+
+<p>There is a simple hello file system from the homepage of the FUSE project.
+Use following command lines to test the hello file system. I tested it in a Ubuntu 14.04 x86_64 box.
+
+<code>
+gcc -Wall hello.c `pkg-config fuse --cflags --libs` -o hello
+mkdir /tmp/fuse
+./hello /tmp/fuse
+</code> 
+</p>
+
+<p>If every thing is all right, you should see following result:
+<code>
+jeff@trusty:~$ ls -l /tmp/fuse
+total 0
+-r--r--r-- 1 root root 13 Jan  1  1970 hello
+jeff@trusty:~$ cat /tmp/fuse/hello
+Hello World!
+</code></p>
+
+<h2>How does FUSE work</h2>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/fuse.png' width='' height='' alt='Fig-1: Workflow of FUSE' title='Fig-1: Workflow of FUSE'><span class='caption-text'>Fig-1: Workflow of FUSE</span></span></p>
+
+<p>Fig-1 is the workflow of FUSE fetched from the homepage of the FUSE project. The remaining in this section will try to explain the process.</p>
+
+<ol>
+<li>Just like EXT4, EXT3, the hello file system much be mounted before it can be used. The command <code>./hello /tmp/fuse</code> will mount it. It should be noted that this <code>hello</code> command will not only mount the hello FS, but also <strong>running as a daemon</strong> in the background. This is very important to understand the whole work process. Now you can verify whether the fs is mounted or not by issuing <code>mount</code> in the command line. </li>
+<li>Users  issue the command <code>ls -l /tmp/fuse</code> </li>
+<li>The <code>ls</code> program will call functions lived in glibc </li>
+<li> The glibc fucntions called in step 2 will send the requests to the kernel&#39;s VFS subsystem with sys calls. </li>
+<li>The VFS sub system will call FUSE module lived in the kernel like it does when dealing with other file systems such as NFS, EXT4. Util now, the workflow is the same with any other FS.</li>
+<li>Unlike other FSes, the FUSE module in kernel will now call the the hello daemon created in Step 1.</li>
+<li>The hello daemon then sends the result back to the FUSE kernel module</li>
+<li>The rest work is the same with other FSes. The result will be passed in the path: FUSE kernel module -&gt; VFS -&gt; glibc -&gt; ls command</li>
+</ol>
+
+<p>With the explanation above, you should understand the overall process. So the FUSE is actually a framework which lives in the kernel space like other file systems. A FUSE file system must be built under that framework.</p>
+
+<p>Next let&#39;s look more deeper. The GDB will be leveraged to track the detail of function calls in next section. BTW, I have not figured out how the FUSE kernel module communicates with the hello daemon living in the user space yet.</p>
+
+<h2>Use GDB with FUSE</h2>
+
+<p>Since the hello daemon runs in the user space, we can attach it to the GDB like other user space applications. But before that we should make some extra preparations.
+
+<code>bash
+gcc -Wall -g hello.c `pkg-config fuse --cflags --libs` -o hello # Compile with debug symbols flag
+./hello /tmp/fuse -s # Run the daemon in single thread mode
+ps -ef | grep hello # Search the pid of the hello daemon
+</code>
+</p>
+
+<p>Now it is ready to enter the gdb by issue <code>gdb64</code> in the command line. Attach the process to the gdb by <code>attach PID_OF_THE_HELLO_DAMONE</code>. Since we want to track which functions are called when the command <code>ls -l /tmp/fuse</code> is issued, we should set breakpoints for the 4 functions, namely <code>hello_open, hello_getattr, hello_readdir, hello_read</code> with following gdb commands.</p>
+<div class="highlight"><pre><code class="text">(gdb) break hello_getattr
+Breakpoint 1 at 0x40076d: file hello.c, line 24.
+(gdb) break hello_readdir
+Breakpoint 2 at 0x40082d: file hello.c, line 46.
+(gdb) break hello_open
+Breakpoint 3 at 0x4008b1: file hello.c, line 58.
+(gdb) break hello_read
+Breakpoint 4 at 0x400909: file hello.c, line 72.
+(gdb) continue
+Continuing.
+</code></pre></div>
+<p>Now the gdb should be in listen on the daemon. When a break point is hit, it will stop the daemon process immediately. Let&#39;s open a new shell windows and issue the command <code>ls -l /tmp/fuse</code>. <strong>DO NOT use tab-complete feature when entering the command</strong>. Or the behavior it will be a little confusing though it could be still reasoning. Let&#39;s check the first break point.</p>
+<div class="highlight"><pre><code class="text">(gdb) continue
+Continuing.
+
+Breakpoint 1, hello_getattr (path=0x6d5100 &quot;/&quot;, stbuf=0x7fff92c71080) at hello.c:24
+24      int res = 0;
+</code></pre></div>
+<p>From the output, we can see that the command will first get the attributes of the  hello file system&#39;s root director, namely <code>/tmp/fuse</code> mount point. Enter <code>continue</code> to resume the daemon process.</p>
+<div class="highlight"><pre><code class="text">Breakpoint 2, hello_readdir (path=0x6f5940 &quot;/&quot;, buf=0x6d5100, filler=0x7f27f8e8e220, offset=0, fi=0x7fff92c710e0) at hello.c:46
+46      if (strcmp(path, &quot;/&quot;) != 0)
+(gdb) continue
+Continuing.
+
+Breakpoint 1, hello_getattr (path=0x6f5940 &quot;/hello&quot;, stbuf=0x7fff92c710b0) at hello.c:24
+24      int res = 0;
+(gdb) continue
+Continuing.
+</code></pre></div>
+<p>When can see all the rest function calls for the <code>ls</code> command from the above output which is quite self-explanatory. You can also use similar way to track the function calls when the command <code>cat /tmp/fuse/hello</code> is issued. </p>
+
+<p>Hope this posts helps you understand how FUSE works!</p>
+
+<h2>Trouble Shooting</h2>
+
+<ul>
+<li>Fail to attach the daemon process in GDB. The error looks like this:</li>
+</ul>
+<div class="highlight"><pre><code class="text">(gdb) attach 13387
+Attaching to process 13387
+&quot;/home/jeff/workspace/fuse/hello&quot;: not in executable format: File format not recognized
+</code></pre></div>
+<p>This is because the hello executable file is a 64 bit binary but the gdb is 32 bit. Use the 64-bit GDB <code>gdb64</code>.</p>
+
+<ul>
+<li>Fail to link the executable file with error:</li>
+</ul>
+<div class="highlight"><pre><code class="text">/tmp/ccIMWTZv.o: In function `main&#39;:
+hello.c:(.text+0x268): undefined reference to `fuse_main_real&#39;
+collect2: error: ld returned 1 exit status 
+</code></pre></div>
+<p>This is a silly problem. Make sure you use the the correct command
+ 
+<code>
+gcc -Wall hello.c `pkg-config fuse --cflags --libs` -o hello # work
+gcc -Wall `pkg-config fuse --cflags --libs` hello.c -o hello # can&#39;t work
+</code>
+</p>
+
+<h2>Further Read</h2>
+
+<ol>
+<li><a href="http://osxfuse.github.io/">FUSE for OS X</a> : FUSE like framework in Mac OS X</li>
+<li><a href="http://www.3c2controller.net/project/truetrue/solaris10/fuse/fuse-opensolaris.pdf">Fuse on Solaris</a>: Fuse on OpenSolaris</li>
+<li><a href="opendedup.org">Opendedup</a>: A deduplication solution built with FUSE</li>
+</ol>
+]]></content>
+  </entry>
+  
+</feed>
