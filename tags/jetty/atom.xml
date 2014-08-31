@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: jetty | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/jetty/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-08-31T10:52:50+08:00</updated>
+  <updated>2014-08-31T13:34:20+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -20,7 +20,6 @@
     <id>http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#v6">V6</a></li>
   <li><a href="#v8">V8</a></li>
 </ul>
 
@@ -33,10 +32,10 @@
 </ul>
 
 <p>Besides <code>jetty-maven-plugin</code>, another maven plugin called <code>keytool-maven-plugin</code> is also needed to generate the certificate.
-It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. </p>
-
-<h3 id="v6">V6</h3>
-<p>If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
+It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. 
+<!--more-->
+### V6
+If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
 
 <h3 id="v8">V8</h3>
 <p>Add following sections to the <plugins> section in your pom.xml file(Pay attention to `Line 7 - Line9`, `Line 41`, `Line 47`):</plugins></p>

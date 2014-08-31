@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-08-31T10:52:50+08:00</updated>
+  <updated>2014-08-31T13:34:20+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -28,9 +28,9 @@
 
 <p>During the past years, I have been involved in several storage related projects from which I have learned a lot about the world of storage. Definitely the journey is interesting. However, it is not awesome because almost all the work I have been involved is about applications of storage. Then I decided to dig more deeper in the storage world. It turned out that it is really wonderful to explore in the world of storage. </p>
 
-<p>Actually I have heard about FUSE before but did not spend time to explore it because I thought FUSE would bring a lot of overhead and hence won’t get too much application in system design. During the past months, I have seen the implementations of a few storage solutions, both open source and commercial ones. To my surprise, FUSE is used in those solutions. It is time to get acquainted with it. Per my experience, debugging is the very very useful way to learn a new technology. In this post, I will show how to use GDB to debug the hello example. You can set break points, use single step execution to observe the behavior of the FUSE application. </p>
-
-<p><strong>CLAIM</strong>: I am not an expert on GDB or FUSE and I can’t guarantee that it is practical in debugging your real world solution.</p>
+<p>Actually I have heard about FUSE before but did not spend time to explore it because I thought FUSE would bring a lot of overhead and hence won’t get too much application in system design. During the past months, I have seen the implementations of a few storage solutions, both open source and commercial ones. To my surprise, FUSE is used in those solutions. It is time to get acquainted with it. Per my experience, debugging is the very very useful way to learn a new technology. In this post, I will show how to use GDB to debug the hello example. You can set break points, use single step execution to observe the behavior of the FUSE application. 
+<!--more-->
+<strong>CLAIM</strong>: I am not an expert on GDB or FUSE and I can’t guarantee that it is practical in debugging your real world solution.</p>
 
 <h2 id="introduction-to-fuse">Introduction to FUSE</h2>
 <p>From the OS course in undergraduate school, your are told that file system is part of the kernel and it is almost true in the real world. That means typically if you want to create your own file system in a real world OS such as Linux, you have to program at the <strong>kernel space</strong>. However you can create your own file system totally in <strong>user space</strong> with the help of FUSE: Filesystem in Userspace. What is the difference? Well, there is much more restriction in kernel space programming than user space. For example, no call to third parties library such as glibc, limited recursive depth. Since Linux kernel is monolithic, a crashed kernel space program(kernel module) could make the whole OS crash too.</p>
@@ -207,7 +207,9 @@ Use following command lines to test the hello file system. I tested it in a Ubun
 </ul>
 
 <h2 id="recipe-6-serialize-data-as-json-data">Recipe 6: Serialize data as JSON data</h2>
-<p>In <a href="http://jeffli.me/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : part I</a>, if you open the file <code>/tmp/log</code> created by recipe 3, you would find that it is definitely not a human readable text format. Avro provides the encoder/decoder mechanism which helps to serial the data to text format as JSON data. Actually, if I want to serial the POJOs to JSON data, I would rather use <a href="https://code.google.com/p/google-gson/">Google Gson</a>. Anyway, this is a post about Avro, right ?</p>
+<p>In <a href="http://jeffli.me/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : part I</a>, if you open the file <code>/tmp/log</code> created by recipe 3, you would find that it is definitely not a human readable text format. Avro provides the encoder/decoder mechanism which helps to serial the data to text format as JSON data.
+<!--more-->
+ Actually, if I want to serial the POJOs to JSON data, I would rather use <a href="https://code.google.com/p/google-gson/">Google Gson</a>. Anyway, this is a post about Avro, right ?</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -499,7 +501,8 @@ org.apache.avro.AvroTypeException: Expected start-union. Got VALUE_STRING
 </ul>
 
 <h2 id="recipe-5-serialize-data-without-code-generation">Recipe 5: Serialize data without Code Generation</h2>
-<p>In formal recipes, before using Avro to serialize/deserialize data, schema files have to be defined to be leveraged by Avro code generation facility to generate the Java classes. This is also recommended when using Avro in Java. However, it is not required. Actually, you can parse the schema on the fly without code generation.</p>
+<p>In formal recipes, before using Avro to serialize/deserialize data, schema files have to be defined to be leveraged by Avro code generation facility to generate the Java classes. This is also recommended when using Avro in Java. However, it is not required. Actually, you can parse the schema on the fly without code generation.
+<!--more--></p>
 
 <h3 id="parse-schema-from-string">Parse Schema from String</h3>
 <p>The schema looks like this:</p>
@@ -742,12 +745,9 @@ Deserializing data without code generation is pretty easy. The only difference w
     <updated>2014-02-06T15:49:00+08:00</updated>
     <id>http://bluesalt.github.io/blog/2014/02/06/avro-cookbook-part-i</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
-  <li><a href="#recipe-1-create-a-maven-avro-project">Recipe 1: Create a Maven Avro Project</a>    <ul>
-      <li><a href="#initialize-the-project-structure">Initialize the project structure</a></li>
-      <li><a href="#tweak-the-pomxml">Tweak the pom.xml</a></li>
-      <li><a href="#import-the-project-into-intellij-idea">Import the project into Intellij IDEA</a></li>
-    </ul>
-  </li>
+  <li><a href="#initialize-the-project-structure">Initialize the project structure</a></li>
+  <li><a href="#tweak-the-pomxml">Tweak the pom.xml</a></li>
+  <li><a href="#import-the-project-into-intellij-idea">Import the project into Intellij IDEA</a></li>
   <li><a href="#recipe-2-define-a-schema">Recipe 2: Define a Schema</a></li>
   <li><a href="#recipe-3-serialize-the-log-data-to-disk-file">Recipe 3: Serialize the Log Data to Disk File</a></li>
   <li><a href="#recipe-4-deserialize-the-log-data-from-disk-file">Recipe 4: Deserialize the Log Data from Disk File</a></li>
@@ -755,10 +755,10 @@ Deserializing data without code generation is pretty easy. The only difference w
 
 <p>Avro is a data serialization framework. It is an Apache project led by Doug Cutting who is also the author of several other open source projects such as Hadoop, Lucene. Recently I need to leverage Avro to serialize/deserialize some data, however, I found its document is too poor, at least too poor for newbies like me who don’t have much experience on data exchange format frameworks. </p>
 
-<p>In fact, it is very easy to understand what Avro can do. It helps to convert Java objects into bytes and vice versa. The key information the framework needs to know is the format of the date, namely ‘Schema’ in Avro. In this article, I won’t spend any time on explaining what Avro is. </p>
-
-<h2 id="recipe-1-create-a-maven-avro-project">Recipe 1: Create a Maven Avro Project</h2>
-<p>Intellij IDEA is my favorite Java IDE. The free Community edition has less features than the commercial Ultimate edition, however, great experience may be gained when the free community IDEA works with Maven. They complete each other. So the examples in this article will use Maven and Intellij IDEA as the IDE. Besides, <strong>TestNG</strong> instead of JUnit will be used as the test framework.</p>
+<p>In fact, it is very easy to understand what Avro can do. It helps to convert Java objects into bytes and vice versa. The key information the framework needs to know is the format of the date, namely ‘Schema’ in Avro. In this article, I won’t spend any time on explaining what Avro is. 
+<!--more-->
+## Recipe 1: Create a Maven Avro Project
+Intellij IDEA is my favorite Java IDE. The free Community edition has less features than the commercial Ultimate edition, however, great experience may be gained when the free community IDEA works with Maven. They complete each other. So the examples in this article will use Maven and Intellij IDEA as the IDE. Besides, <strong>TestNG</strong> instead of JUnit will be used as the test framework.</p>
 
 <h3 id="initialize-the-project-structure">Initialize the project structure</h3>
 <ul>
@@ -945,7 +945,6 @@ Deserializing data without code generation is pretty easy. The only difference w
     <id>http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#v6">V6</a></li>
   <li><a href="#v8">V8</a></li>
 </ul>
 
@@ -958,10 +957,10 @@ Deserializing data without code generation is pretty easy. The only difference w
 </ul>
 
 <p>Besides <code>jetty-maven-plugin</code>, another maven plugin called <code>keytool-maven-plugin</code> is also needed to generate the certificate.
-It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. </p>
-
-<h3 id="v6">V6</h3>
-<p>If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
+It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. 
+<!--more-->
+### V6
+If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
 
 <h3 id="v8">V8</h3>
 <p>Add following sections to the <plugins> section in your pom.xml file(Pay attention to `Line 7 - Line9`, `Line 41`, `Line 47`):</plugins></p>
@@ -1085,6 +1084,7 @@ It should be noted that the plugin has evolved a lot since version 7. The config
     <id>http://bluesalt.github.io/blog/2013/06/17/tips-about-octopress</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</a>    <ul>
+      <li><a href="#basic-usage">Basic Usage</a></li>
       <li><a href="#trouble-shooting">Trouble Shooting</a></li>
     </ul>
   </li>
@@ -1092,11 +1092,14 @@ It should be noted that the plugin has evolved a lot since version 7. The config
   <li><a href="#add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</a></li>
 </ul>
 
+<!--more-->
+
 <h2 id="add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</h2>
 <p><span class="caption-wrapper left"><img class="caption" src="http://bluesalt.github.io/images/tags.png" width="500" height="250" alt="Fig-1: Tags" title="Fig-1: Tags" /><span class="caption-text">Fig-1: Tags</span></span>
-<span class="caption-wrapper right"><img class="caption" src="http://bluesalt.github.io/images/tag-cloud.png" width="250" height="500" alt="Fig-2: Tag Cloud" title="Fig-2: Tag Cloud" /><span class="caption-text">Fig-2: Tag Cloud</span></span>
-#### Basic Usage
-After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
+<span class="caption-wrapper right"><img class="caption" src="http://bluesalt.github.io/images/tag-cloud.png" width="250" height="500" alt="Fig-2: Tag Cloud" title="Fig-2: Tag Cloud" /><span class="caption-text">Fig-2: Tag Cloud</span></span></p>
+
+<h4 id="basic-usage">Basic Usage</h4>
+<p>After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
 
 <p>Here I don’t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
 
@@ -1134,6 +1137,8 @@ After migrating my blog system from WordPress to Octopress, I have got more fun 
     <updated>2012-09-25T06:11:00+08:00</updated>
     <id>http://bluesalt.github.io/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang</id>
     <content type="html"><![CDATA[<p>We all know that type assert could be used to cast a interface type variable to its actual type value. In the other way, golang allows you to query if a value has implement an interface. This could be used when writing unit test cases, for example, you want to make sure that a struct actually implements certain interfaces.</p>
+
+<!--more-->
 
 <ul>
   <li>
@@ -1239,12 +1244,11 @@ _from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle
 _from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
 _from Run:4:in </code><main>&#8216;_</main></p>
 
-<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn’t the textmate 2  ship with these files.</p>
+<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn’t the textmate 2  ship with these files.
+<!--more-->
+1. Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p>
 
 <ol>
-  <li>
-    <p>Get the files from here :  <a href="https://www.dropbox.com/s/kdo0j21xij3mzos/themes.tar">theme</a></p>
-  </li>
   <li>
     <p>Extract it to anywhere you like, I put it in:  ~/Library/Application Support/Avian</p>
   </li>

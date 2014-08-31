@@ -9,7 +9,7 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Add Tags and Tag Cloud Support to Octopress Trouble Shooting Use Redcarpet Markdown Engine Add Clicky Web Analysis Tool Add Tags and Tag Cloud &hellip;">
+  <meta name="description" content="Add Tags and Tag Cloud Support to Octopress Basic Usage Trouble Shooting Use Redcarpet Markdown Engine Add Clicky Web Analysis Tool Add Tags and Tag &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -107,6 +107,7 @@
 
 <div class="entry-content"><ul id="markdown-toc">
   <li><a href="#add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</a>    <ul>
+      <li><a href="#basic-usage">Basic Usage</a></li>
       <li><a href="#trouble-shooting">Trouble Shooting</a></li>
     </ul>
   </li>
@@ -114,11 +115,14 @@
   <li><a href="#add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</a></li>
 </ul>
 
+<!--more-->
+
 <h2 id="add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</h2>
 <p><span class="caption-wrapper left"><img class="caption" src="/images/tags.png" width="500" height="250" alt="Fig-1: Tags" title="Fig-1: Tags" /><span class="caption-text">Fig-1: Tags</span></span>
-<span class="caption-wrapper right"><img class="caption" src="/images/tag-cloud.png" width="250" height="500" alt="Fig-2: Tag Cloud" title="Fig-2: Tag Cloud" /><span class="caption-text">Fig-2: Tag Cloud</span></span>
-#### Basic Usage
-After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
+<span class="caption-wrapper right"><img class="caption" src="/images/tag-cloud.png" width="250" height="500" alt="Fig-2: Tag Cloud" title="Fig-2: Tag Cloud" /><span class="caption-text">Fig-2: Tag Cloud</span></span></p>
+
+<h4 id="basic-usage">Basic Usage</h4>
+<p>After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>
 
 <p>Here I don’t want to talk too much about how to install the plugins because I think commit diffs can explain everything. This <a href="https://github.com/bluesalt/bluesalt.github.io/commit/d3e90232c14b4bc413567273fe5da9295d1be809">commit</a> shows you how to use the octopress-tag-pages plugin and this <a href="https://github.com/bluesalt/bluesalt.github.io/commit/628ee6fb8d92b0b910982122141882b45dee7dd1">one</a> demos how to use octopress-tag-cloud which is based on octopress-tag-pages.</p>
 

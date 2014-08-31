@@ -9,7 +9,7 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Recipe 1: Create a Maven Avro Project Initialize the project structure Tweak the pom.xml Import the project into Intellij IDEA Recipe 2: Define a &hellip;">
+  <meta name="description" content="Initialize the project structure Tweak the pom.xml Import the project into Intellij IDEA Recipe 2: Define a Schema Recipe 3: Serialize the Log Data &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -106,12 +106,9 @@
 
 
 <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#recipe-1-create-a-maven-avro-project">Recipe 1: Create a Maven Avro Project</a>    <ul>
-      <li><a href="#initialize-the-project-structure">Initialize the project structure</a></li>
-      <li><a href="#tweak-the-pomxml">Tweak the pom.xml</a></li>
-      <li><a href="#import-the-project-into-intellij-idea">Import the project into Intellij IDEA</a></li>
-    </ul>
-  </li>
+  <li><a href="#initialize-the-project-structure">Initialize the project structure</a></li>
+  <li><a href="#tweak-the-pomxml">Tweak the pom.xml</a></li>
+  <li><a href="#import-the-project-into-intellij-idea">Import the project into Intellij IDEA</a></li>
   <li><a href="#recipe-2-define-a-schema">Recipe 2: Define a Schema</a></li>
   <li><a href="#recipe-3-serialize-the-log-data-to-disk-file">Recipe 3: Serialize the Log Data to Disk File</a></li>
   <li><a href="#recipe-4-deserialize-the-log-data-from-disk-file">Recipe 4: Deserialize the Log Data from Disk File</a></li>
@@ -119,10 +116,10 @@
 
 <p>Avro is a data serialization framework. It is an Apache project led by Doug Cutting who is also the author of several other open source projects such as Hadoop, Lucene. Recently I need to leverage Avro to serialize/deserialize some data, however, I found its document is too poor, at least too poor for newbies like me who don’t have much experience on data exchange format frameworks. </p>
 
-<p>In fact, it is very easy to understand what Avro can do. It helps to convert Java objects into bytes and vice versa. The key information the framework needs to know is the format of the date, namely ‘Schema’ in Avro. In this article, I won’t spend any time on explaining what Avro is. </p>
-
-<h2 id="recipe-1-create-a-maven-avro-project">Recipe 1: Create a Maven Avro Project</h2>
-<p>Intellij IDEA is my favorite Java IDE. The free Community edition has less features than the commercial Ultimate edition, however, great experience may be gained when the free community IDEA works with Maven. They complete each other. So the examples in this article will use Maven and Intellij IDEA as the IDE. Besides, <strong>TestNG</strong> instead of JUnit will be used as the test framework.</p>
+<p>In fact, it is very easy to understand what Avro can do. It helps to convert Java objects into bytes and vice versa. The key information the framework needs to know is the format of the date, namely ‘Schema’ in Avro. In this article, I won’t spend any time on explaining what Avro is. 
+<!--more-->
+## Recipe 1: Create a Maven Avro Project
+Intellij IDEA is my favorite Java IDE. The free Community edition has less features than the commercial Ultimate edition, however, great experience may be gained when the free community IDEA works with Maven. They complete each other. So the examples in this article will use Maven and Intellij IDEA as the IDE. Besides, <strong>TestNG</strong> instead of JUnit will be used as the test framework.</p>
 
 <h3 id="initialize-the-project-structure">Initialize the project structure</h3>
 <ul>
