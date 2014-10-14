@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-08-31T14:34:46+08:00</updated>
+  <updated>2014-10-14T20:58:01+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -12,6 +12,159 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Install Systemtap in Ubuntu 14.04]]></title>
+    <link href="http://bluesalt.github.io/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/"/>
+    <updated>2014-10-10T20:07:09+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#install-systemtap">Install SystemTap</a></li>
+  <li><a href="#install-debug-file">Install debug file</a></li>
+  <li><a href="#troubleshooting">Troubleshooting</a>    <ul>
+      <li><a href="#build-directory-not-found">build directory not found</a></li>
+      <li><a href="#disktopstp-does-not-work">disktop.stp does not work</a></li>
+      <li><a href="#pass-4-compile-error">pass 4 compile error</a></li>
+    </ul>
+  </li>
+  <li><a href="#further-reading">Further Reading</a></li>
+</ul>
+
+<p>About 2 months ago, I happened to read a book about how to learn OS principles by hands-on experience on Solaris with MDB and DTrace. After reading the chapters about memory management, I was totally impressed by MDB and DTrace. They acts like a microscope to help you look into the kernel. For example, you can walk through the data structures used by Solaris kernel to manage the process. You can even observe the memory related data structures and emulate the translation between virtual address and physical address manually. Then I became curious about if Linux has similar tools because I am pretty sure that it will be very helpful to understand the design and implementation of Linux kernel. </p>
+
+<!--more-->
+
+<p>Since I have heard about SystemTap before, so after googling “systemtap ubuntu”, I found several articles about how to install SystemTap in Ubuntu. However, those are kind of outdated even the one posted in the SystemTap’s homepage. For example,  some complicated steps are not needed anymore while some are not applicable when working with latest kernel. So I decide to write down this experience. The environment is a Ubuntu 14.04(trust) box running in DigitalOcean with 3.13.0-36-generic kernel image.</p>
+
+<h3 id="install-systemtap">Install SystemTap</h3>
+<p>SystemTap 2.3 is available in the apt source thus it can be installed simply with <code>apt-get</code>. Gcc is also required since the SystemTap script will be translated into C source code which will be compiled as kernel module finally.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo apt-get install systemtap
+</span><span class="line">sudo apt-get install gcc
+</span><span class="line">sudo apt-get install linux-headers-<span class="k">$(</span>uname -r<span class="k">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Test the installation with the HelloWorld example:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo stap -e <span class="s1">&#39;probe begin { printf(&quot;Hello, World!\n&quot;); exit() }&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>You should see <code>Hello, World!</code> is emitted in the console.</p>
+
+<h3 id="install-debug-file">Install debug file</h3>
+<p>SystemTap is a powerful trace tool. Let’s see another example which will print <code>hello world</code> to the console when the system call <code>sys_call</code> is called.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo stap -e <span class="s1">&#39;probe kernel.function(&quot;sys_open&quot;) {log(&quot;hello world&quot;) exit()}&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>It will end with the error information:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">semantic error: <span class="k">while </span>resolving probe point: identifier <span class="s1">&#39;kernel&#39;</span> at &lt;input&gt;:1:7
+</span><span class="line">        <span class="nb">source</span>: probe kernel.function<span class="o">(</span><span class="s2">&quot;sys_open&quot;</span><span class="o">)</span> <span class="o">{</span>log<span class="o">(</span><span class="s2">&quot;hello world&quot;</span><span class="o">)</span> <span class="nb">exit</span><span class="o">()}</span>
+</span><span class="line">                      ^
+</span><span class="line">
+</span><span class="line">semantic error: missing x86_64 kernel/module debuginfo <span class="o">[</span>man warning::debuginfo<span class="o">]</span> under <span class="s1">&#39;/lib/modules/3.13.0-36-generic/build&#39;</span>
+</span><span class="line">Pass 2: analysis failed.  <span class="o">[</span>man error::pass2<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The debug symbols are required to solve this problem. You can following the instruction in the <a href="https://wiki.ubuntu.com/Kernel/Systemtap#Where_to_get_debug_symbols_for_kernel_X.3F">Ubuntu Wiki</a>.</p>
+
+<p>You can also install the symbols manually if you failed by following above instructions.  Goto <a href="http://ddebs.ubuntu.com/pool/main/l/linux/">ddeb</a> and find a symbol file matched your kernel. If you are not able to find a matched symbol file, I suggest you upgrade your linux kernel or you will have to build it by yourself.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">wget http://ddebs.ubuntu.com/pool/main/l/linux/linux-image-3.13.0-36-generic-dbgsym_3.13.0-36.63_amd64.ddeb
+</span><span class="line">sudo dpkg -i  linux-image-3.13.0-36-generic-dbgsym_3.13.0-36.63_amd64.ddeb
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="troubleshooting">Troubleshooting</h3>
+
+<h4 id="build-directory-not-found">build directory not found</h4>
+
+<p>Error Information:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">Checking <span class="s2">&quot;/lib/modules/3.13.0-36-generic/build/.config&quot;</span> failed with error: No such file or directory
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><code>/lib/modules/3.13.0-36-generic/build</code> is actually a soft link to the linux header files directory. This error is not supposed to appear because when you install the headers by <code>sudo apt-get install linux-headers-$(uname -r)</code>, the soft link will be created automatically. But if you are as unlucky as me, please install the linux headers and make sure the <code>build</code> links to <code>/usr/src/linux-headers-3.13.0-36-generic/</code>.</p>
+
+<h4 id="disktopstp-does-not-work">disktop.stp does not work</h4>
+<p>SystemTap is also shipped with some <a href="https://sourceware.org/systemtap/examples/">examples</a>. <code>disktop.top</code> is a SystemTap script used to get the status of reading/writing. If you use the SystemTap provided by the apt software repository, the following error is likely to occur.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">/tmp/stapvSQlYC/stap_46806491689887ce5beb12ed5b6f2994_27689_src.c: In <span class="k">function</span> ‘function_uid’:
+</span><span class="line">/tmp/stapvSQlYC/stap_46806491689887ce5beb12ed5b6f2994_27689_src.c:3459:16: error: incompatible types when assigning to <span class="nb">type</span> ‘int64_t’ from <span class="nb">type</span> ‘kuid_t’
+</span><span class="line">  <span class="nv">STAP_RETVALUE</span> <span class="o">=</span> current_uid<span class="o">()</span>;
+</span><span class="line">                ^
+</span><span class="line">make<span class="o">[</span>1<span class="o">]</span>: *** <span class="o">[</span>/tmp/stapvSQlYC/stap_46806491689887ce5beb12ed5b6f2994_27689_src.o<span class="o">]</span> Error 1
+</span><span class="line">make: *** <span class="o">[</span>_module_/tmp/stapvSQlYC<span class="o">]</span> Error 2
+</span><span class="line">WARNING: kbuild exited with status: 2
+</span><span class="line">Pass 4: compilation failed.  <span class="o">[</span>man error::pass4<span class="o">]</span>
+</span><span class="line">Tip: /usr/share/doc/systemtap/README.Debian should <span class="nb">help </span>you get started.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This is probably a <a href="https://bugs.launchpad.net/ubuntu/+source/systemtap/+bug/1286865">bug</a>. One way to fix it is building SystemTap from source. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo apt-get remove systemtap
+</span><span class="line">wget https://fedorahosted.org/releases/e/l/elfutils/0.160/elfutils-0.160.tar.bz2
+</span><span class="line">wget https://sourceware.org/systemtap/ftp/releases/systemtap-2.5.tar.gz
+</span><span class="line">tar jxf elfutils-0.160.tar.bz2
+</span><span class="line">tar zxf systemtap-2.5.tar.gz
+</span><span class="line"><span class="nb">cd </span>systemtap-2.5
+</span><span class="line">./configure --with-elfutils<span class="o">=</span>../elfutils-0.160
+</span><span class="line">make
+</span><span class="line">sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="pass-4-compile-error">pass 4 compile error</h4>
+<p>This is the most weird issue I have met. Almost all the examples can’t work and SystemTap keeps complaing <code>pass 4: compilation failed. [man error::pass4]</code>. That means the SystemTap script can be translated into C source code which can also be compile as a kernel module. However, it fails to load the kernel module. After downgrading the kernel from 3.13.0-36 to 3.13.0-32, I found ever thing is ok. After I switched back to 3.13.0-36, however, nothing is wrong. If you meet similar issue, try to clean the symbols file, linux headers and switch to other kernel version with matched debug symbol files and linux headers.</p>
+
+<h3 id="further-reading">Further Reading</h3>
+<ol>
+  <li>
+    <p><a href="http://www.opensourceforu.com/2011/12/getting-started-with-systemtap/">Getting Started with SystemTap</a>: A introduction with simple examples. It is simple and thus good for beginners.</p>
+  </li>
+  <li>
+    <p><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/SystemTap_Beginners_Guide/">SystemTap Beginners Guid</a>: SystemTap guide from Red Hat planned for beginners </p>
+  </li>
+  <li>
+    <p><a href="https://sourceware.org/systemtap/wiki/SystemTapOnCentOS">SystemTap on CentOS</a>: Detail how to install SystemTap in CentOS. I followed the step on a CentOS 6.5 box. The whole process was very smooth. Every thing is fine including the disktop example.</p>
+  </li>
+  <li>
+    <p><a href="https://sourceware.org/systemtap/examples/">SystemTap examples</a>: Examples from SystemTap’s homepage</p>
+  </li>
+</ol>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Use GDB to Understand FUSE File System]]></title>
@@ -945,6 +1098,7 @@ Intellij IDEA is my favorite Java IDE. The free Community edition has less featu
     <id>http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#v6">V6</a></li>
   <li><a href="#v8">V8</a></li>
 </ul>
 
@@ -958,9 +1112,10 @@ Intellij IDEA is my favorite Java IDE. The free Community edition has less featu
 
 <p>Besides <code>jetty-maven-plugin</code>, another maven plugin called <code>keytool-maven-plugin</code> is also needed to generate the certificate.
 It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. 
-<!--more-->
-### V6
-If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
+<!--more--></p>
+
+<h3 id="v6">V6</h3>
+<p>If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
 
 <h3 id="v8">V8</h3>
 <p>Add following sections to the <plugins> section in your pom.xml file(Pay attention to `Line 7 - Line9`, `Line 41`, `Line 47`):</plugins></p>

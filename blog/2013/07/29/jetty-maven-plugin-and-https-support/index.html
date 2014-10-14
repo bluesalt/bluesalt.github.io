@@ -9,7 +9,7 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Introduction V8 Introduction
+  <meta name="description" content="Introduction V6 V8 Introduction
 jetty-maven-plugin(formerly known as maven-jetty-plugin)is a maven plugin which enables the jetty container in maven &hellip;">
   
 
@@ -108,6 +108,7 @@ jetty-maven-plugin(formerly known as maven-jetty-plugin)is a maven plugin which 
 
 <div class="entry-content"><ul id="markdown-toc">
   <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#v6">V6</a></li>
   <li><a href="#v8">V8</a></li>
 </ul>
 
@@ -121,9 +122,10 @@ jetty-maven-plugin(formerly known as maven-jetty-plugin)is a maven plugin which 
 
 <p>Besides <code>jetty-maven-plugin</code>, another maven plugin called <code>keytool-maven-plugin</code> is also needed to generate the certificate.
 It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. 
-<!--more-->
-### V6
-If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
+<!--more--></p>
+
+<h3 id="v6">V6</h3>
+<p>If you are still using the version 6 plugin, please refer to this blog: <a href="http://mrhaki.blogspot.com/2009/05/configure-maven-jetty-plugin-for-ssl.html">Configure Maven Jetty plugin for SSL communication</a>. I tried it in my project, but it is unstable. Sometimes it works and sometimes it fails. So I have to upgrade the plugin to V8.</p>
 
 <h3 id="v8">V8</h3>
 <p>Add following sections to the <plugins> section in your pom.xml file(Pay attention to `Line 7 - Line9`, `Line 41`, `Line 47`):</plugins></p>
@@ -313,6 +315,10 @@ If you are still using the version 6 plugin, please refer to this blog: <a href=
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Install Systemtap in Ubuntu 14.04</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/08/30/use-gdb-to-understand-fuse-file-system/">Use GDB to Understand FUSE File System</a>
       </li>
     
@@ -328,10 +334,6 @@ If you are still using the version 6 plugin, please refer to this blog: <a href=
         <a href="/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : Part I</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Jetty-maven-plugin and Https Support</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -344,6 +346,7 @@ If you are still using the version 6 plugin, please refer to this blog: <a href=
     <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
 <li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
 <li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>Linux (1)</a></li>
 <li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
 <li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
 <li class='category'><a href='/blog/categories/storage/'>Storage (1)</a></li>
@@ -360,11 +363,14 @@ If you are still using the version 6 plugin, please refer to this blog: <a href=
 <a style="font-size: 90%" href="/tags/https/">https</a>
 <a style="font-size: 210%" href="/tags/java/">java</a>
 <a style="font-size: 90%" href="/tags/jetty/">jetty</a>
+<a style="font-size: 90%" href="/tags/kernel/">kernel</a>
 <a style="font-size: 90%" href="/tags/mac/">mac</a>
 <a style="font-size: 90%" href="/tags/maven/">maven</a>
 <a style="font-size: 90%" href="/tags/octopress/">octopress</a>
 <a style="font-size: 210%" href="/tags/oss/">oss</a>
+<a style="font-size: 90%" href="/tags/systemtap/">systemtap</a>
 <a style="font-size: 90%" href="/tags/textmate/">textmate</a>
+<a style="font-size: 90%" href="/tags/trusty/">trusty</a>
 
   </ul>
 </section>

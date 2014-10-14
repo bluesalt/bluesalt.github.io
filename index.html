@@ -9,7 +9,7 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Introduction to FUSE How does FUSE work Use GDB with FUSE Trouble Shooting Further Read During the past years, I have been involved in several &hellip;">
+  <meta name="description" content="Install SystemTap Install debug file Troubleshooting build directory not found disktop.stp does not work pass 4 compile error Further Reading About &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,59 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Install Systemtap in Ubuntu 14.04</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-10T20:07:09+08:00" pubdate data-updated="true">Oct 10<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#install-systemtap">Install SystemTap</a></li>
+  <li><a href="#install-debug-file">Install debug file</a></li>
+  <li><a href="#troubleshooting">Troubleshooting</a>    <ul>
+      <li><a href="#build-directory-not-found">build directory not found</a></li>
+      <li><a href="#disktopstp-does-not-work">disktop.stp does not work</a></li>
+      <li><a href="#pass-4-compile-error">pass 4 compile error</a></li>
+    </ul>
+  </li>
+  <li><a href="#further-reading">Further Reading</a></li>
+</ul>
+
+<p>About 2 months ago, I happened to read a book about how to learn OS principles by hands-on experience on Solaris with MDB and DTrace. After reading the chapters about memory management, I was totally impressed by MDB and DTrace. They acts like a microscope to help you look into the kernel. For example, you can walk through the data structures used by Solaris kernel to manage the process. You can even observe the memory related data structures and emulate the translation between virtual address and physical address manually. Then I became curious about if Linux has similar tools because I am pretty sure that it will be very helpful to understand the design and implementation of Linux kernel. </p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -311,6 +364,7 @@
 
   <div class="entry-content"><ul id="markdown-toc">
   <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#v6">V6</a></li>
   <li><a href="#v8">V8</a></li>
 </ul>
 
@@ -530,6 +584,10 @@ _from Run:4:in </code><main>&#8216;_</main></p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Install Systemtap in Ubuntu 14.04</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/08/30/use-gdb-to-understand-fuse-file-system/">Use GDB to Understand FUSE File System</a>
       </li>
     
@@ -545,10 +603,6 @@ _from Run:4:in </code><main>&#8216;_</main></p>
         <a href="/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : Part I</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Jetty-maven-plugin and Https Support</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -561,6 +615,7 @@ _from Run:4:in </code><main>&#8216;_</main></p>
     <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
 <li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
 <li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>Linux (1)</a></li>
 <li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
 <li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
 <li class='category'><a href='/blog/categories/storage/'>Storage (1)</a></li>
@@ -577,11 +632,14 @@ _from Run:4:in </code><main>&#8216;_</main></p>
 <a style="font-size: 90%" href="/tags/https/">https</a>
 <a style="font-size: 210%" href="/tags/java/">java</a>
 <a style="font-size: 90%" href="/tags/jetty/">jetty</a>
+<a style="font-size: 90%" href="/tags/kernel/">kernel</a>
 <a style="font-size: 90%" href="/tags/mac/">mac</a>
 <a style="font-size: 90%" href="/tags/maven/">maven</a>
 <a style="font-size: 90%" href="/tags/octopress/">octopress</a>
 <a style="font-size: 210%" href="/tags/oss/">oss</a>
+<a style="font-size: 90%" href="/tags/systemtap/">systemtap</a>
 <a style="font-size: 90%" href="/tags/textmate/">textmate</a>
+<a style="font-size: 90%" href="/tags/trusty/">trusty</a>
 
   </ul>
 </section>
