@@ -9,7 +9,7 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Install SystemTap Install debug file Troubleshooting build directory not found disktop.stp does not work pass 4 compile error Further Reading About &hellip;">
+  <meta name="description" content="Pagemap Interface Explained /proc/${pid}/pagemap /proc/kpagecount /proc/kpageflags Parse the Pagemap Interface Conclusion Further Reading As we know &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,59 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-11-08T08:40:24+08:00" pubdate data-updated="true">Nov 8<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#pagemap-interface-explained">Pagemap Interface Explained</a>    <ul>
+      <li><a href="#procpidpagemap">/proc/${pid}/pagemap</a></li>
+      <li><a href="#prockpagecount">/proc/kpagecount</a></li>
+      <li><a href="#prockpageflags">/proc/kpageflags</a></li>
+    </ul>
+  </li>
+  <li><a href="#parse-the-pagemap-interface">Parse the Pagemap Interface</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+  <li><a href="#further-reading">Further Reading</a></li>
+</ul>
+
+<p>As we know, Linux supports virtual memory. Actually, almost all modern general operating systems such as Solaris, Windows, Mac OS X support virtual memory. Every user space process in Linux has its own virtual address space. The virtual address will be translated to physical address by operating system finally. In fact, most CPU architectures such as x86 and arm provide hardware support for virtual to physical address translation with MMU. In that case, the translation is done by the cooperation of operating system(software) and CPU(hardware). In this post, I am trying to explain the pagemap interface which is used to explore the mapping information of physical memory.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -517,61 +570,9 @@ It should be noted that the plugin has evolved a lot since version 7. The config
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/18/bundles-command-error-in-textmate-2/">Bundles Command Error in TextMate 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-18T22:43:52+08:00" pubdate data-updated="true">Aug 18<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>When getting the news that the famous text editor in Max OS platform–TextMate 2 had been released as an open source software in github, I couldn’t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
-
-<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in <code>e_url': undefined method </code>gsub’ for nil:NilClass (NoMethodError)</em>
-<em>from (erb):21:in <code>header'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in </code>eval’</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in <code>block in result'_
-_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in </code>call’</em>
-<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in <code>result'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in </code>header’</em>
-<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in <code>show'_
-_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in </code>run’</em>
-_from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
-_from Run:4:in </code><main>&#8216;_</main></p>
-
-<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn’t the textmate 2  ship with these files.
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/08/18/bundles-command-error-in-textmate-2/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -582,6 +583,10 @@ _from Run:4:in </code><main>&#8216;_</main></p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Install SystemTap in Ubuntu 14.04</a>
@@ -597,10 +602,6 @@ _from Run:4:in </code><main>&#8216;_</main></p>
     
       <li class="post">
         <a href="/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : Part I</a>
       </li>
     
   </ul>

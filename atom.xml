@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-11-15T13:34:40+08:00</updated>
+  <updated>2014-11-15T17:47:42+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -12,6 +12,212 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Pagemap Interface of Linux Explained]]></title>
+    <link href="http://bluesalt.github.io/blog/2014/11/08/pagemap-interface-of-linux-explained/"/>
+    <updated>2014-11-08T08:40:24+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2014/11/08/pagemap-interface-of-linux-explained</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#pagemap-interface-explained">Pagemap Interface Explained</a>    <ul>
+      <li><a href="#procpidpagemap">/proc/${pid}/pagemap</a></li>
+      <li><a href="#prockpagecount">/proc/kpagecount</a></li>
+      <li><a href="#prockpageflags">/proc/kpageflags</a></li>
+    </ul>
+  </li>
+  <li><a href="#parse-the-pagemap-interface">Parse the Pagemap Interface</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+  <li><a href="#further-reading">Further Reading</a></li>
+</ul>
+
+<p>As we know, Linux supports virtual memory. Actually, almost all modern general operating systems such as Solaris, Windows, Mac OS X support virtual memory. Every user space process in Linux has its own virtual address space. The virtual address will be translated to physical address by operating system finally. In fact, most CPU architectures such as x86 and arm provide hardware support for virtual to physical address translation with MMU. In that case, the translation is done by the cooperation of operating system(software) and CPU(hardware). In this post, I am trying to explain the pagemap interface which is used to explore the mapping information of physical memory.</p>
+
+<!--more-->
+
+<p>I assume you are familiar with the basic memory management principles. At least you must know</p>
+
+<ul>
+  <li>Terminologies like virtual page, page frame, page size</li>
+  <li>How to locate an address within a page</li>
+  <li>Basic administration knowledge of Linux such as proc file system</li>
+  <li>Know how to figure out virtual addresses that are interesting to you of a process in the proc file system or with tools such as GDB and readelf </li>
+</ul>
+
+<h2 id="pagemap-interface-explained">Pagemap Interface Explained</h2>
+<p>Managing hardware is one of the operating system’s main responsibilitiles. OS kernel needs some data structures to manage the physical memory. Since those data structures lives in kernel space, they can’t be accessed from the user space directly. The pagemap interface which has been introduced since 2.6.25 allows page tables and related information to be examined from user space. The information is exposed as virtual files living in proc file system:</p>
+
+<ul>
+  <li>/proc/$(pid}/pagemap</li>
+  <li>/proc/kpagecount</li>
+  <li>/proc/kpageflags</li>
+</ul>
+
+<p>Let’s start to explore these files now.</p>
+
+<h3 id="procpidpagemap">/proc/${pid}/pagemap</h3>
+<p>This file contains the map information between virtual pages and physical pages of a process. The mapping information between a virtual page and physical page is represented as a 64-bit long entry. The file is a virtual file which means that it does not exist in the disk. Even so, you can imagine that it consists of many 64-bit long records each of which contains the physical page frame number of a virtual memory page and some other attributes. For example, record 0, 1, 2  are for the first, second and third virtual page respectively. In other words, the records are indexed by the virtual page number.
+<span class="caption-wrapper left"><img class="caption" src="http://bluesalt.github.io/images/pagemap.png" width="500" height="250" alt="Fig-1: Format of Pagemap Entry" title="Fig-1: Format of Pagemap Entry" /><span class="caption-text">Fig-1: Format of Pagemap Entry</span></span>
+Fig-1 is the format of pagemap entries. Please refer to the <a href="https://www.kernel.org/doc/Documentation/vm/pagemap.txt">design doc</a> of the pagemap interface to see the detail of the format. It should be noted that the entry’s content represent different information when page is present and swapped out.</p>
+
+<h3 id="prockpagecount">/proc/kpagecount</h3>
+<p>In linux, it is possible (and likely!) that a physical page is mapped to different virtual pages of different process. This kpagecount file contains the reference number of physical pages. It is also a virtual file in which each physical frame’s reference count is represent as a 64-bit integer and indexed by the physical frame number. For example, if you want to find second physical frame’s reference count, you can just need to simply read byte 8 to byte 15 of the kpagecount file. </p>
+
+<h3 id="prockpageflags">/proc/kpageflags</h3>
+<p>This virtual file contains the flags of physical frames. The flags of each page frame are present in a 64-bit long entry which is also indexed by the physical frame number. That means it is accessed in the same way as the kpagecount file. Each bit in the entry present a flag. I won’t explore every flags here because they are explained clearly in the <a href="https://www.kernel.org/doc/Documentation/vm/pagemap.txt">design doc</a>. Even the entry is 64-bit long, only 23 bit are used so far. </p>
+
+<h2 id="parse-the-pagemap-interface">Parse the Pagemap Interface</h2>
+<p>Following is a Python script to parse the files of pagemap interface. It accepts 2 arguments, one is the process’ pid and the other is the virtual address. Remember to append the <code>0x</code> prefix if you want to pass a hexadecimal address.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c">#!/usr/bin/python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">binascii</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">struct</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">read_entry</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+</span><span class="line">  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span class="line">    <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&#39;Q&#39;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># Read /proc/$PID/pagemap</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">get_pagemap_entry</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">addr</span><span class="p">):</span>
+</span><span class="line">  <span class="n">maps_path</span> <span class="o">=</span> <span class="s">&quot;/proc/{0}/pagemap&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">maps_path</span><span class="p">):</span>
+</span><span class="line">    <span class="k">print</span> <span class="s">&quot;Process {0} doesn&#39;t exist.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+</span><span class="line">    <span class="k">return</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">page_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sysconf</span><span class="p">(</span><span class="s">&quot;SC_PAGE_SIZE&quot;</span><span class="p">)</span>
+</span><span class="line">  <span class="n">pagemap_entry_size</span> <span class="o">=</span> <span class="mi">8</span>
+</span><span class="line">  <span class="n">offset</span>  <span class="o">=</span> <span class="p">(</span><span class="n">addr</span> <span class="o">/</span> <span class="n">page_size</span><span class="p">)</span> <span class="o">*</span> <span class="n">pagemap_entry_size</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">return</span> <span class="n">read_entry</span><span class="p">(</span><span class="n">maps_path</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">get_pfn</span><span class="p">(</span><span class="n">entry</span><span class="p">):</span>
+</span><span class="line">  <span class="k">return</span> <span class="n">entry</span> <span class="o">&amp;</span> <span class="mh">0x7FFFFFFFFFFFFF</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">is_present</span><span class="p">(</span><span class="n">entry</span><span class="p">):</span>
+</span><span class="line">  <span class="k">return</span> <span class="p">((</span><span class="n">entry</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">63</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">def</span> <span class="nf">is_file_page</span><span class="p">(</span><span class="n">entry</span><span class="p">):</span>
+</span><span class="line">  <span class="k">return</span> <span class="p">((</span><span class="n">entry</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">61</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class="line"><span class="c">##########################################################</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># Read /proc/kpagecount</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">get_pagecount</span><span class="p">(</span><span class="n">pfn</span><span class="p">):</span>
+</span><span class="line">  <span class="n">file_path</span> <span class="o">=</span> <span class="s">&quot;/proc/kpagecount&quot;</span>
+</span><span class="line">  <span class="n">offset</span> <span class="o">=</span> <span class="n">pfn</span> <span class="o">*</span> <span class="mi">8</span>
+</span><span class="line">  <span class="k">return</span> <span class="n">read_entry</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c">##########################################################</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># Read /proc/kpageflags</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">get_page_flags</span><span class="p">(</span><span class="n">pfn</span><span class="p">):</span>
+</span><span class="line">  <span class="n">file_path</span> <span class="o">=</span> <span class="s">&quot;/proc/kpageflags&quot;</span>
+</span><span class="line">  <span class="n">offset</span> <span class="o">=</span> <span class="n">pfn</span> <span class="o">*</span> <span class="mi">8</span>
+</span><span class="line">  <span class="k">return</span> <span class="n">read_entry</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class="line">  <span class="n">pid</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span class="line">  <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;0x&quot;</span><span class="p">):</span>
+</span><span class="line">    <span class="n">addr</span> <span class="o">=</span> <span class="nb">long</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+</span><span class="line">  <span class="k">else</span><span class="p">:</span>
+</span><span class="line">    <span class="n">addr</span> <span class="o">=</span> <span class="nb">long</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">entry</span> <span class="o">=</span> <span class="n">get_pagemap_entry</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
+</span><span class="line">  <span class="n">pfn</span> <span class="o">=</span> <span class="n">get_pfn</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+</span><span class="line">  <span class="k">print</span> <span class="s">&quot;PFN: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">pfn</span><span class="p">))</span>
+</span><span class="line">  <span class="k">print</span> <span class="s">&quot;Is Present? : {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">is_present</span><span class="p">(</span><span class="n">entry</span><span class="p">))</span>
+</span><span class="line">  <span class="k">print</span> <span class="s">&quot;Is file-page: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">is_file_page</span><span class="p">(</span><span class="n">entry</span><span class="p">))</span>
+</span><span class="line">  <span class="k">print</span> <span class="s">&quot;Page count: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">get_pagecount</span><span class="p">(</span><span class="n">pfn</span><span class="p">))</span>
+</span><span class="line">  <span class="k">print</span> <span class="s">&quot;Page flags: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">get_page_flags</span><span class="p">(</span><span class="n">pfn</span><span class="p">)))</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Save the script as v2pfn.py. Usage:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo ./v2pfn <span class="nv">$PID</span> <span class="nv">$ADDRESS</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Of course, this script does not cover everything of the pagemap interface. What I want to show here is how to read the information of a physical frame from the interface. It is very to extend if you want to parse other flags. </p>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>Pagemap interface is a quite simple tool to learn more about how Linux manage the physical memory. Hope this post can be helpful to understanding it. However, pagemap interface does <strong>NOT</strong> expose the origin PTE entry. This is kind of pity because PTE is very helpful to understand how virtual addresses are translated to physical address by CPU. In next post, I will show you how to inspect the raw PTE entry with SystemTap. Stay tuned.</p>
+
+<h2 id="further-reading">Further Reading</h2>
+
+<ul>
+  <li><a href="https://www.kernel.org/doc/Documentation/vm/pagemap.txt">design doc</a>: The design doc of the pagemap. Besides explaining the interface, it also give some examples to use the interface. </li>
+  <li><a href="http://lxr.linux.no/#linux+v3.17.3/tools/vm/page-types.c">page-type tool</a> A pagemap interface explore tool shipped with the linux kernel. It need to be compiled before you use it.</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Install SystemTap in Ubuntu 14.04]]></title>

@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Chinese Posts - Jeff Li</title>
+  <title>Jeff Li</title>
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Chinese Posts May 22nd, 2013 May 22nd, 2013 Comments Please enable JavaScript to view the comments powered by Disqus. Recent Posts Pagemap Interface &hellip;">
+  <meta name="description" content="When getting the news that the famous text editor in Max OS platform–TextMate 2 had been released as an open source software in github, I couldn’t &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://bluesalt.github.io/chinese-posts">
+  <link rel="canonical" href="http://bluesalt.github.io/blog/page/2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
@@ -77,33 +77,19 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div>
-<article role="article">
+      <div class="blog-index">
   
+  
+  
+    <article>
+      
   <header>
-    <h1 class="entry-title">Chinese Posts</h1>
-    <p class="meta">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-22T22:59:00+08:00" pubdate data-updated="true">May 22<span>nd</span>, 2013</time></p>
-  </header>
-  
-  
-
-  
-    <footer>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/18/bundles-command-error-in-textmate-2/">Bundles Command Error in TextMate 2</a></h1>
+    
+    
       <p class="meta">
         
-        
 
 
 
@@ -115,29 +101,47 @@
   
 
 
-<time datetime="2013-05-22T22:59:00+08:00" pubdate data-updated="true">May 22<span>nd</span>, 2013</time>
+<time datetime="2012-08-18T22:43:52+08:00" pubdate data-updated="true">Aug 18<span>th</span>, 2012</time>
         
       </p>
-      
-        <div class="sharing">
-  
-  
-  
-</div>
+    
+  </header>
 
-      
+
+  <div class="entry-content"><p>When getting the news that the famous text editor in Max OS platform–TextMate 2 had been released as an open source software in github, I couldn’t wait to  give it a try though I am a big fan of VIM. When trying to run scripts files such as Ruby, Python or Even Golang, I failed. The error information was shown like this :</p>
+
+<p><em>/Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/escape.rb:23:in <code>e_url': undefined method </code>gsub’ for nil:NilClass (NoMethodError)</em>
+<em>from (erb):21:in <code>header'_
+_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in </code>eval’</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:835:in <code>block in result'_
+_from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in </code>call’</em>
+<em>from /Users/xxxxxxx/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/erb.rb:833:in <code>result'_
+_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:91:in </code>header’</em>
+<em>from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/htmloutput.rb:68:in <code>show'_
+_from /Users/xxxxxxx/Library/Application Support/TextMate/Managed/Bundles/Bundle Support.tmbundle/Support/shared/lib/tm/executor.rb:110:in </code>run’</em>
+_from /Users/xxxxxxx/Library/Application Support/Avian/Bundles/Go.tmbundle/Support/gomate.rb:63:in <code>launch'_
+_from Run:4:in </code><main>&#8216;_</main></p>
+
+<p>This is caused by the lack of themes files for the output window.The most easy way to solve this is getting the theme files and make the bundles find it.I am curious why doesn’t the textmate 2  ship with these files.
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/08/18/bundles-command-error-in-textmate-2/">Read on &rarr;</a>
     </footer>
   
-</article>
 
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
 </div>
-  </section>
-
-</div>
-
 <aside class="sidebar">
   
     <section>
@@ -208,7 +212,6 @@
   
 </aside>
 
-
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -223,10 +226,7 @@
       var disqus_shortname = 'bluesalt';
       
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://bluesalt.github.io/chinese-posts/index.html';
-        var disqus_url = 'http://bluesalt.github.io/chinese-posts/index.html';
-        var disqus_script = 'embed.js';
+        var disqus_script = 'count.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
