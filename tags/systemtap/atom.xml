@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: systemtap | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/systemtap/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-10-14T20:58:01+08:00</updated>
+  <updated>2014-11-15T13:34:40+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Install systemtap in Ubuntu 14.04]]></title>
+    <title type="html"><![CDATA[Install SystemTap in Ubuntu 14.04]]></title>
     <link href="http://bluesalt.github.io/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/"/>
     <updated>2014-10-10T20:07:09+08:00</updated>
     <id>http://bluesalt.github.io/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04</id>
@@ -34,7 +34,7 @@
 
 <!--more-->
 
-<p>Since I have heard about SystemTap before, so after googling “systemtap ubuntu”, I found several articles about how to install SystemTap in Ubuntu. However, those are kind of outdated even the one posted in the SystemTap’s homepage. For example,  some complicated steps are not needed anymore while some are not applicable when working with latest kernel. So I decide to write down this experience. The environment is a Ubuntu 14.04(trust) box running in DigitalOcean with 3.13.0-36-generic kernel image.</p>
+<p>Since I have heard about SystemTap before, so after googling “systemtap ubuntu”, I found several articles about how to install SystemTap in Ubuntu. However, those are kind of outdated even the one posted in the SystemTap’s homepage. For example,  some complicated steps are not needed anymore while some are not applicable when working with latest kernel. So I decided to write down this experience. The environment is a Ubuntu 14.04(trust) box running in DigitalOcean with 3.13.0-36-generic kernel image.</p>
 
 <h3 id="install-systemtap">Install SystemTap</h3>
 <p>SystemTap 2.3 is available in the apt source thus it can be installed simply with <code>apt-get</code>. Gcc is also required since the SystemTap script will be translated into C source code which will be compiled as kernel module finally.</p>
@@ -60,7 +60,7 @@ sudo stap -e 'probe begin { printf("Hello, World!\n"); exit() }'
 sudo stap -e 'probe kernel.function("sys_open") {log("hello world") exit()}'
 </code></p>
 
-<p>It will end with the error information:</p>
+<p>It is likely to end with the error information:</p>
 
 <p>```
 semantic error: while resolving probe point: identifier ‘kernel’ at <input />:1:7
