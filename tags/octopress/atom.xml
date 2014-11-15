@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: octopress | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/octopress/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-11-15T17:47:42+08:00</updated>
+  <updated>2014-11-15T18:44:44+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -28,6 +28,7 @@
   <li><a href="#add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</a></li>
   <li><a href="#add-table-of-content-to-the-post">Add Table of Content to the post</a></li>
   <li><a href="#shorten-the-homepage">Shorten the homepage</a></li>
+  <li><a href="#fix-slow-speed-access-from-china">Fix slow speed access from China</a></li>
 </ul>
 
 <!--more-->
@@ -61,6 +62,9 @@
 
 <h2 id="shorten-the-homepage">Shorten the homepage</h2>
 <p>By default, when you access the homepage of your blog, you will see every blog post will be displayed completely which is not so friendly to readers. A simple way is use the <code>&lt;!--more--&gt;</code> tag to customize excerpts which are shown in the homepage from the posts.</p>
+
+<h2 id="fix-slow-speed-access-from-china">Fix slow speed access from China</h2>
+<p>Octopress will use Google CDN to accelerate the access speed. However, Google CDN is blocked in China mainland due to some reasons which makes the fastest CDN become the slowest CDN. Quite ironical, isn’t it? Octopress use Google CDN in two place. One is the fonts and the other is the jQuery library.  Resolve jQuery issue is simply, just replace it with CloudFlare’s jQuery service. The fonts’ issue is not so easy because of some <a href="https://github.com/cdnjs/cdnjs/issues/682">reasons</a>. So I just remove the fonts service and so good so far. Refer <a href="https://github.com/bluesalt/bluesalt.github.io/commit/15531b15707bfd61f7e02e567d57397985a890ba">here</a> to see how to fix it.</p>
 
 <p>Have fun!</p>
 ]]></content>
