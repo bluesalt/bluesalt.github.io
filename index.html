@@ -9,7 +9,7 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Pagemap Interface Explained /proc/${pid}/pagemap /proc/kpagecount /proc/kpageflags Parse the Pagemap Interface Conclusion Further Reading As we know &hellip;">
+  <meta name="description" content="SystemTap Script Code Comments Conclusion Further Reading In my last blog post, we explored the pagemap interface in Linux which is an interface &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,55 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/04/05/dump-pte-for-virtual-address/">Dump PTE for Virtual Address</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-04-05T14:41:47+08:00" pubdate data-updated="true">Apr 5<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#systemtap-script">SystemTap Script</a></li>
+  <li><a href="#code-comments">Code Comments</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+  <li><a href="#further-reading">Further Reading</a></li>
+</ul>
+
+<p>In my <a href="http://blog.jeffli.me/blog/2014/11/08/pagemap-interface-of-linux-explained/">last blog post</a>, we explored the pagemap interface in Linux which is an interface that exposes some kernel information about the memory management. As I mentioned in that post, the pagemap interface does not expose the raw pte content. Since PTEs are allocated in the kernel space, it is impossible to explore the PTEs from user space applications. To access the kernel space memory, a traditional way is writing a kernel module which, I believe, is of course kind of tedious.</p>
+
+<p>In this article, we’ll see how to leverage SystemTap infrastructure to dump the PTE for the page where an given virtual address of a process lives in. 
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/04/05/dump-pte-for-virtual-address/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -530,47 +579,6 @@ It should be noted that the plugin has evolved a lot since version 7. The config
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/">Test if a Value Implements an Interface in Golang</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-25T06:11:00+08:00" pubdate data-updated="true">Sep 25<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>We all know that type assert could be used to cast a interface type variable to its actual type value. In the other way, golang allows you to query if a value has implement an interface. This could be used when writing unit test cases, for example, you want to make sure that a struct actually implements certain interfaces.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -584,6 +592,10 @@ It should be noted that the plugin has evolved a lot since version 7. The config
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/04/05/dump-pte-for-virtual-address/">Dump PTE for Virtual Address</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a>
@@ -601,10 +613,6 @@ It should be noted that the plugin has evolved a lot since version 7. The config
         <a href="/blog/2014/04/08/avro-cookbook-part-iii/">Avro Cookbook : Part III</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -617,7 +625,7 @@ It should be noted that the plugin has evolved a lot since version 7. The config
     <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
 <li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
 <li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
-<li class='category'><a href='/blog/categories/linux/'>Linux (2)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>Linux (3)</a></li>
 <li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
 <li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
 <li class='category'><a href='/blog/categories/storage/'>Storage (1)</a></li>
@@ -634,13 +642,13 @@ It should be noted that the plugin has evolved a lot since version 7. The config
 <a style="font-size: 90%" href="/tags/https/">https</a>
 <a style="font-size: 210%" href="/tags/java/">java</a>
 <a style="font-size: 90%" href="/tags/jetty/">jetty</a>
-<a style="font-size: 150%" href="/tags/kernel/">kernel</a>
+<a style="font-size: 185%" href="/tags/kernel/">kernel</a>
 <a style="font-size: 90%" href="/tags/linux/">linux</a>
 <a style="font-size: 90%" href="/tags/mac/">mac</a>
 <a style="font-size: 90%" href="/tags/maven/">maven</a>
 <a style="font-size: 90%" href="/tags/octopress/">octopress</a>
 <a style="font-size: 210%" href="/tags/oss/">oss</a>
-<a style="font-size: 90%" href="/tags/systemtap/">systemtap</a>
+<a style="font-size: 150%" href="/tags/systemtap/">systemtap</a>
 <a style="font-size: 90%" href="/tags/textmate/">textmate</a>
 
   </ul>
@@ -652,7 +660,7 @@ It should be noted that the plugin has evolved a lot since version 7. The config
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Jeff Li -
+  Copyright &copy; 2015 - Jeff Li -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

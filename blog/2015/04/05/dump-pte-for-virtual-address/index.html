@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Dump PTE for Virtual Address - Jeff Li</title>
+  <meta name="author" content="Jeff Li">
+
+  
+  <meta name="description" content="SystemTap Script Code Comments Conclusion Further Reading In my last blog post, we explored the pagemap interface in Linux which is an interface &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2015/04/05/dump-pte-for-virtual-address">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!-- <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+<!-- <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-49767927-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jeff Li</a></h1>
+  
+    <h2>Be another Jeff</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bluesalt.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/categories/chinese-posts">Chinese Posts</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Dump PTE for Virtual Address</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-04-05T14:41:47+08:00" pubdate data-updated="true">Apr 5<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#systemtap-script">SystemTap Script</a></li>
+  <li><a href="#code-comments">Code Comments</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+  <li><a href="#further-reading">Further Reading</a></li>
+</ul>
+
+<p>In my <a href="http://blog.jeffli.me/blog/2014/11/08/pagemap-interface-of-linux-explained/">last blog post</a>, we explored the pagemap interface in Linux which is an interface that exposes some kernel information about the memory management. As I mentioned in that post, the pagemap interface does not expose the raw pte content. Since PTEs are allocated in the kernel space, it is impossible to explore the PTEs from user space applications. To access the kernel space memory, a traditional way is writing a kernel module which, I believe, is of course kind of tedious.</p>
+
+<p>In this article, we’ll see how to leverage SystemTap infrastructure to dump the PTE for the page where an given virtual address of a process lives in. 
+<!--more-->
+Of course, SystemTap scripts will be translated into kernel module finally, however, compared with writing kernel modules, writing SystemTap scripts is more convenient. This article is intended to show how to leverage SystemTap to explore the world of Linux kernel. So it will not cover topics like memory management in x86. Actually, I plan to write an article to talk about the evolution of memory management from i386 to x86_64. But I am not sure when will that be started. </p>
+
+<h2 id="systemtap-script">SystemTap Script</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="n">function</span> <span class="n">find_pte</span><span class="o">:</span><span class="kt">long</span> <span class="p">(</span><span class="n">mm</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span> <span class="o">%</span><span class="p">{</span>
+</span><span class="line">  <span class="n">pgd_t</span> <span class="o">*</span><span class="n">pgd</span><span class="p">;</span>
+</span><span class="line">  <span class="n">pte_t</span> <span class="o">*</span><span class="n">pte</span><span class="p">;</span>
+</span><span class="line">  <span class="n">pud_t</span> <span class="o">*</span><span class="n">pud</span><span class="p">;</span>
+</span><span class="line">  <span class="n">pmd_t</span> <span class="o">*</span><span class="n">pmd</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="kt">long</span> <span class="n">address</span> <span class="o">=</span> <span class="n">STAP_ARG_addr</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">struct</span> <span class="n">page</span><span class="o">*</span> <span class="n">page</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class="line">  <span class="k">struct</span> <span class="n">mm_struct</span> <span class="o">*</span><span class="n">mm</span> <span class="o">=</span> <span class="p">(</span><span class="k">struct</span> <span class="n">mm_struct</span><span class="o">*</span><span class="p">)</span><span class="n">STAP_ARG_mm</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">pgd</span> <span class="o">=</span> <span class="n">pgd_offset</span><span class="p">(</span><span class="n">mm</span><span class="p">,</span> <span class="n">address</span><span class="p">);</span>
+</span><span class="line">  <span class="k">if</span> <span class="p">(</span><span class="n">pgd_none</span><span class="p">(</span><span class="o">*</span><span class="n">pgd</span><span class="p">)</span> <span class="o">||</span> <span class="n">pgd_bad</span><span class="p">(</span><span class="o">*</span><span class="n">pgd</span><span class="p">))</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">_stp_printf</span><span class="p">(</span><span class="s">&quot;bad pgd&quot;</span><span class="p">);</span>
+</span><span class="line">    <span class="n">STAP_RETURN</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">pud</span> <span class="o">=</span> <span class="n">pud_offset</span><span class="p">(</span><span class="n">pgd</span><span class="p">,</span> <span class="n">address</span><span class="p">);</span>
+</span><span class="line">  <span class="k">if</span> <span class="p">(</span><span class="n">pud_none</span><span class="p">(</span><span class="o">*</span><span class="n">pud</span><span class="p">)</span> <span class="o">||</span> <span class="n">pud_bad</span><span class="p">(</span><span class="o">*</span><span class="n">pud</span><span class="p">))</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">_stp_printf</span><span class="p">(</span><span class="s">&quot;bad pud</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class="line">    <span class="n">STAP_RETURN</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">pmd</span> <span class="o">=</span> <span class="n">pmd_offset</span><span class="p">(</span><span class="n">pud</span><span class="p">,</span> <span class="n">address</span><span class="p">);</span>
+</span><span class="line">  <span class="k">if</span> <span class="p">(</span><span class="n">pmd_none</span><span class="p">(</span><span class="o">*</span><span class="n">pmd</span><span class="p">)</span> <span class="o">||</span> <span class="n">pmd_bad</span><span class="p">(</span><span class="o">*</span><span class="n">pmd</span><span class="p">))</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">_stp_printf</span><span class="p">(</span><span class="s">&quot;bad pmd</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class="line">    <span class="n">STAP_RETURN</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">pte</span> <span class="o">=</span> <span class="n">pte_offset_map</span><span class="p">(</span><span class="n">pmd</span><span class="p">,</span> <span class="n">address</span><span class="p">);</span>
+</span><span class="line">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pte</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">_stp_printf</span><span class="p">(</span><span class="s">&quot;bad pte</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class="line">    <span class="n">STAP_RETURN</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">STAP_RETURN</span><span class="p">(</span><span class="n">pte</span><span class="o">-&gt;</span><span class="n">pte</span><span class="p">);</span>
+</span><span class="line"><span class="o">%</span><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">probe</span> <span class="n">begin</span> <span class="p">{</span>
+</span><span class="line">  <span class="n">process_pid</span> <span class="o">=</span> <span class="n">target</span><span class="p">()</span>
+</span><span class="line">  <span class="n">pt</span> <span class="o">=</span> <span class="n">pid2task</span><span class="p">(</span><span class="n">process_pid</span><span class="p">)</span>
+</span><span class="line">  <span class="n">mm</span> <span class="o">=</span> <span class="err">@</span><span class="n">cast</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="s">&quot;task_struct&quot;</span><span class="p">,</span> <span class="s">&quot;kernel&lt;linux/sched.h&gt;&quot;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">mm</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">pte</span> <span class="o">=</span> <span class="n">find_pte</span><span class="p">(</span><span class="n">mm</span><span class="p">,</span> <span class="err">$</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;pte: %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">pte</span><span class="p">)</span>
+</span><span class="line">  <span class="n">exit</span><span class="p">()</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Save the code as <code>dump_pte.stp</code> and run it with the following command: <code>sudo stap -g dump_pte.stp -x PID VIRTUAL_ADDRESS</code>. The <code>-g</code> option is required since C code is embedded in the script. </p>
+
+<p>Note, this script only work in x86-64 and can’t work in 32 bit x86. Though there is a fix, I don’t want to post it here because I have not figured out how it works in 32 bit platform.</p>
+
+<h2 id="code-comments">Code Comments</h2>
+<p>This section will give a short explanation on how this System script work.</p>
+
+<ul>
+  <li>Line 41 get the task struct of the target process. pid2task is an built function to get task struct from pid</li>
+  <li>Line 42 get the <a href="http://lxr.linux.no/linux+v3.13/include/linux/sched.h#L1103">mm field</a> of task struct. You should be familiar with the data structures used by kernel to manage process.</li>
+  <li>Line 1-37 is the function definition to read the PTE. It should be note that although declared as a SystemTap function, the whole function body is actually C code. SystemTap allows embedding C code in the script.</li>
+  <li>Line 7 and Line 10 shows how to convert SystemTap function argument to C variable with the <code>STAP_ARG_</code> macro.</li>
+  <li>Line 14 shows how to print variable to standard console with the method <code>_stp_printf</code>. Note this function is not recommended.</li>
+  <li>Line 15 shows how to return value in embedded C code. You can’t use return but the <code>STAP_RETURN</code> macro.</li>
+  <li>Line 12, Line 18, Line 24 and Line 30 describe the translation from linear address to physical address. As we know, Linux uses 4 level page table in x86_64 architecture, the code reflects the page table organisation.</li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>SystemTap is not designed to inspect the kernel space memory. Instead, the primary usage is monitoring events happening in kernel world. In spite of that, we can leverage the tool to explore the Linux kernel world, learn the design of kernel. For example, we can observe the PTEs to verify the behaviour of COW mechanism. There will be another post shows how to observe the COW in Linux by using the script we talk in this article.</p>
+
+<p>Allowing embedded C code in script makes writing SystemTap script very flexible. However, it also requires the users know some data structures of Linux kernel well. Sometimes, it is insufficient and more knowledge is required. For example, in the dump_pte script, users must know how to travel the page table.</p>
+
+<h2 id="further-reading">Further Reading</h2>
+
+<ul>
+  <li><a href="http://en.wikipedia.org/wiki/X86-64">x86-64</a> : Article of x86-64 in wikipedia, very good introduction on x86-64 memory.</li>
+  <li><a href="http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html">x86 developer manual</a>: The definitive guide about x86 architecture.  Section 4.4.2 gives the detail of address translation including the PTE structure.</li>
+</ul>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-04-05T14:41:47+08:00" pubdate data-updated="true">Apr 5<span>th</span>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>Linux</a>
+  
+</span>
+
+
+      
+
+<span class="tags">
+  
+    <a class='tag' href='/tags/kernel/'>kernel</a>, <a class='tag' href='/tags/systemtap/'>systemtap</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/11/08/pagemap-interface-of-linux-explained/" title="Previous Post: Pagemap Interface of Linux Explained">&laquo; Pagemap Interface of Linux Explained</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/04/05/dump-pte-for-virtual-address/">Dump PTE for Virtual Address</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Install SystemTap in Ubuntu 14.04</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/30/use-gdb-to-understand-fuse-file-system/">Use GDB to Understand FUSE File System</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/08/avro-cookbook-part-iii/">Avro Cookbook : Part III</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
+<li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
+<li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>Linux (3)</a></li>
+<li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
+<li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
+<li class='category'><a href='/blog/categories/storage/'>Storage (1)</a></li>
+
+  </ul>
+</section>
+<section>
+  <h1>Topics</h1>
+  <ul class="tag-cloud">
+    <a style="font-size: 185%" href="/tags/avro/">avro</a>
+<a style="font-size: 150%" href="/tags/cool/">cool</a>
+<a style="font-size: 90%" href="/tags/fuse/">fuse</a>
+<a style="font-size: 90%" href="/tags/go/">go</a>
+<a style="font-size: 90%" href="/tags/https/">https</a>
+<a style="font-size: 210%" href="/tags/java/">java</a>
+<a style="font-size: 90%" href="/tags/jetty/">jetty</a>
+<a style="font-size: 185%" href="/tags/kernel/">kernel</a>
+<a style="font-size: 90%" href="/tags/linux/">linux</a>
+<a style="font-size: 90%" href="/tags/mac/">mac</a>
+<a style="font-size: 90%" href="/tags/maven/">maven</a>
+<a style="font-size: 90%" href="/tags/octopress/">octopress</a>
+<a style="font-size: 210%" href="/tags/oss/">oss</a>
+<a style="font-size: 150%" href="/tags/systemtap/">systemtap</a>
+<a style="font-size: 90%" href="/tags/textmate/">textmate</a>
+
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Jeff Li -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'bluesalt';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2015/04/05/dump-pte-for-virtual-address/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2015/04/05/dump-pte-for-virtual-address/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

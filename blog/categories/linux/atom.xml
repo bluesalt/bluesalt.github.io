@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Linux | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2014-11-15T22:47:54+08:00</updated>
+  <updated>2015-04-05T19:24:08+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -12,6 +12,108 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Dump PTE for Virtual Address]]></title>
+    <link href="http://bluesalt.github.io/blog/2015/04/05/dump-pte-for-virtual-address/"/>
+    <updated>2015-04-05T14:41:47+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2015/04/05/dump-pte-for-virtual-address</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#systemtap-script">SystemTap Script</a></li>
+  <li><a href="#code-comments">Code Comments</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+  <li><a href="#further-reading">Further Reading</a></li>
+</ul>
+
+<p>In my <a href="http://blog.jeffli.me/blog/2014/11/08/pagemap-interface-of-linux-explained/">last blog post</a>, we explored the pagemap interface in Linux which is an interface that exposes some kernel information about the memory management. As I mentioned in that post, the pagemap interface does not expose the raw pte content. Since PTEs are allocated in the kernel space, it is impossible to explore the PTEs from user space applications. To access the kernel space memory, a traditional way is writing a kernel module which, I believe, is of course kind of tedious.</p>
+
+<p>In this article, we’ll see how to leverage SystemTap infrastructure to dump the PTE for the page where an given virtual address of a process lives in. 
+<!--more-->
+Of course, SystemTap scripts will be translated into kernel module finally, however, compared with writing kernel modules, writing SystemTap scripts is more convenient. This article is intended to show how to leverage SystemTap to explore the world of Linux kernel. So it will not cover topics like memory management in x86. Actually, I plan to write an article to talk about the evolution of memory management from i386 to x86_64. But I am not sure when will that be started. </p>
+
+<h2 id="systemtap-script">SystemTap Script</h2>
+
+<p>```c
+function find_pte:long (mm, addr) %{
+  pgd_t *pgd;
+  pte_t *pte;
+  pud_t *pud;
+  pmd_t *pmd;</p>
+
+<p>long address = STAP_ARG_addr;</p>
+
+<p>struct page* page = NULL;
+  struct mm_struct <em>mm = (struct mm_struct</em>)STAP_ARG_mm;</p>
+
+<p>pgd = pgd_offset(mm, address);
+  if (pgd_none(<em>pgd) || pgd_bad(</em>pgd)) {
+    _stp_printf(“bad pgd”);
+    STAP_RETURN(0);
+  }</p>
+
+<p>pud = pud_offset(pgd, address);
+  if (pud_none(<em>pud) || pud_bad(</em>pud)) {
+    _stp_printf(“bad pud\n”);
+    STAP_RETURN(0);
+  }</p>
+
+<p>pmd = pmd_offset(pud, address);
+  if (pmd_none(<em>pmd) || pmd_bad(</em>pmd)) {
+    _stp_printf(“bad pmd\n”);
+    STAP_RETURN(0);
+  }</p>
+
+<p>pte = pte_offset_map(pmd, address);
+  if (!pte) {
+    _stp_printf(“bad pte\n”);
+    STAP_RETURN(0);
+  }</p>
+
+<p>STAP_RETURN(pte-&gt;pte);
+%}</p>
+
+<p>probe begin {
+  process_pid = target()
+  pt = pid2task(process_pid) 
+  mm = @cast(pt, “task_struct”, “kernel&lt;linux/sched.h&gt;”)-&gt;mm</p>
+
+<p>pte = find_pte(mm, $1)
+  printf(“pte: %p\n”, pte)
+  exit()
+}
+```</p>
+
+<p>Save the code as <code>dump_pte.stp</code> and run it with the following command: <code>sudo stap -g dump_pte.stp -x PID VIRTUAL_ADDRESS</code>. The <code>-g</code> option is required since C code is embedded in the script. </p>
+
+<p>Note, this script only work in x86-64 and can’t work in 32 bit x86. Though there is a fix, I don’t want to post it here because I have not figured out how it works in 32 bit platform.</p>
+
+<h2 id="code-comments">Code Comments</h2>
+<p>This section will give a short explanation on how this System script work.</p>
+
+<ul>
+  <li>Line 41 get the task struct of the target process. pid2task is an built function to get task struct from pid</li>
+  <li>Line 42 get the <a href="http://lxr.linux.no/linux+v3.13/include/linux/sched.h#L1103">mm field</a> of task struct. You should be familiar with the data structures used by kernel to manage process.</li>
+  <li>Line 1-37 is the function definition to read the PTE. It should be note that although declared as a SystemTap function, the whole function body is actually C code. SystemTap allows embedding C code in the script.</li>
+  <li>Line 7 and Line 10 shows how to convert SystemTap function argument to C variable with the <code>STAP_ARG_</code> macro.</li>
+  <li>Line 14 shows how to print variable to standard console with the method <code>_stp_printf</code>. Note this function is not recommended.</li>
+  <li>Line 15 shows how to return value in embedded C code. You can’t use return but the <code>STAP_RETURN</code> macro.</li>
+  <li>Line 12, Line 18, Line 24 and Line 30 describe the translation from linear address to physical address. As we know, Linux uses 4 level page table in x86_64 architecture, the code reflects the page table organisation.</li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>SystemTap is not designed to inspect the kernel space memory. Instead, the primary usage is monitoring events happening in kernel world. In spite of that, we can leverage the tool to explore the Linux kernel world, learn the design of kernel. For example, we can observe the PTEs to verify the behaviour of COW mechanism. There will be another post shows how to observe the COW in Linux by using the script we talk in this article.</p>
+
+<p>Allowing embedded C code in script makes writing SystemTap script very flexible. However, it also requires the users know some data structures of Linux kernel well. Sometimes, it is insufficient and more knowledge is required. For example, in the dump_pte script, users must know how to travel the page table.</p>
+
+<h2 id="further-reading">Further Reading</h2>
+
+<ul>
+  <li><a href="http://en.wikipedia.org/wiki/X86-64">x86-64</a> : Article of x86-64 in wikipedia, very good introduction on x86-64 memory.</li>
+  <li><a href="http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html">x86 developer manual</a>: The definitive guide about x86 architecture.  Section 4.4.2 gives the detail of address translation including the PTE structure.</li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Pagemap Interface of Linux Explained]]></title>
