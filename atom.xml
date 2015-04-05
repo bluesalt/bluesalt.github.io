@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2015-04-05T19:24:08+08:00</updated>
+  <updated>2015-04-05T19:38:59+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -14,10 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Dump PTE for Virtual Address]]></title>
-    <link href="http://bluesalt.github.io/blog/2015/04/05/dump-pte-for-virtual-address/"/>
+    <title type="html"><![CDATA[Dump PTE With SystemTap]]></title>
+    <link href="http://bluesalt.github.io/blog/2015/04/05/dump-pte-with-systemtap/"/>
     <updated>2015-04-05T14:41:47+08:00</updated>
-    <id>http://bluesalt.github.io/blog/2015/04/05/dump-pte-for-virtual-address</id>
+    <id>http://bluesalt.github.io/blog/2015/04/05/dump-pte-with-systemtap</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#systemtap-script">SystemTap Script</a></li>
   <li><a href="#code-comments">Code Comments</a></li>
