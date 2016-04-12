@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Python | Jeff Li]]></title>
+  <link href="http://bluesalt.github.io/blog/categories/python/atom.xml" rel="self"/>
+  <link href="http://bluesalt.github.io/"/>
+  <updated>2016-04-12T21:36:18+08:00</updated>
+  <id>http://bluesalt.github.io/</id>
+  <author>
+    <name><![CDATA[Jeff Li]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[processes relation on python multiprocessing module]]></title>
+    <link href="http://bluesalt.github.io/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/"/>
+    <updated>2016-04-02T11:40:59+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2016/04/02/processes-relation-on-python-multiprocessing-module</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#related-processes-in-linux">Related Processes in Linux</a></li>
+  <li><a href="#multiple-processes-in-python">Multiple Processes in Python</a>    <ul>
+      <li><a href="#fork-primitive">fork primitive</a></li>
+      <li><a href="#multiprocess-module">multiprocess module</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
+  <li><a href="#reference">Reference</a></li>
+</ul>
+
+<h3 id="related-processes-in-linux">Related Processes in Linux</h3>
+<p>In 2007, when I was taking the undergraduate operating system course, the textbook<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> mentioned that a child process could possible be terminated on its parent’s exit.  Years later, I came to the world of Linux and found that the design is OS-dependent because in Linux, the child process will keep running even though its parent is gone. But it will be adopted by the process 1 instead of becoming an orphan. Let’s use a small program<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> to validate the behaviour.</p>
+
+<p>```c
+#include &lt;sys/types.h&gt;
+#include <unistd.h>
+#include <stdio.h></stdio.h></unistd.h></p>
+
+<p>int main(int argc, const char **argv)
+{
+    pid_t pid = fork();
+    if (pid &gt; 0) {
+        printf(“I am the parent of pid=%d\n”, pid);
+        sleep(10);
+    }
+    else  if (!pid) {
+        printf(“I am the child\n”);
+        for (int i=0; i&lt;5; i++) {
+            printf(“loop %d\n”, i);
+            sleep(5);
+        }
+    } else if (pid == -1)
+        perror (“fork”);
+    return 0;
+}
+```</p>
+
+<p>In Linux, let’s start 2 shell sessions. In the first one, type</p>
+
+<p><code>bash
+gcc --std=c99 fork.c
+./a.out
+</code></p>
+
+<p>In the other one, type <code>ps -ef | grep a.out</code> to check the status of the 2 processes. About 10s later, you should find that the parent is gone and the the child is still alive. But the parent of the child has become process 1. </p>
+
+<p>Based on what we have observed, it can be concluded that</p>
+
+<ul>
+  <li>child will continue to run even though its parent is dead, and it will be adopted by the <code>init</code> process whose pid is 1.</li>
+  <li>parent will not wait for child’s termination if only <code>fork</code> primitive is used.</li>
+</ul>
+
+<p>Now let’s think about another case. If you press <code>ctrl + c</code> in the shell immediately after running <code>a.out</code>, you could find that both parent and child are terminated. This seems to contradict what we have mentioned. Actually, when <code>ctrl + c</code> is typed, the <code>SIGINT</code> will be sent to the whole foreground process group instead of a single process<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>. When a child is forked by the parent, they will share the same process group id. So both the parent and child will receive the <code>SIGINT</code> signal and exit. You can change the child’s process group id to see what happens.</p>
+
+<h3 id="multiple-processes-in-python">Multiple Processes in Python</h3>
+<p>There are multiple ways in the standard lib to implement multiple processes in Python, one is the <code>fork</code> primitive provided by the <code>os</code> package and another is the <code>multiprocess</code> module.</p>
+
+<h4 id="fork-primitive">fork primitive</h4>
+<p>The <code>os.fork</code> function is a wrapper of the  <code>fork</code> function in C. So its behaviour is similar. I won’t give too much detail about it. Here is a sample program. You can find that it behaves as the C version one.</p>
+
+<p>```python
+import os
+import time</p>
+
+<p>def child():
+    print “process id of child is: %d” % os.getpid()
+    time.sleep(10)</p>
+
+<p>p = os.fork()</p>
+
+<p>if p == 0:
+    child()
+else:
+    print “process id of parent is: %d” % os.getpid()
+    time.sleep(5)
+```</p>
+
+<h4 id="multiprocess-module">multiprocess module</h4>
+<p><code>multiprocess</code> is a high level module built upon the primitives such as <code>fork</code>, thus it is much more versatile. Besides forking child processes, it also provides features like daemonic process, shared variables. On this post, I will focus only on the process relation. Let’s start with a simple piece of code.</p>
+
+<p>```python
+from multiprocessing import Process
+import time
+import os</p>
+
+<p>def child():
+    print “child process pid: %d” % os.getpid()
+    time.sleep(10)</p>
+
+<p>p = Process(target=child, args=())
+p.start()</p>
+
+<p>print “parent process pid: %d” % os.getpid()</p>
+
+<p>```  </p>
+
+<p>You can find that the parent will always wait for the children to terminated even no <code>join</code> or <code>wait</code> are called. Besides, if the child process is set to be daemonic, instead of waiting, the parent will kill the child before it exits. The behaviour is documented <a href="https://docs.python.org/2/library/multiprocessing.html#multiprocessing.Process.daemon">here</a>. So how does the module achieve that? Let’s navigate to the source code of class <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/process.py#L86">Process</a> and check the implementation.</p>
+
+<ul>
+  <li>When the <code>start</code> method of the child is invoked, it will create a <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/forking.py#L114">Popen</a> object which will fork a new process and execute the child process by calling back the child’s <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/process.py#L241">_bootstrap</a> method.</li>
+  <li>Meanwhile, the parent will maintain a list to save all its children.</li>
+  <li>The <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/process.py#L241">_bootstrap</a> method imports the <code>util</code> module in which a <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/util.py#L294">_exit_function</a> function is registered as a cleanup handler. The function will check all its children and terminate all the daemonic children but wait for those that are not.</li>
+  <li><code>daemonic</code> is quit different from the <code>daemon process</code> in Linux system programming. In Python multiprocessing module, it is just a flag indicating how the child processes should be handled when parent exits.</li>
+</ul>
+
+<h3 id="conclusion">Conclusion</h3>
+<p>Due to the GIL, multithreading is very limited in high concurrency scenario. Even in the gevent’s implementation of thread pool, the issue is a big pain. Thus multiprocessing is encouraged in (C)Python. This post can not cover all the aspects of multiprocessing in Python, but I hope it can help you understand the concurrency in Python.</p>
+
+<h3 id="reference">Reference</h3>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>Operating Systems: Internals and Design Principles, 5th edition, by William Stalling<a href="#fnref:1" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:2">
+      <p>Linux System Programming, 2nd edition, by Robert Love<a href="#fnref:2" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:3">
+      <p>The Linux Programming Interface, by Michael Kerrisk<a href="#fnref:3" rel="reference">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
+  
+</feed>

@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Jeff Li</title>
+  <title>Processes Relation on Python Multiprocessing Module - Jeff Li</title>
   <meta name="author" content="Jeff Li">
 
   
@@ -19,7 +19,7 @@ In 2007, &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://bluesalt.github.io">
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2016/04/02/processes-relation-on-python-multiprocessing-module">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
@@ -78,15 +78,12 @@ In 2007, &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/">Processes Relation on Python Multiprocessing Module</a></h1>
+      <h1 class="entry-title">Processes Relation on Python Multiprocessing Module</h1>
     
     
       <p class="meta">
@@ -109,7 +106,7 @@ In 2007, &hellip;">
   </header>
 
 
-  <div class="entry-content"><ul id="markdown-toc">
+<div class="entry-content"><ul id="markdown-toc">
   <li><a href="#related-processes-in-linux">Related Processes in Linux</a></li>
   <li><a href="#multiple-processes-in-python">Multiple Processes in Python</a>    <ul>
       <li><a href="#fork-primitive">fork primitive</a></li>
@@ -279,71 +276,16 @@ In 2007, &hellip;">
   </ol>
 </div>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/04/05/dump-pte-with-systemtap/">Dump PTE With SystemTap</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
 
-<time datetime="2015-04-05T14:41:47+08:00" pubdate data-updated="true">Apr 5<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#systemtap-script">SystemTap Script</a></li>
-  <li><a href="#code-comments">Code Comments</a></li>
-  <li><a href="#conclusion">Conclusion</a></li>
-  <li><a href="#further-reading">Further Reading</a></li>
-</ul>
-
-<p>In my <a href="http://blog.jeffli.me/blog/2014/11/08/pagemap-interface-of-linux-explained/">last blog post</a>, we explored the pagemap interface in Linux which is an interface that exposes some kernel information about the memory management. As I mentioned in that post, the pagemap interface does not expose the raw pte content. Since PTEs are allocated in the kernel space, it is impossible to explore the PTEs from user space applications. To access the kernel space memory, a traditional way is writing a kernel module which, I believe, is of course kind of tedious.</p>
-
-<p>In this article, we’ll see how to leverage SystemTap infrastructure to dump the PTE for the page where an given virtual address of a process lives in. 
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/04/05/dump-pte-with-systemtap/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -355,407 +297,51 @@ In 2007, &hellip;">
   
 
 
-<time datetime="2014-11-08T08:40:24+08:00" pubdate data-updated="true">Nov 8<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#pagemap-interface-explained">Pagemap Interface Explained</a>    <ul>
-      <li><a href="#procpidpagemap">/proc/${pid}/pagemap</a></li>
-      <li><a href="#prockpagecount">/proc/kpagecount</a></li>
-      <li><a href="#prockpageflags">/proc/kpageflags</a></li>
-    </ul>
-  </li>
-  <li><a href="#parse-the-pagemap-interface">Parse the Pagemap Interface</a></li>
-  <li><a href="#conclusion">Conclusion</a></li>
-  <li><a href="#further-reading">Further Reading</a></li>
-</ul>
-
-<p>As we know, Linux supports virtual memory. Actually, almost all modern general operating systems such as Solaris, Windows, Mac OS X support virtual memory. Every user space process in Linux has its own virtual address space. The virtual address will be translated to physical address by operating system finally. In fact, most CPU architectures such as x86 and arm provide hardware support for virtual to physical address translation with MMU. In that case, the translation is done by the cooperation of operating system(software) and CPU(hardware). In this post, I am trying to explain the pagemap interface which is used to explore the mapping information of physical memory.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2016-04-02T11:40:59+08:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2016</time>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Install SystemTap in Ubuntu 14.04</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="categories">
   
-
-
-<time datetime="2014-10-10T20:07:09+08:00" pubdate data-updated="true">Oct 10<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#install-systemtap">Install SystemTap</a></li>
-  <li><a href="#install-debug-file">Install debug file</a></li>
-  <li><a href="#troubleshooting">Troubleshooting</a>    <ul>
-      <li><a href="#build-directory-not-found">build directory not found</a></li>
-      <li><a href="#disktopstp-does-not-work">disktop.stp does not work</a></li>
-      <li><a href="#pass-4-compile-error">pass 4 compile error</a></li>
-    </ul>
-  </li>
-  <li><a href="#further-reading">Further Reading</a></li>
-</ul>
-
-<p>About 2 months ago, I happened to read a book about how to learn OS principles by hands-on experience on Solaris with MDB and DTrace. After reading the chapters about memory management, I was totally impressed by MDB and DTrace. They acts like a microscope to help you look into the kernel. For example, you can walk through the data structures used by Solaris kernel to manage the process. You can even observe the memory related data structures and emulate the translation between virtual address and physical address manually. Then I became curious about if Linux has similar tools because I am pretty sure that it will be very helpful to understand the design and implementation of Linux kernel. </p>
-
-</div>
+    <a class='category' href='/blog/categories/python/'>Python</a>
   
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Read on &rarr;</a>
-    </footer>
-  
+</span>
 
 
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/08/30/use-gdb-to-understand-fuse-file-system/">Use GDB to Understand FUSE File System</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="tags">
   
+    <a class='tag' href='/tags/concurrency/'>concurrency</a>, <a class='tag' href='/tags/python/'>python</a>
+  
+</span>
 
 
-<time datetime="2014-08-30T10:17:46+08:00" pubdate data-updated="true">Aug 30<span>th</span>, 2014</time>
-        
-      </p>
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#introduction-to-fuse">Introduction to FUSE</a></li>
-  <li><a href="#how-does-fuse-work">How does FUSE work</a></li>
-  <li><a href="#use-gdb-with-fuse">Use GDB with FUSE</a></li>
-  <li><a href="#trouble-shooting">Trouble Shooting</a></li>
-  <li><a href="#further-read">Further Read</a></li>
-</ul>
-
-<p>During the past years, I have been involved in several storage related projects from which I have learned a lot about the world of storage. Definitely the journey is interesting. However, it is not awesome because almost all the work I have been involved is about applications of storage. Then I decided to dig more deeper in the storage world. It turned out that it is really wonderful to explore in the world of storage. </p>
-
-<p>Actually I have heard about FUSE before but did not spend time to explore it because I thought FUSE would bring a lot of overhead and hence won’t get too much application in system design. During the past months, I have seen the implementations of a few storage solutions, both open source and commercial ones. To my surprise, FUSE is used in those solutions. It is time to get acquainted with it. Per my experience, debugging is the very very useful way to learn a new technology. In this post, I will show how to use GDB to debug the hello example. You can set break points, use single step execution to observe the behavior of the FUSE application. 
+      <div class="sharing">
+  
+  
+  
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/08/30/use-gdb-to-understand-fuse-file-system/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/08/avro-cookbook-part-iii/">Avro Cookbook : Part III</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-08T17:24:45+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#recipe-6-serialize-data-as-json-data">Recipe 6: Serialize data as JSON data</a></li>
-  <li><a href="#recipe-7-deserialize-json-data">Recipe 7: Deserialize JSON data</a></li>
-  <li><a href="#recipe-8-serialize-array-in-json">Recipe 8: Serialize array in JSON</a></li>
-  <li><a href="#recipe-9-deserialize-json-array-data">Recipe 9: Deserialize JSON array data</a></li>
-  <li><a href="#recipe-10-deserialize-data-stream">Recipe 10: Deserialize data stream</a></li>
-  <li><a href="#summary">Summary</a></li>
-</ul>
-
-<h2 id="recipe-6-serialize-data-as-json-data">Recipe 6: Serialize data as JSON data</h2>
-<p>In <a href="http://jeffli.me/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : part I</a>, if you open the file <code>/tmp/log</code> created by recipe 3, you would find that it is definitely not a human readable text format. Avro provides the encoder/decoder mechanism which helps to serial the data to text format as JSON data.
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/04/08/avro-cookbook-part-iii/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+        <a class="basic-alignment left" href="/blog/2015/04/05/dump-pte-with-systemtap/" title="Previous Post: Dump PTE with SystemTap">&laquo; Dump PTE with SystemTap</a>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/05/avro-cookbook-part-ii/">Avro Cookbook : Part II</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-05T18:31:35+08:00" pubdate data-updated="true">Apr 5<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#recipe-5-serialize-data-without-code-generation">Recipe 5: Serialize data without Code Generation</a>    <ul>
-      <li><a href="#parse-schema-from-string">Parse Schema from String</a></li>
-      <li><a href="#parse-schema-from-disk-file">Parse Schema from Disk File</a></li>
-      <li><a href="#parse-schema-from-existing-java-class">Parse Schema from Existing Java Class</a></li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="recipe-5-serialize-data-without-code-generation">Recipe 5: Serialize data without Code Generation</h2>
-<p>In formal recipes, before using Avro to serialize/deserialize data, schema files have to be defined to be leveraged by Avro code generation facility to generate the Java classes. This is also recommended when using Avro in Java. However, it is not required. Actually, you can parse the schema on the fly without code generation.
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/04/05/avro-cookbook-part-ii/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : Part I</a></h1>
-    
-    
-      <p class="meta">
-        
+    </p>
+  </footer>
+</article>
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-02-06T15:49:00+08:00" pubdate data-updated="true">Feb 6<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#initialize-the-project-structure">Initialize the project structure</a></li>
-  <li><a href="#tweak-the-pomxml">Tweak the pom.xml</a></li>
-  <li><a href="#import-the-project-into-intellij-idea">Import the project into Intellij IDEA</a></li>
-  <li><a href="#recipe-2-define-a-schema">Recipe 2: Define a Schema</a></li>
-  <li><a href="#recipe-3-serialize-the-log-data-to-disk-file">Recipe 3: Serialize the Log Data to Disk File</a></li>
-  <li><a href="#recipe-4-deserialize-the-log-data-from-disk-file">Recipe 4: Deserialize the Log Data from Disk File</a></li>
-</ul>
-
-<p>Avro is a data serialization framework. It is an Apache project led by Doug Cutting who is also the author of several other open source projects such as Hadoop, Lucene. Recently I need to leverage Avro to serialize/deserialize some data, however, I found its document is too poor, at least too poor for newbies like me who don’t have much experience on data exchange format frameworks. </p>
-
-<p>In fact, it is very easy to understand what Avro can do. It helps to convert Java objects into bytes and vice versa. The key information the framework needs to know is the format of the date, namely ‘Schema’ in Avro. In this article, I won’t spend any time on explaining what Avro is. 
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/02/06/avro-cookbook-part-i/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Jetty-maven-plugin and Https Support</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-29T22:46:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#v6">V6</a></li>
-  <li><a href="#v8">V8</a></li>
-</ul>
-
-<h3 id="introduction">Introduction</h3>
-<p><code>jetty-maven-plugin</code>(formerly known as <code>maven-jetty-plugin</code>)is a maven plugin which enables the jetty container in maven project. It is very convenient in development environment since you can start the web app by issue only one command <code>mvn jetty:run</code>. By default it only supports http protocol. Additional configuration is necessary if https is required. Roughly we needs:</p>
-
-<ul>
-  <li>A development certificate</li>
-  <li>Instruct the jetty plugin to use the certificate</li>
-</ul>
-
-<p>Besides <code>jetty-maven-plugin</code>, another maven plugin called <code>keytool-maven-plugin</code> is also needed to generate the certificate.
-It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. 
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/06/17/tips-about-octopress/">Tips About Octopress</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-17T07:55:00+08:00" pubdate data-updated="true">Jun 17<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</a>    <ul>
-      <li><a href="#basic-usage">Basic Usage</a></li>
-      <li><a href="#trouble-shooting">Trouble Shooting</a></li>
-    </ul>
-  </li>
-  <li><a href="#use-redcarpet-markdown-engine">Use Redcarpet Markdown Engine</a></li>
-  <li><a href="#add-clicky-web-analysis-tool">Add Clicky Web Analysis Tool</a></li>
-  <li><a href="#add-table-of-content-to-the-post">Add Table of Content to the post</a></li>
-  <li><a href="#shorten-the-homepage">Shorten the homepage</a></li>
-  <li><a href="#fix-slow-speed-access-from-china">Fix slow speed access from China</a></li>
-</ul>
+  </section>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/06/17/tips-about-octopress/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-      <a class="prev" href="/blog/page/2/">&larr; Older</a>
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -829,6 +415,7 @@ It should be noted that the plugin has evolved a lot since version 7. The config
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -843,7 +430,10 @@ It should be noted that the plugin has evolved a lot since version 7. The config
       var disqus_shortname = 'bluesalt';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
