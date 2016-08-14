@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: Storage - Jeff Li</title>
+  <title>Build Latest Wireshark in CentOS 7 - Jeff Li</title>
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Category: Storage">
+  <meta name="description" content="As we know, Wireshark has switched from GTK+ to Qt since Version 2. As a Mac and Kubuntu user, the GTK UI was really not harmony with my desktop &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://bluesalt.github.ioblog/categories/storage">
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
@@ -78,36 +78,114 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Storage</h1>
+    
+      <h1 class="entry-title">Build Latest Wireshark in CentOS 7</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-08-14T16:27:37+08:00" pubdate data-updated="true">Aug 14<span>th</span>, 2016</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>As we know, Wireshark has switched from GTK+ to Qt since Version 2. As a Mac and Kubuntu user, the GTK UI was really not harmony with my desktop environment. So after the version 2 was released last year, I upgraded Wireshark in both my Mac and Kubuntu boxes. </p>
 
-  
-  <h2>2014</h2>
+<p>For some reason, I have to work on some CentOS 7 boxes in which the latest Wireshark in the yum repo is 1.10. However, I found it is so difficult to find any existing Wireshark 2 rpm package in the web. So after spending some time on the Wireshark document, I came to know that it is really easy to build Wireshark rpm packages if you can figure out the dependencies. </p>
 
-<article>
-  
-<h1><a href="/blog/2014/08/30/use-gdb-to-understand-fuse-file-system/">Use GDB to Understand FUSE File System</a></h1>
-<time datetime="2014-08-30T10:17:46+08:00" pubdate><span class='month'>Aug</span> <span class='day'>30</span> <span class='year'>2014</span></time>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install gcc gcc-c++ bison flex libpcap-devel qt-devel gtk3-devel rpm-build libtool c-ares-devel qt5-qtbase-devel qt5-qtmultimedia-devel desktop-file-utils
+</span><span class="line">wget https://1.eu.dl.wireshark.org/src/wireshark-2.0.5.tar.bz2
+</span><span class="line">tar xf wireshark-2.0.5.tar.bz2
+</span><span class="line">./configure
+</span><span class="line">make rpm-package</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/storage/'>Storage</a></span>
-</footer>
-
-
-</article>
+<p>After that, you can find the rpms in the <code>package/rpm/RPMs/x86_64</code>. Hope this note could save you some time.</p>
 
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-08-14T16:27:37+08:00" pubdate data-updated="true">Aug 14<span>th</span>, 2016</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/tips/'>Tips</a>
+  
+</span>
+
+
+      
+
+<span class="tags">
+  
+    <a class='tag' href='/tags/tip/'>tip</a>, <a class='tag' href='/tags/wireshark/'>wireshark</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/" title="Previous Post: processes relation on python multiprocessing module">&laquo; processes relation on python multiprocessing module</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -202,7 +280,10 @@
       var disqus_shortname = 'bluesalt';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

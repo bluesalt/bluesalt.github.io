@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: tip | Jeff Li]]></title>
+  <link href="http://bluesalt.github.io/tags/tip/atom.xml" rel="self"/>
+  <link href="http://bluesalt.github.io/"/>
+  <updated>2016-08-14T17:12:07+08:00</updated>
+  <id>http://bluesalt.github.io/</id>
+  <author>
+    <name><![CDATA[Jeff Li]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[build latest Wireshark in CentOS 7]]></title>
+    <link href="http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7/"/>
+    <updated>2016-08-14T16:27:37+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7</id>
+    <content type="html"><![CDATA[<p>As we know, Wireshark has switched from GTK+ to Qt since Version 2. As a Mac and Kubuntu user, the GTK UI was really not harmony with my desktop environment. So after the version 2 was released last year, I upgraded Wireshark in both my Mac and Kubuntu boxes. </p>
+
+<p>For some reason, I have to work on some CentOS 7 boxes in which the latest Wireshark in the yum repo is 1.10. However, I found it is so difficult to find any existing Wireshark 2 rpm package in the web. So after spending some time on the Wireshark document, I came to know that it is really easy to build Wireshark rpm packages if you can figure out the dependencies. </p>
+
+<p><code>
+sudo yum install gcc gcc-c++ bison flex libpcap-devel qt-devel gtk3-devel rpm-build libtool c-ares-devel qt5-qtbase-devel qt5-qtmultimedia-devel desktop-file-utils
+wget https://1.eu.dl.wireshark.org/src/wireshark-2.0.5.tar.bz2
+tar xf wireshark-2.0.5.tar.bz2
+./configure
+make rpm-package
+</code>  </p>
+
+<p>After that, you can find the rpms in the <code>package/rpm/RPMs/x86_64</code>. Hope this note could save you some time.</p>
+
+]]></content>
+  </entry>
+  
+</feed>
