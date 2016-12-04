@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2016-08-14T17:12:07+08:00</updated>
+  <updated>2016-12-04T17:07:23+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -12,6 +12,168 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Started With RocksDB in CentOS 7]]></title>
+    <link href="http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/"/>
+    <updated>2016-12-02T20:27:01+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#getting-started">Getting Started</a>    <ul>
+      <li><a href="#build-rocksdb">Build RocksDB</a></li>
+      <li><a href="#install-rocksdb">Install RocksDB</a></li>
+      <li><a href="#run-the-example">Run the example</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p><a href="http://rocksdb.org/">RocksDB</a> is a high performance embedded key value storage engine which is written in C++. Though its name tells that it is a database, it is actually a C++ library providing a bunch of API instead of a Client-Server architected database.</p>
+
+<p>I am not a C++ programmer and when trying to play with RocksDB following the <a href="http://rocksdb.org/docs/getting-started.html">Getting Started</a> guide from the RocksDB website, I found it is not easy to run the example in CentOS 7 due to the incorrect installation of RocksDB dynamic library (.so file). To be more specific, the search paths of dynamic libraries vary from Linux distributions but the installation script of RocksDB does not take care of that.</p>
+
+<p>This post is intended for those want to play with RocksDB but failed to run the example. What will be mentioned including</p>
+
+<ul>
+  <li>How to build RocksDB dynamic library from source in CentOS 7</li>
+  <li>How to install RocksDB dynamic library in CentOS 7</li>
+  <li>How to run the example program</li>
+</ul>
+
+<p><strong>Note</strong>: I attempted to compile the program with static link but failed. Still need to figure it out.</p>
+
+<!--more-->
+
+<h3 id="getting-started">Getting Started</h3>
+
+<h4 id="build-rocksdb">Build RocksDB</h4>
+<ul>
+  <li>Install Dependencies</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install gflags-devel snappy-devel zlib-devel bzip2-devel  gcc-c++ -y</span></code></pre></td></tr></table></div></figure></notextile></div>
+<ul>
+  <li>Build dynamic library</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">make shared_lib</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="install-rocksdb">Install RocksDB</h4>
+<p>The <code>Makefile</code> provides a target called <code>install-shared</code> to install RocksDB shared lib.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo make install-shared</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The target actually includes two jobs:</p>
+
+<ol>
+  <li>Copy all the header files under <code>$SRC_ROOT/include/rocksdb</code> to <code>/usr/local/include/rocksdb</code></li>
+  <li>Install the <code>.so</code> file and symbolic links to <code>/usr/local/lib</code>  </li>
+</ol>
+
+<h4 id="run-the-example">Run the example</h4>
+
+<p>Here is the demo program</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="c++"><span class="line"><span class="cp">#include &lt;iostream&gt;</span>
+</span><span class="line"><span class="cp">#include &quot;rocksdb/db.h&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line"><span class="kt">int</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">rocksdb</span><span class="o">::</span><span class="n">DB</span><span class="o">*</span> <span class="n">db</span><span class="p">;</span>
+</span><span class="line">    <span class="n">rocksdb</span><span class="o">::</span><span class="n">Options</span> <span class="n">options</span><span class="p">;</span>
+</span><span class="line">    <span class="n">options</span><span class="p">.</span><span class="n">create_if_missing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class="line">    <span class="n">rocksdb</span><span class="o">::</span><span class="n">Status</span> <span class="n">status</span> <span class="o">=</span> <span class="n">rocksdb</span><span class="o">::</span><span class="n">DB</span><span class="o">::</span><span class="n">Open</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="s">&quot;/tmp/kv&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">db</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">delete</span> <span class="n">db</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Compile the program with following command</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">g++ -o demo -std<span class="o">=</span>c++11 -lrocksdb demo.cpp
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Run the program with <code>./demo</code> and an error occurs</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">./demo: error <span class="k">while </span>loading shared libraries: librocksdb.so.4.9: cannot open shared object file: No such file or directory
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The problem with the <code>install-shared</code> target is that  <code>/usr/local/lib</code> is in <code>g++</code>’s dynamic library search paths but not in <code>ldconfig</code>’s in CentOS 7 by default. So the program can be linked during compiling time but will cause dynamic library load error during run time. This can be verified by following commands:</p>
+
+<ul>
+  <li>Show search paths of g++</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">ld --verbose | grep SEARCH_DIR | tr -s <span class="s1">&#39; ;&#39;</span> <span class="se">\\</span>012
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Show search paths of ldconfig</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">ldconfig -v 2&gt;/dev/null | grep -v ^<span class="s1">$&#39;\t&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>There are 2 ways to resolve the issue. </p>
+
+<ul>
+  <li>Installing <code>.so</code> file and symbolic links into both the search paths of <code>g++</code> and <code>ldconfig</code></li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">INSTALL_PATH</span><span class="o">=</span>/usr sudo -E make install-shared
+</span><span class="line">sudo ldconfig -v  <span class="c">#refresh the ldconfig cache</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Add <code>/usr/local/lib</code> to the <code>ldconfig</code>’s search paths.</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">echo</span> <span class="s2">&quot;/usr/local/lib&quot;</span> |sudo tee /etc/ld.so.conf.d/rocksdb-x86_64.conf
+</span><span class="line">sudo ldconfig -v  <span class="c">#refresh the ldconfig cache</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>The problem is caused by shared library search paths which could vary from different Linux distributions. A good solution to avoid the issue is packaging the files into a rpm package, and deb package in Debian paltform of course.</p>
+
+<p>There is another problem I have not figured out yet. It is about static linkage. If anyone know how to link RocksDB program statically please drop me a note. </p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Latest Wireshark in CentOS 7]]></title>
@@ -56,6 +218,8 @@
 
 <h3 id="related-processes-in-linux">Related Processes in Linux</h3>
 <p>In 2007, when I was taking the undergraduate operating system course, the textbook<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> mentioned that a child process could possible be terminated on its parent’s exit.  Years later, I came to the world of Linux and found that the design is OS-dependent because in Linux, the child process will keep running even though its parent is gone. But it will be adopted by the process 1 instead of becoming an orphan. Let’s use a small program<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> to validate the behaviour.</p>
+
+<!--more-->
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>

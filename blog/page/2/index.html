@@ -9,7 +9,8 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Add Tags and Tag Cloud Support to Octopress Basic Usage Trouble Shooting Use Redcarpet Markdown Engine Add Clicky Web Analysis Tool Add Table of &hellip;">
+  <meta name="description" content="Introduction V6 V8 Introduction
+jetty-maven-plugin(formerly known as maven-jetty-plugin)is a maven plugin which enables the jetty container in maven &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +80,61 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Jetty-maven-plugin and Https Support</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-29T22:46:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#v6">V6</a></li>
+  <li><a href="#v8">V8</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p><code>jetty-maven-plugin</code>(formerly known as <code>maven-jetty-plugin</code>)is a maven plugin which enables the jetty container in maven project. It is very convenient in development environment since you can start the web app by issue only one command <code>mvn jetty:run</code>. By default it only supports http protocol. Additional configuration is necessary if https is required. Roughly we needs:</p>
+
+<ul>
+  <li>A development certificate</li>
+  <li>Instruct the jetty plugin to use the certificate</li>
+</ul>
+
+<p>Besides <code>jetty-maven-plugin</code>, another maven plugin called <code>keytool-maven-plugin</code> is also needed to generate the certificate.
+It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. 
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -278,6 +334,10 @@ _from Run:4:in </code><main>&#8216;_</main></p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started With RocksDB in CentOS 7</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/08/14/build-latest-wireshark-in-centos-7/">Build Latest Wireshark in CentOS 7</a>
       </li>
     
@@ -291,10 +351,6 @@ _from Run:4:in </code><main>&#8216;_</main></p>
     
       <li class="post">
         <a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Install SystemTap in Ubuntu 14.04</a>
       </li>
     
   </ul>
@@ -313,7 +369,7 @@ _from Run:4:in </code><main>&#8216;_</main></p>
 <li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
 <li class='category'><a href='/blog/categories/python/'>Python (1)</a></li>
 <li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
-<li class='category'><a href='/blog/categories/storage/'>Storage (1)</a></li>
+<li class='category'><a href='/blog/categories/storage/'>Storage (2)</a></li>
 <li class='category'><a href='/blog/categories/tips/'>Tips (1)</a></li>
 
   </ul>
@@ -330,9 +386,11 @@ _from Run:4:in </code><main>&#8216;_</main></p>
 <a style="font-size: 210%" href="/tags/java/">java</a>
 <a style="font-size: 90%" href="/tags/jetty/">jetty</a>
 <a style="font-size: 185%" href="/tags/kernel/">kernel</a>
+<a style="font-size: 90%" href="/tags/kv/">kv</a>
 <a style="font-size: 90%" href="/tags/linux/">linux</a>
 <a style="font-size: 90%" href="/tags/mac/">mac</a>
 <a style="font-size: 90%" href="/tags/maven/">maven</a>
+<a style="font-size: 90%" href="/tags/nosql/">nosql</a>
 <a style="font-size: 90%" href="/tags/octopress/">octopress</a>
 <a style="font-size: 210%" href="/tags/oss/">oss</a>
 <a style="font-size: 90%" href="/tags/python/">python</a>

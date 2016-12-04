@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: kv | Jeff Li]]></title>
+  <link href="http://bluesalt.github.io/tags/kv/atom.xml" rel="self"/>
+  <link href="http://bluesalt.github.io/"/>
+  <updated>2016-12-04T17:07:23+08:00</updated>
+  <id>http://bluesalt.github.io/</id>
+  <author>
+    <name><![CDATA[Jeff Li]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Started with RocksDB in CentOS 7]]></title>
+    <link href="http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/"/>
+    <updated>2016-12-02T20:27:01+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#getting-started">Getting Started</a>    <ul>
+      <li><a href="#build-rocksdb">Build RocksDB</a></li>
+      <li><a href="#install-rocksdb">Install RocksDB</a></li>
+      <li><a href="#run-the-example">Run the example</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p><a href="http://rocksdb.org/">RocksDB</a> is a high performance embedded key value storage engine which is written in C++. Though its name tells that it is a database, it is actually a C++ library providing a bunch of API instead of a Client-Server architected database.</p>
+
+<p>I am not a C++ programmer and when trying to play with RocksDB following the <a href="http://rocksdb.org/docs/getting-started.html">Getting Started</a> guide from the RocksDB website, I found it is not easy to run the example in CentOS 7 due to the incorrect installation of RocksDB dynamic library (.so file). To be more specific, the search paths of dynamic libraries vary from Linux distributions but the installation script of RocksDB does not take care of that.</p>
+
+<p>This post is intended for those want to play with RocksDB but failed to run the example. What will be mentioned including</p>
+
+<ul>
+  <li>How to build RocksDB dynamic library from source in CentOS 7</li>
+  <li>How to install RocksDB dynamic library in CentOS 7</li>
+  <li>How to run the example program</li>
+</ul>
+
+<p><strong>Note</strong>: I attempted to compile the program with static link but failed. Still need to figure it out.</p>
+
+<!--more-->
+
+<h3 id="getting-started">Getting Started</h3>
+
+<h4 id="build-rocksdb">Build RocksDB</h4>
+<ul>
+  <li>Install Dependencies</li>
+</ul>
+
+<p><code>
+sudo yum install gflags-devel snappy-devel zlib-devel bzip2-devel  gcc-c++ -y
+</code>
+* Build dynamic library</p>
+
+<p><code>
+make shared_lib
+</code></p>
+
+<h4 id="install-rocksdb">Install RocksDB</h4>
+<p>The <code>Makefile</code> provides a target called <code>install-shared</code> to install RocksDB shared lib.</p>
+
+<p><code>
+sudo make install-shared
+</code></p>
+
+<p>The target actually includes two jobs:</p>
+
+<ol>
+  <li>Copy all the header files under <code>$SRC_ROOT/include/rocksdb</code> to <code>/usr/local/include/rocksdb</code></li>
+  <li>Install the <code>.so</code> file and symbolic links to <code>/usr/local/lib</code>  </li>
+</ol>
+
+<h4 id="run-the-example">Run the example</h4>
+
+<p>Here is the demo program</p>
+
+<p>```c++
+#include <iostream>
+#include "rocksdb/db.h"</iostream></p>
+
+<p>using namespace std;</p>
+
+<p>int main() {
+    rocksdb::DB* db;
+    rocksdb::Options options;
+    options.create_if_missing = true;
+    rocksdb::Status status = rocksdb::DB::Open(options, “/tmp/kv”, &amp;db);</p>
+
+<pre><code>delete db;
+
+return 0; } ```
+</code></pre>
+
+<ul>
+  <li>Compile the program with following command</li>
+</ul>
+
+<p><code>bash
+g++ -o demo -std=c++11 -lrocksdb demo.cpp 
+</code></p>
+
+<ul>
+  <li>Run the program with <code>./demo</code> and an error occurs</li>
+</ul>
+
+<p><code>
+./demo: error while loading shared libraries: librocksdb.so.4.9: cannot open shared object file: No such file or directory
+</code></p>
+
+<p>The problem with the <code>install-shared</code> target is that  <code>/usr/local/lib</code> is in <code>g++</code>’s dynamic library search paths but not in <code>ldconfig</code>’s in CentOS 7 by default. So the program can be linked during compiling time but will cause dynamic library load error during run time. This can be verified by following commands:</p>
+
+<ul>
+  <li>Show search paths of g++</li>
+</ul>
+
+<p><code>bash
+ld --verbose | grep SEARCH_DIR | tr -s ' ;' \\012
+</code> </p>
+
+<ul>
+  <li>Show search paths of ldconfig</li>
+</ul>
+
+<p><code>bash
+ldconfig -v 2&gt;/dev/null | grep -v ^$'\t'
+</code></p>
+
+<p>There are 2 ways to resolve the issue. </p>
+
+<ul>
+  <li>Installing <code>.so</code> file and symbolic links into both the search paths of <code>g++</code> and <code>ldconfig</code></li>
+</ul>
+
+<p><code>
+INSTALL_PATH=/usr sudo -E make install-shared
+sudo ldconfig -v  #refresh the ldconfig cache
+</code></p>
+
+<ul>
+  <li>Add <code>/usr/local/lib</code> to the <code>ldconfig</code>’s search paths.</li>
+</ul>
+
+<p><code>
+echo "/usr/local/lib" |sudo tee /etc/ld.so.conf.d/rocksdb-x86_64.conf
+sudo ldconfig -v  #refresh the ldconfig cache
+</code></p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>The problem is caused by shared library search paths which could vary from different Linux distributions. A good solution to avoid the issue is packaging the files into a rpm package, and deb package in Debian paltform of course.</p>
+
+<p>There is another problem I have not figured out yet. It is about static linkage. If anyone know how to link RocksDB program statically please drop me a note. </p>
+]]></content>
+  </entry>
+  
+</feed>

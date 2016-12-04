@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Getting Started With RocksDB in CentOS 7 - Jeff Li</title>
+  <meta name="author" content="Jeff Li">
+
+  
+  <meta name="description" content="Introduction Getting Started Build RocksDB Install RocksDB Run the example Conclusion Introduction
+RocksDB is a high performance embedded key value &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!-- <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+<!-- <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-49767927-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jeff Li</a></h1>
+  
+    <h2>Be another Jeff</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bluesalt.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/categories/chinese-posts">Chinese Posts</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Getting Started With RocksDB in CentOS 7</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-12-02T20:27:01+08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#getting-started">Getting Started</a>    <ul>
+      <li><a href="#build-rocksdb">Build RocksDB</a></li>
+      <li><a href="#install-rocksdb">Install RocksDB</a></li>
+      <li><a href="#run-the-example">Run the example</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p><a href="http://rocksdb.org/">RocksDB</a> is a high performance embedded key value storage engine which is written in C++. Though its name tells that it is a database, it is actually a C++ library providing a bunch of API instead of a Client-Server architected database.</p>
+
+<p>I am not a C++ programmer and when trying to play with RocksDB following the <a href="http://rocksdb.org/docs/getting-started.html">Getting Started</a> guide from the RocksDB website, I found it is not easy to run the example in CentOS 7 due to the incorrect installation of RocksDB dynamic library (.so file). To be more specific, the search paths of dynamic libraries vary from Linux distributions but the installation script of RocksDB does not take care of that.</p>
+
+<p>This post is intended for those want to play with RocksDB but failed to run the example. What will be mentioned including</p>
+
+<ul>
+  <li>How to build RocksDB dynamic library from source in CentOS 7</li>
+  <li>How to install RocksDB dynamic library in CentOS 7</li>
+  <li>How to run the example program</li>
+</ul>
+
+<p><strong>Note</strong>: I attempted to compile the program with static link but failed. Still need to figure it out.</p>
+
+<!--more-->
+
+<h3 id="getting-started">Getting Started</h3>
+
+<h4 id="build-rocksdb">Build RocksDB</h4>
+<ul>
+  <li>Install Dependencies</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install gflags-devel snappy-devel zlib-devel bzip2-devel  gcc-c++ -y</span></code></pre></td></tr></table></div></figure></notextile></div>
+<ul>
+  <li>Build dynamic library</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">make shared_lib</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="install-rocksdb">Install RocksDB</h4>
+<p>The <code>Makefile</code> provides a target called <code>install-shared</code> to install RocksDB shared lib.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo make install-shared</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The target actually includes two jobs:</p>
+
+<ol>
+  <li>Copy all the header files under <code>$SRC_ROOT/include/rocksdb</code> to <code>/usr/local/include/rocksdb</code></li>
+  <li>Install the <code>.so</code> file and symbolic links to <code>/usr/local/lib</code>  </li>
+</ol>
+
+<h4 id="run-the-example">Run the example</h4>
+
+<p>Here is the demo program</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="c++"><span class="line"><span class="cp">#include &lt;iostream&gt;</span>
+</span><span class="line"><span class="cp">#include &quot;rocksdb/db.h&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line"><span class="kt">int</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">rocksdb</span><span class="o">::</span><span class="n">DB</span><span class="o">*</span> <span class="n">db</span><span class="p">;</span>
+</span><span class="line">    <span class="n">rocksdb</span><span class="o">::</span><span class="n">Options</span> <span class="n">options</span><span class="p">;</span>
+</span><span class="line">    <span class="n">options</span><span class="p">.</span><span class="n">create_if_missing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class="line">    <span class="n">rocksdb</span><span class="o">::</span><span class="n">Status</span> <span class="n">status</span> <span class="o">=</span> <span class="n">rocksdb</span><span class="o">::</span><span class="n">DB</span><span class="o">::</span><span class="n">Open</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="s">&quot;/tmp/kv&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">db</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">delete</span> <span class="n">db</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Compile the program with following command</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">g++ -o demo -std<span class="o">=</span>c++11 -lrocksdb demo.cpp
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Run the program with <code>./demo</code> and an error occurs</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">./demo: error <span class="k">while </span>loading shared libraries: librocksdb.so.4.9: cannot open shared object file: No such file or directory
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The problem with the <code>install-shared</code> target is that  <code>/usr/local/lib</code> is in <code>g++</code>’s dynamic library search paths but not in <code>ldconfig</code>’s in CentOS 7 by default. So the program can be linked during compiling time but will cause dynamic library load error during run time. This can be verified by following commands:</p>
+
+<ul>
+  <li>Show search paths of g++</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">ld --verbose | grep SEARCH_DIR | tr -s <span class="s1">&#39; ;&#39;</span> <span class="se">\\</span>012
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Show search paths of ldconfig</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">ldconfig -v 2&gt;/dev/null | grep -v ^<span class="s1">$&#39;\t&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>There are 2 ways to resolve the issue. </p>
+
+<ul>
+  <li>Installing <code>.so</code> file and symbolic links into both the search paths of <code>g++</code> and <code>ldconfig</code></li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">INSTALL_PATH</span><span class="o">=</span>/usr sudo -E make install-shared
+</span><span class="line">sudo ldconfig -v  <span class="c">#refresh the ldconfig cache</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Add <code>/usr/local/lib</code> to the <code>ldconfig</code>’s search paths.</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">echo</span> <span class="s2">&quot;/usr/local/lib&quot;</span> |sudo tee /etc/ld.so.conf.d/rocksdb-x86_64.conf
+</span><span class="line">sudo ldconfig -v  <span class="c">#refresh the ldconfig cache</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>The problem is caused by shared library search paths which could vary from different Linux distributions. A good solution to avoid the issue is packaging the files into a rpm package, and deb package in Debian paltform of course.</p>
+
+<p>There is another problem I have not figured out yet. It is about static linkage. If anyone know how to link RocksDB program statically please drop me a note. </p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-12-02T20:27:01+08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2016</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/storage/'>Storage</a>
+  
+</span>
+
+
+      
+
+<span class="tags">
+  
+    <a class='tag' href='/tags/kv/'>kv</a>, <a class='tag' href='/tags/nosql/'>nosql</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/08/14/build-latest-wireshark-in-centos-7/" title="Previous Post: build latest Wireshark in CentOS 7">&laquo; build latest Wireshark in CentOS 7</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started With RocksDB in CentOS 7</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/14/build-latest-wireshark-in-centos-7/">Build Latest Wireshark in CentOS 7</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/">Processes Relation on Python Multiprocessing Module</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/04/05/dump-pte-with-systemtap/">Dump PTE With SystemTap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
+<li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
+<li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>Linux (3)</a></li>
+<li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
+<li class='category'><a href='/blog/categories/python/'>Python (1)</a></li>
+<li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
+<li class='category'><a href='/blog/categories/storage/'>Storage (2)</a></li>
+<li class='category'><a href='/blog/categories/tips/'>Tips (1)</a></li>
+
+  </ul>
+</section>
+<section>
+  <h1>Topics</h1>
+  <ul class="tag-cloud">
+    <a style="font-size: 185%" href="/tags/avro/">avro</a>
+<a style="font-size: 90%" href="/tags/concurrency/">concurrency</a>
+<a style="font-size: 150%" href="/tags/cool/">cool</a>
+<a style="font-size: 90%" href="/tags/fuse/">fuse</a>
+<a style="font-size: 90%" href="/tags/go/">go</a>
+<a style="font-size: 90%" href="/tags/https/">https</a>
+<a style="font-size: 210%" href="/tags/java/">java</a>
+<a style="font-size: 90%" href="/tags/jetty/">jetty</a>
+<a style="font-size: 185%" href="/tags/kernel/">kernel</a>
+<a style="font-size: 90%" href="/tags/kv/">kv</a>
+<a style="font-size: 90%" href="/tags/linux/">linux</a>
+<a style="font-size: 90%" href="/tags/mac/">mac</a>
+<a style="font-size: 90%" href="/tags/maven/">maven</a>
+<a style="font-size: 90%" href="/tags/nosql/">nosql</a>
+<a style="font-size: 90%" href="/tags/octopress/">octopress</a>
+<a style="font-size: 210%" href="/tags/oss/">oss</a>
+<a style="font-size: 90%" href="/tags/python/">python</a>
+<a style="font-size: 150%" href="/tags/systemtap/">systemtap</a>
+<a style="font-size: 90%" href="/tags/textmate/">textmate</a>
+<a style="font-size: 90%" href="/tags/tip/">tip</a>
+<a style="font-size: 90%" href="/tags/wireshark/">wireshark</a>
+
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Jeff Li -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'bluesalt';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

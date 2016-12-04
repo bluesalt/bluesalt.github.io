@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: concurrency | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/concurrency/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2016-08-14T17:12:07+08:00</updated>
+  <updated>2016-12-04T17:07:23+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -31,6 +31,8 @@
 
 <h3 id="related-processes-in-linux">Related Processes in Linux</h3>
 <p>In 2007, when I was taking the undergraduate operating system course, the textbook<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> mentioned that a child process could possible be terminated on its parent’s exit.  Years later, I came to the world of Linux and found that the design is OS-dependent because in Linux, the child process will keep running even though its parent is gone. But it will be adopted by the process 1 instead of becoming an orphan. Let’s use a small program<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> to validate the behaviour.</p>
+
+<!--more-->
 
 <p>```c
 #include &lt;sys/types.h&gt;

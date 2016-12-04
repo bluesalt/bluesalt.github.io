@@ -9,7 +9,8 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="As we know, Wireshark has switched from GTK+ to Qt since Version 2. As a Mac and Kubuntu user, the GTK UI was really not harmony with my desktop &hellip;">
+  <meta name="description" content="Introduction Getting Started Build RocksDB Install RocksDB Run the example Conclusion Introduction
+RocksDB is a high performance embedded key value &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +80,71 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started With RocksDB in CentOS 7</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-12-02T20:27:01+08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#getting-started">Getting Started</a>    <ul>
+      <li><a href="#build-rocksdb">Build RocksDB</a></li>
+      <li><a href="#install-rocksdb">Install RocksDB</a></li>
+      <li><a href="#run-the-example">Run the example</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p><a href="http://rocksdb.org/">RocksDB</a> is a high performance embedded key value storage engine which is written in C++. Though its name tells that it is a database, it is actually a C++ library providing a bunch of API instead of a Client-Server architected database.</p>
+
+<p>I am not a C++ programmer and when trying to play with RocksDB following the <a href="http://rocksdb.org/docs/getting-started.html">Getting Started</a> guide from the RocksDB website, I found it is not easy to run the example in CentOS 7 due to the incorrect installation of RocksDB dynamic library (.so file). To be more specific, the search paths of dynamic libraries vary from Linux distributions but the installation script of RocksDB does not take care of that.</p>
+
+<p>This post is intended for those want to play with RocksDB but failed to run the example. What will be mentioned including</p>
+
+<ul>
+  <li>How to build RocksDB dynamic library from source in CentOS 7</li>
+  <li>How to install RocksDB dynamic library in CentOS 7</li>
+  <li>How to run the example program</li>
+</ul>
+
+<p><strong>Note</strong>: I attempted to compile the program with static link but failed. Still need to figure it out.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -174,163 +240,12 @@
 <h3 id="related-processes-in-linux">Related Processes in Linux</h3>
 <p>In 2007, when I was taking the undergraduate operating system course, the textbook<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> mentioned that a child process could possible be terminated on its parent’s exit.  Years later, I came to the world of Linux and found that the design is OS-dependent because in Linux, the child process will keep running even though its parent is gone. But it will be adopted by the process 1 instead of becoming an orphan. Let’s use a small program<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> to validate the behaviour.</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="cp">#include &lt;sys/types.h&gt;</span>
-</span><span class="line"><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class="line"><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class="line">
-</span><span class="line"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="n">pid_t</span> <span class="n">pid</span> <span class="o">=</span> <span class="n">fork</span><span class="p">();</span>
-</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="n">pid</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;I am the parent of pid=%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">pid</span><span class="p">);</span>
-</span><span class="line">        <span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">    <span class="k">else</span>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pid</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;I am the child</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class="line">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;loop %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
-</span><span class="line">            <span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
-</span><span class="line">        <span class="p">}</span>
-</span><span class="line">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">pid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">        <span class="n">perror</span> <span class="p">(</span><span class="s">&quot;fork&quot;</span><span class="p">);</span>
-</span><span class="line">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>In Linux, let’s start 2 shell sessions. In the first one, type</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">gcc --std<span class="o">=</span>c99 fork.c
-</span><span class="line">./a.out
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>In the other one, type <code>ps -ef | grep a.out</code> to check the status of the 2 processes. About 10s later, you should find that the parent is gone and the the child is still alive. But the parent of the child has become process 1. </p>
-
-<p>Based on what we have observed, it can be concluded that</p>
-
-<ul>
-  <li>child will continue to run even though its parent is dead, and it will be adopted by the <code>init</code> process whose pid is 1.</li>
-  <li>parent will not wait for child’s termination if only <code>fork</code> primitive is used.</li>
-</ul>
-
-<p>Now let’s think about another case. If you press <code>ctrl + c</code> in the shell immediately after running <code>a.out</code>, you could find that both parent and child are terminated. This seems to contradict what we have mentioned. Actually, when <code>ctrl + c</code> is typed, the <code>SIGINT</code> will be sent to the whole foreground process group instead of a single process<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>. When a child is forked by the parent, they will share the same process group id. So both the parent and child will receive the <code>SIGINT</code> signal and exit. You can change the child’s process group id to see what happens.</p>
-
-<h3 id="multiple-processes-in-python">Multiple Processes in Python</h3>
-<p>There are multiple ways in the standard lib to implement multiple processes in Python, one is the <code>fork</code> primitive provided by the <code>os</code> package and another is the <code>multiprocess</code> module.</p>
-
-<h4 id="fork-primitive">fork primitive</h4>
-<p>The <code>os.fork</code> function is a wrapper of the  <code>fork</code> function in C. So its behaviour is similar. I won’t give too much detail about it. Here is a sample program. You can find that it behaves as the C version one.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">import</span> <span class="nn">os</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">child</span><span class="p">():</span>
-</span><span class="line">    <span class="k">print</span> <span class="s">&quot;process id of child is: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
-</span><span class="line">    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span class="line">    <span class="n">child</span><span class="p">()</span>
-</span><span class="line"><span class="k">else</span><span class="p">:</span>
-</span><span class="line">    <span class="k">print</span> <span class="s">&quot;process id of parent is: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
-</span><span class="line">    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h4 id="multiprocess-module">multiprocess module</h4>
-<p><code>multiprocess</code> is a high level module built upon the primitives such as <code>fork</code>, thus it is much more versatile. Besides forking child processes, it also provides features like daemonic process, shared variables. On this post, I will focus only on the process relation. Let’s start with a simple piece of code.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">time</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">os</span>
-</span><span class="line">
-</span><span class="line"><span class="k">def</span> <span class="nf">child</span><span class="p">():</span>
-</span><span class="line">    <span class="k">print</span> <span class="s">&quot;child process pid: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
-</span><span class="line">    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">child</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">())</span>
-</span><span class="line"><span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="k">print</span> <span class="s">&quot;parent process pid: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>You can find that the parent will always wait for the children to terminated even no <code>join</code> or <code>wait</code> are called. Besides, if the child process is set to be daemonic, instead of waiting, the parent will kill the child before it exits. The behaviour is documented <a href="https://docs.python.org/2/library/multiprocessing.html#multiprocessing.Process.daemon">here</a>. So how does the module achieve that? Let’s navigate to the source code of class <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/process.py#L86">Process</a> and check the implementation.</p>
-
-<ul>
-  <li>When the <code>start</code> method of the child is invoked, it will create a <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/forking.py#L114">Popen</a> object which will fork a new process and execute the child process by calling back the child’s <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/process.py#L241">_bootstrap</a> method.</li>
-  <li>Meanwhile, the parent will maintain a list to save all its children.</li>
-  <li>The <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/process.py#L241">_bootstrap</a> method imports the <code>util</code> module in which a <a href="https://github.com/python/cpython/blob/2.7/Lib/multiprocessing/util.py#L294">_exit_function</a> function is registered as a cleanup handler. The function will check all its children and terminate all the daemonic children but wait for those that are not.</li>
-  <li><code>daemonic</code> is quit different from the <code>daemon process</code> in Linux system programming. In Python multiprocessing module, it is just a flag indicating how the child processes should be handled when parent exits.</li>
-</ul>
-
-<h3 id="conclusion">Conclusion</h3>
-<p>Due to the GIL, multithreading is very limited in high concurrency scenario. Even in the gevent’s implementation of thread pool, the issue is a big pain. Thus multiprocessing is encouraged in (C)Python. This post can not cover all the aspects of multiprocessing in Python, but I hope it can help you understand the concurrency in Python.</p>
-
-<h3 id="reference">Reference</h3>
-
-<div class="footnotes">
-  <ol>
-    <li id="fn:1">
-      <p>Operating Systems: Internals and Design Principles, 5th edition, by William Stalling<a href="#fnref:1" rel="reference">&#8617;</a></p>
-    </li>
-    <li id="fn:2">
-      <p>Linux System Programming, 2nd edition, by Robert Love<a href="#fnref:2" rel="reference">&#8617;</a></p>
-    </li>
-    <li id="fn:3">
-      <p>The Linux Programming Interface, by Michael Kerrisk<a href="#fnref:3" rel="reference">&#8617;</a></p>
-    </li>
-  </ol>
-</div>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -692,61 +607,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Jetty-maven-plugin and Https Support</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-29T22:46:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#v6">V6</a></li>
-  <li><a href="#v8">V8</a></li>
-</ul>
-
-<h3 id="introduction">Introduction</h3>
-<p><code>jetty-maven-plugin</code>(formerly known as <code>maven-jetty-plugin</code>)is a maven plugin which enables the jetty container in maven project. It is very convenient in development environment since you can start the web app by issue only one command <code>mvn jetty:run</code>. By default it only supports http protocol. Additional configuration is necessary if https is required. Roughly we needs:</p>
-
-<ul>
-  <li>A development certificate</li>
-  <li>Instruct the jetty plugin to use the certificate</li>
-</ul>
-
-<p>Besides <code>jetty-maven-plugin</code>, another maven plugin called <code>keytool-maven-plugin</code> is also needed to generate the certificate.
-It should be noted that the plugin has evolved a lot since version 7. The configuration is different from different version. 
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/07/29/jetty-maven-plugin-and-https-support/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -762,6 +622,10 @@ It should be noted that the plugin has evolved a lot since version 7. The config
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started With RocksDB in CentOS 7</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/08/14/build-latest-wireshark-in-centos-7/">Build Latest Wireshark in CentOS 7</a>
       </li>
     
@@ -775,10 +639,6 @@ It should be noted that the plugin has evolved a lot since version 7. The config
     
       <li class="post">
         <a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/">Install SystemTap in Ubuntu 14.04</a>
       </li>
     
   </ul>
@@ -797,7 +657,7 @@ It should be noted that the plugin has evolved a lot since version 7. The config
 <li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
 <li class='category'><a href='/blog/categories/python/'>Python (1)</a></li>
 <li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
-<li class='category'><a href='/blog/categories/storage/'>Storage (1)</a></li>
+<li class='category'><a href='/blog/categories/storage/'>Storage (2)</a></li>
 <li class='category'><a href='/blog/categories/tips/'>Tips (1)</a></li>
 
   </ul>
@@ -814,9 +674,11 @@ It should be noted that the plugin has evolved a lot since version 7. The config
 <a style="font-size: 210%" href="/tags/java/">java</a>
 <a style="font-size: 90%" href="/tags/jetty/">jetty</a>
 <a style="font-size: 185%" href="/tags/kernel/">kernel</a>
+<a style="font-size: 90%" href="/tags/kv/">kv</a>
 <a style="font-size: 90%" href="/tags/linux/">linux</a>
 <a style="font-size: 90%" href="/tags/mac/">mac</a>
 <a style="font-size: 90%" href="/tags/maven/">maven</a>
+<a style="font-size: 90%" href="/tags/nosql/">nosql</a>
 <a style="font-size: 90%" href="/tags/octopress/">octopress</a>
 <a style="font-size: 210%" href="/tags/oss/">oss</a>
 <a style="font-size: 90%" href="/tags/python/">python</a>
