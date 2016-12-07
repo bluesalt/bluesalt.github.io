@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2016-12-04T17:07:23+08:00</updated>
+  <updated>2016-12-07T22:12:32+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -145,7 +145,7 @@
 </pre></td><td class="code"><pre><code class="bash"><span class="line">ldconfig -v 2&gt;/dev/null | grep -v ^<span class="s1">$&#39;\t&#39;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>There are 2 ways to resolve the issue. </p>
+<p>There are 2 ways to resolve the issue. And <em>EITHER</em> one is ok.</p>
 
 <ul>
   <li>Installing <code>.so</code> file and symbolic links into both the search paths of <code>g++</code> and <code>ldconfig</code></li>
