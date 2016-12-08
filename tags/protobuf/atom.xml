@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: protobuf | Jeff Li]]></title>
+  <link href="http://bluesalt.github.io/tags/protobuf/atom.xml" rel="self"/>
+  <link href="http://bluesalt.github.io/"/>
+  <updated>2016-12-08T21:42:57+08:00</updated>
+  <id>http://bluesalt.github.io/</id>
+  <author>
+    <name><![CDATA[Jeff Li]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Install Protocol Buffer from Source in CentOS 7]]></title>
+    <link href="http://bluesalt.github.io/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/"/>
+    <updated>2016-12-08T13:45:59+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7</id>
+    <content type="html"><![CDATA[<p>Figuring out dependencies in specific distribution is really boring, not fun at all.</p>
+
+<p>Hope this post can save you some time.</p>
+
+<p><code>
+sudo yum install autoconf automake libtool unzip gcc-c++ -y
+git clone https://github.com/google/protobuf.git
+cd protobuf
+./autogen.sh
+./configure
+make
+</code></p>
+
+]]></content>
+  </entry>
+  
+</feed>

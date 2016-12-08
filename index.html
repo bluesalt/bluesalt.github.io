@@ -9,8 +9,13 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Introduction Getting Started Build RocksDB Install RocksDB Run the example Conclusion Introduction
-RocksDB is a high performance embedded key value &hellip;">
+  <meta name="description" content="Figuring out dependencies in specific distribution is really boring, not fun at all. Hope this post can save you some time. 1
+2
+3
+4
+5
+6
+sudo yum &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,6 +85,58 @@ RocksDB is a high performance embedded key value &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/">Install Protocol Buffer From Source in CentOS 7</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-12-08T13:45:59+08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Figuring out dependencies in specific distribution is really boring, not fun at all.</p>
+
+<p>Hope this post can save you some time.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install autoconf automake libtool unzip gcc-c++ -y
+</span><span class="line">git clone https://github.com/google/protobuf.git
+</span><span class="line">cd protobuf
+</span><span class="line">./autogen.sh
+</span><span class="line">./configure
+</span><span class="line">make</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -556,57 +613,6 @@ RocksDB is a high performance embedded key value &hellip;">
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : Part I</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-02-06T15:49:00+08:00" pubdate data-updated="true">Feb 6<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#initialize-the-project-structure">Initialize the project structure</a></li>
-  <li><a href="#tweak-the-pomxml">Tweak the pom.xml</a></li>
-  <li><a href="#import-the-project-into-intellij-idea">Import the project into Intellij IDEA</a></li>
-  <li><a href="#recipe-2-define-a-schema">Recipe 2: Define a Schema</a></li>
-  <li><a href="#recipe-3-serialize-the-log-data-to-disk-file">Recipe 3: Serialize the Log Data to Disk File</a></li>
-  <li><a href="#recipe-4-deserialize-the-log-data-from-disk-file">Recipe 4: Deserialize the Log Data from Disk File</a></li>
-</ul>
-
-<p>Avro is a data serialization framework. It is an Apache project led by Doug Cutting who is also the author of several other open source projects such as Hadoop, Lucene. Recently I need to leverage Avro to serialize/deserialize some data, however, I found its document is too poor, at least too poor for newbies like me who don’t have much experience on data exchange format frameworks. </p>
-
-<p>In fact, it is very easy to understand what Avro can do. It helps to convert Java objects into bytes and vice versa. The key information the framework needs to know is the format of the date, namely ‘Schema’ in Avro. In this article, I won’t spend any time on explaining what Avro is. 
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/02/06/avro-cookbook-part-i/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -622,6 +628,10 @@ RocksDB is a high performance embedded key value &hellip;">
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/">Install Protocol Buffer From Source in CentOS 7</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started With RocksDB in CentOS 7</a>
       </li>
     
@@ -635,10 +645,6 @@ RocksDB is a high performance embedded key value &hellip;">
     
       <li class="post">
         <a href="/blog/2015/04/05/dump-pte-with-systemtap/">Dump PTE With SystemTap</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a>
       </li>
     
   </ul>
@@ -658,7 +664,7 @@ RocksDB is a high performance embedded key value &hellip;">
 <li class='category'><a href='/blog/categories/python/'>Python (1)</a></li>
 <li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
 <li class='category'><a href='/blog/categories/storage/'>Storage (2)</a></li>
-<li class='category'><a href='/blog/categories/tips/'>Tips (1)</a></li>
+<li class='category'><a href='/blog/categories/tips/'>Tips (2)</a></li>
 
   </ul>
 </section>
@@ -681,10 +687,11 @@ RocksDB is a high performance embedded key value &hellip;">
 <a style="font-size: 90%" href="/tags/nosql/">nosql</a>
 <a style="font-size: 90%" href="/tags/octopress/">octopress</a>
 <a style="font-size: 210%" href="/tags/oss/">oss</a>
+<a style="font-size: 90%" href="/tags/protobuf/">protobuf</a>
 <a style="font-size: 90%" href="/tags/python/">python</a>
 <a style="font-size: 150%" href="/tags/systemtap/">systemtap</a>
 <a style="font-size: 90%" href="/tags/textmate/">textmate</a>
-<a style="font-size: 90%" href="/tags/tip/">tip</a>
+<a style="font-size: 150%" href="/tags/tip/">tip</a>
 <a style="font-size: 90%" href="/tags/wireshark/">wireshark</a>
 
   </ul>

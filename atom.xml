@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2016-12-07T22:12:32+08:00</updated>
+  <updated>2016-12-08T21:42:57+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -12,6 +12,31 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Install Protocol Buffer From Source in CentOS 7]]></title>
+    <link href="http://bluesalt.github.io/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/"/>
+    <updated>2016-12-08T13:45:59+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7</id>
+    <content type="html"><![CDATA[<p>Figuring out dependencies in specific distribution is really boring, not fun at all.</p>
+
+<p>Hope this post can save you some time.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install autoconf automake libtool unzip gcc-c++ -y
+</span><span class="line">git clone https://github.com/google/protobuf.git
+</span><span class="line">cd protobuf
+</span><span class="line">./autogen.sh
+</span><span class="line">./configure
+</span><span class="line">make</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Getting Started With RocksDB in CentOS 7]]></title>

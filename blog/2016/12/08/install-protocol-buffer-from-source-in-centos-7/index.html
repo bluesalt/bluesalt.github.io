@@ -5,11 +5,17 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: Octopress - Jeff Li</title>
+  <title>Install Protocol Buffer From Source in CentOS 7 - Jeff Li</title>
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Category: Octopress">
+  <meta name="description" content="Figuring out dependencies in specific distribution is really boring, not fun at all. Hope this post can save you some time. 1
+2
+3
+4
+5
+6
+sudo yum &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://bluesalt.github.ioblog/categories/octopress">
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
@@ -78,36 +84,114 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Octopress</h1>
+    
+      <h1 class="entry-title">Install Protocol Buffer From Source in CentOS 7</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-12-08T13:45:59+08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2016</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>Figuring out dependencies in specific distribution is really boring, not fun at all.</p>
 
-  
-  <h2>2013</h2>
+<p>Hope this post can save you some time.</p>
 
-<article>
-  
-<h1><a href="/blog/2013/06/17/tips-about-octopress/">Tips About Octopress</a></h1>
-<time datetime="2013-06-17T07:55:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>17</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/octopress/'>Octopress</a></span>
-</footer>
-
-
-</article>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install autoconf automake libtool unzip gcc-c++ -y
+</span><span class="line">git clone https://github.com/google/protobuf.git
+</span><span class="line">cd protobuf
+</span><span class="line">./autogen.sh
+</span><span class="line">./configure
+</span><span class="line">make</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-12-08T13:45:59+08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2016</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/tips/'>Tips</a>
+  
+</span>
+
+
+      
+
+<span class="tags">
+  
+    <a class='tag' href='/tags/protobuf/'>protobuf</a>, <a class='tag' href='/tags/tip/'>tip</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/" title="Previous Post: Getting Started with RocksDB in CentOS 7">&laquo; Getting Started with RocksDB in CentOS 7</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -205,7 +289,10 @@
       var disqus_shortname = 'bluesalt';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
