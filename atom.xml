@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2016-12-08T21:42:57+08:00</updated>
+  <updated>2016-12-13T21:57:40+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -28,12 +28,145 @@
 <span class="line-number">4</span>
 <span class="line-number">5</span>
 <span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install autoconf automake libtool unzip gcc-c++ -y
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install autoconf automake libtool unzip gcc-c++ git -y
 </span><span class="line">git clone https://github.com/google/protobuf.git
 </span><span class="line">cd protobuf
 </span><span class="line">./autogen.sh
 </span><span class="line">./configure
 </span><span class="line">make</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[A Beginner's Guide for Vagrant]]></title>
+    <link href="http://bluesalt.github.io/blog/2016/12/06/a-beginners-guide-for-vagrant/"/>
+    <updated>2016-12-06T07:28:04+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2016/12/06/a-beginners-guide-for-vagrant</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#getting-started">Getting Started</a></li>
+  <li><a href="#how-it-works">How It Works</a>    <ul>
+      <li><a href="#provider">Provider</a></li>
+      <li><a href="#box">Box</a></li>
+      <li><a href="#provisioner">Provisioner</a></li>
+    </ul>
+  </li>
+  <li><a href="#what-is-next">What is Next</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p><a href="https://www.vagrantup.com/">Vagrant</a> is a tool developed at <a href="https://www.hashicorp.com/">HashiCorp</a> intended to relieve the effort to setup development environment. According to its document, Vagrant is able to “create and configure lightweight, reproducible, and portable development environments”. It relizes the vision through virtualization technologies like VirtualBox.
+By the way, besides Vagrant, HashiCorp also deliver several open source DevOps tools which are really cool. I suggest spending some time on exploring their products if you are interested in DevOps.
+<!--more--></p>
+
+<p>The biggest pain point Vagrant solves is how to boot up a consistent development environment in every host. The benefit is obvious.</p>
+
+<ul>
+  <li>Boot up a consistent development environment anywhere.
+    <ul>
+      <li>If you have multiple laptops, it makes you work seamlessly with any one of them.</li>
+      <li>The development environment is able to be shared among the whole team. There is no need for new team members to spend a day on setting up the environment.</li>
+    </ul>
+  </li>
+  <li>The whole development environment is defined in <code>Vagrantfile</code> which is Ruby code in fact. That means the environment can be versioned with version control system like <code>Git</code> and thus could be shared easily.</li>
+</ul>
+
+<h3 id="getting-started">Getting Started</h3>
+<p>As mentioned before, Vagrant is built on virtualization, so before getting your hands dirty, you need</p>
+
+<ul>
+  <li>Grab and install Vagrant from the <a href="https://www.vagrantup.com/downloads.html">project’s website</a></li>
+  <li>Choose a virtualization platform and have it installed. We’ll use <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a> as our example. Other <a href="https://www.vagrantup.com/docs/providers/">alternative choices</a> are also available if you are interested.</li>
+</ul>
+
+<p>From the <a href="https://www.vagrantup.com/docs/getting-started/">doc</a>, it is very easy to boot up a virtual machine.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">vagrant init centos/7
+</span><span class="line">vagrant up</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here is the list of what actually happen.  </p>
+
+<ul>
+  <li>The Vagrant command line tool create a <code>Vagrantfile</code> with following content which indicates that vagrant should boot up a virtual machine based on the OS image called <code>centos/7</code>. </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;centos/7&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>
+    <p>Vagrant tries to locate the OS image in the local image repo. If not found , it attempts to download the image from <a href="https://atlas.hashicorp.com/boxes/search">HashiCorp’s box search service</a>. The path of local image repo is <code>$HOME/.vagrant.d/boxes</code>.</p>
+  </li>
+  <li>
+    <p>Create a virtual machine based on the OS image</p>
+  </li>
+</ul>
+
+<p>For now, we have a running virtual machine. Imagine the day you booted up a VM by *.iso image, life becomes pretty easy now. Next we can control the VM by running <code>vagrant ssh</code>. This seems like magic but if you run <code>ps -ef | grep vagrant</code>, you can see something like this </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">ssh</span> <span class="n">vagrant</span><span class="err">@</span><span class="mi">127</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">1</span> <span class="o">-</span><span class="nb">p</span> <span class="mi">2222</span> <span class="o">-</span><span class="n">o</span> <span class="no">Compression</span><span class="o">=</span><span class="n">yes</span> <span class="o">-</span><span class="n">o</span> <span class="no">DSAAuthentication</span><span class="o">=</span><span class="n">yes</span> <span class="o">-</span><span class="n">o</span> <span class="no">LogLevel</span><span class="o">=</span><span class="no">FATAL</span> <span class="o">-</span><span class="n">o</span> <span class="no">StrictHostKeyChecking</span><span class="o">=</span><span class="n">no</span> <span class="o">-</span><span class="n">o</span> <span class="no">UserKnownHostsFile</span><span class="o">=</span><span class="sr">/dev/nu</span><span class="n">ll</span> <span class="o">-</span><span class="n">o</span> <span class="no">IdentitiesOnly</span><span class="o">=</span><span class="n">yes</span> <span class="o">-</span><span class="n">i</span> <span class="vg">$PWD</span><span class="o">/.</span><span class="n">vagrant</span><span class="o">/</span><span class="n">machines</span><span class="o">/</span><span class="n">default</span><span class="o">/</span><span class="n">virtualbox</span><span class="o">/</span><span class="n">private_key</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That means <code>vagrant ssh</code> connects to the VM by calling the <code>ssh</code> utility and nothing else. Wait, why the host is <code>127.0.0.1</code> ?  We’ll check this out in another blog post dedicated to Vagrant network.</p>
+
+<h3 id="how-it-works">How It Works</h3>
+<p>Essentially, Vagrant provides the features:</p>
+
+<ul>
+  <li>A nearly hypervisor-agnostic abstraction for managing virtual machines.</li>
+  <li>A way to define the development environment with code. A typical Vagrant development environment includes 2 parts
+    <ul>
+      <li>A virtual machine</li>
+      <li>Toolchain like GCC, lib dependencies and Java running in the virtual machine</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Let’s see how Vagrant makes it.</p>
+
+<h4 id="provider">Provider</h4>
+<p>Provider means the type of underlying virtualization technology. Though it is able to manage virtual machines, Vagrant is not a hypervisor itself. Instead, it is just abstraction of managing virtual machines in different hypervisors. That is why we said that hypervisor is a prerequisite for Vagrant.</p>
+
+<p>Vagrant supports multiple types of hypervisor such as <code>VirtualBox</code>, <code>VMware Fusion</code>, <code>VMware Workstation</code>, <code>Hyper-V</code> and <code>Docker</code>. It is worth mentioning that thanks to the plugable provider architecture, Vagrant is able to manage virtual machines in cloud service like <code>AWS</code>, <code>DigitalOcean</code>, <code>VMware vSphere</code>, <code>OpenStack</code> besides hypervisors mentioned before.</p>
+
+<h4 id="box">Box</h4>
+<p>Box packages OS images required by the underlying hypervisor to run the virtual machine. Typically, each hypervisor has its own OS image format. Thus when building or downloading boxes, you have to choose the target hypervisor. Boxes are organized in local repo located in  <code>$HOME/.vagrant.d/boxes</code>. There are multiple ways to add a box to the local box repo.</p>
+
+<ul>
+  <li>From HashiCorp’s <a href="https://atlas.hashicorp.com/boxes/search">box discovery service</a>. You can search the OS box you want to run and add it to the local repo by <code>vagrant box add</code> command. Note, you should <strong>ALWAYS</strong> download the boxes you trust. Fortunately, some popular OS distributions like <a href="https://atlas.hashicorp.com/centos/boxes/7">CentOS</a> and <a href="https://atlas.hashicorp.com/ubuntu/boxes/xenial64">Ubuntu</a> provide the OS boxes officially. HashiCorp provides some boxes too.</li>
+  <li>Use <a href="https://www.packer.io/">Packer</a>, another tool from HashiCorp to build boxes from iso images. <a href="https://www.chef.io/">Chef</a> provides a whole bunch of <a href="https://github.com/chef/bento">Packer templates</a> in GitHub to make life much more easier.</li>
+  <li>Create box from existing virtual machines running in different hypervisor. See the <a href="https://www.vagrantup.com/docs/boxes/base.html">doc</a> for more detail.</li>
+</ul>
+
+<p>For new Vagrant users, the first method should be preferred because it is easy. For example, a CentOS 7 box could be added by one command line <code>vagrant box add centos/7</code>. The box is trusted because it is distributed officially.</p>
+
+<p><strong>Tip</strong>: In some districts like China mainland, it would takes several hours to download the whole box and the download has to be restarted from the begin if any error occurs during transfer which is really painful sometime. A workaround is using some download tools like Thunder to <a href="http://stackoverflow.com/questions/28399324/download-vagrant-box-file-locally-from-atlas-and-configuring-it">download Vagrant box manually</a> to local hostand then add it to the box repo.</p>
+
+<h4 id="provisioner">Provisioner</h4>
+<p>The example doesn’t leverage any provisioner but we have mentioned that one of the essential parts of a development environment is the toolchain. It is impractical to package all the development tools in a box thus the Vagrant provides facility to customize the virtual machine.</p>
+
+<p>There are many deveops tools available to automate configuration management such as <a href="https://www.ansible.com/">Ansible</a>, <a href="https://puppet.com/">Puppet</a>, <a href="https://saltstack.com/">SaltStack</a> and <a href="https://www.chef.io/">Chef</a>. Vagrant does not reinvent the wheel. Instead, it makes an abstract on different tools so the users could choose any technique they want. The tools are called <code>provisioners</code>.</p>
+
+<p>Supported provisioner list could be found in the <a href="https://www.vagrantup.com/docs/provisioning/">doc</a>. You could choose any one you want. If you don’t have experience with any tool yet, I strongly recommend Anislbe because it is simple yet powerful. </p>
+
+<h3 id="what-is-next">What is Next</h3>
+<p>Vagrant is a powerful tool. It is impossible to cover everything in a single post.  Here are some other interesting topics deserves to be explored.</p>
+
+<ul>
+  <li><strong>Provisioner</strong>: We don’t show any usage about provisioner in this post. However, it is essential for customizing a envrionment. Ansible should be considered if you are a developer since it is lightweight and easy to learn.</li>
+  <li><strong>QEMU provider</strong>: VirtualBox is great and most of time it is adequate. But it does not support <a href="https://en.wikipedia.org/wiki/Virtualization#Nested_virtualization">nested virtualzation</a> which is the ability to run virtual machines within another virtual machine. Most of hypervisors like VMware Fusion, Hyper-V and QEMU except VirtualBox support such a feature. Nested virtualization is very useful when creating demo cluster. There is also a company named <a href="https://www.ravellosystems.com/">Ravello</a> who has been acquired by Oracle focusing on nested virtualzation technique. Hyper-V is not cross-platform and VMware Fusion/Workstation is charged. Vagrant provider for VMware Fusion/Workstation is also charged. So QEMU is another provider worthy playing with.</li>
+  <li><strong>Docker provider</strong>: As one of the hottest techniques, Docker is worthy noting. Compared with hypervisors like VirtualBox, Docker is much much more lightweight. It is not a hypervisor, but it does provide some abstraction of a virtual machine. Its overhead is very low too which makes it is easy to boot dozens of Docker containers in you laptop. Of course, it is not as versatile as hypervisors but if it meets your need,it would be a good choices.</li>
+  <li><strong>Network</strong>: Many new users will be confused on the network configuration of Vagrant. My suggestion is learning the network in hypervisor before you go ahead with Vagrant. <a href="https://www.virtualbox.org/manual/ch06.html">VirtualBox’s Network document</a> is a good source to refer.</li>
+</ul>
 
 ]]></content>
   </entry>

@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: tip | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/tip/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2016-12-08T21:42:57+08:00</updated>
+  <updated>2016-12-13T21:57:40+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -23,7 +23,7 @@
 <p>Hope this post can save you some time.</p>
 
 <p><code>
-sudo yum install autoconf automake libtool unzip gcc-c++ -y
+sudo yum install autoconf automake libtool unzip gcc-c++ git -y
 git clone https://github.com/google/protobuf.git
 cd protobuf
 ./autogen.sh

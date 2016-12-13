@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>A Beginner's Guide for Vagrant - Jeff Li</title>
+  <meta name="author" content="Jeff Li">
+
+  
+  <meta name="description" content="Introduction Getting Started How It Works Provider Box Provisioner What is Next Introduction
+Vagrant is a tool developed at HashiCorp intended to &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2016/12/06/a-beginners-guide-for-vagrant">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!-- <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+<!-- <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-49767927-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jeff Li</a></h1>
+  
+    <h2>Be another Jeff</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bluesalt.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/categories/chinese-posts">Chinese Posts</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">A Beginner's Guide for Vagrant</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-12-06T07:28:04+08:00" pubdate data-updated="true">Dec 6<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#getting-started">Getting Started</a></li>
+  <li><a href="#how-it-works">How It Works</a>    <ul>
+      <li><a href="#provider">Provider</a></li>
+      <li><a href="#box">Box</a></li>
+      <li><a href="#provisioner">Provisioner</a></li>
+    </ul>
+  </li>
+  <li><a href="#what-is-next">What is Next</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p><a href="https://www.vagrantup.com/">Vagrant</a> is a tool developed at <a href="https://www.hashicorp.com/">HashiCorp</a> intended to relieve the effort to setup development environment. According to its document, Vagrant is able to “create and configure lightweight, reproducible, and portable development environments”. It relizes the vision through virtualization technologies like VirtualBox.
+By the way, besides Vagrant, HashiCorp also deliver several open source DevOps tools which are really cool. I suggest spending some time on exploring their products if you are interested in DevOps.
+<!--more--></p>
+
+<p>The biggest pain point Vagrant solves is how to boot up a consistent development environment in every host. The benefit is obvious.</p>
+
+<ul>
+  <li>Boot up a consistent development environment anywhere.
+    <ul>
+      <li>If you have multiple laptops, it makes you work seamlessly with any one of them.</li>
+      <li>The development environment is able to be shared among the whole team. There is no need for new team members to spend a day on setting up the environment.</li>
+    </ul>
+  </li>
+  <li>The whole development environment is defined in <code>Vagrantfile</code> which is Ruby code in fact. That means the environment can be versioned with version control system like <code>Git</code> and thus could be shared easily.</li>
+</ul>
+
+<h3 id="getting-started">Getting Started</h3>
+<p>As mentioned before, Vagrant is built on virtualization, so before getting your hands dirty, you need</p>
+
+<ul>
+  <li>Grab and install Vagrant from the <a href="https://www.vagrantup.com/downloads.html">project’s website</a></li>
+  <li>Choose a virtualization platform and have it installed. We’ll use <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a> as our example. Other <a href="https://www.vagrantup.com/docs/providers/">alternative choices</a> are also available if you are interested.</li>
+</ul>
+
+<p>From the <a href="https://www.vagrantup.com/docs/getting-started/">doc</a>, it is very easy to boot up a virtual machine.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">vagrant init centos/7
+</span><span class="line">vagrant up</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here is the list of what actually happen.  </p>
+
+<ul>
+  <li>The Vagrant command line tool create a <code>Vagrantfile</code> with following content which indicates that vagrant should boot up a virtual machine based on the OS image called <code>centos/7</code>. </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;centos/7&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>
+    <p>Vagrant tries to locate the OS image in the local image repo. If not found , it attempts to download the image from <a href="https://atlas.hashicorp.com/boxes/search">HashiCorp’s box search service</a>. The path of local image repo is <code>$HOME/.vagrant.d/boxes</code>.</p>
+  </li>
+  <li>
+    <p>Create a virtual machine based on the OS image</p>
+  </li>
+</ul>
+
+<p>For now, we have a running virtual machine. Imagine the day you booted up a VM by *.iso image, life becomes pretty easy now. Next we can control the VM by running <code>vagrant ssh</code>. This seems like magic but if you run <code>ps -ef | grep vagrant</code>, you can see something like this </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">ssh</span> <span class="n">vagrant</span><span class="err">@</span><span class="mi">127</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">1</span> <span class="o">-</span><span class="nb">p</span> <span class="mi">2222</span> <span class="o">-</span><span class="n">o</span> <span class="no">Compression</span><span class="o">=</span><span class="n">yes</span> <span class="o">-</span><span class="n">o</span> <span class="no">DSAAuthentication</span><span class="o">=</span><span class="n">yes</span> <span class="o">-</span><span class="n">o</span> <span class="no">LogLevel</span><span class="o">=</span><span class="no">FATAL</span> <span class="o">-</span><span class="n">o</span> <span class="no">StrictHostKeyChecking</span><span class="o">=</span><span class="n">no</span> <span class="o">-</span><span class="n">o</span> <span class="no">UserKnownHostsFile</span><span class="o">=</span><span class="sr">/dev/nu</span><span class="n">ll</span> <span class="o">-</span><span class="n">o</span> <span class="no">IdentitiesOnly</span><span class="o">=</span><span class="n">yes</span> <span class="o">-</span><span class="n">i</span> <span class="vg">$PWD</span><span class="o">/.</span><span class="n">vagrant</span><span class="o">/</span><span class="n">machines</span><span class="o">/</span><span class="n">default</span><span class="o">/</span><span class="n">virtualbox</span><span class="o">/</span><span class="n">private_key</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That means <code>vagrant ssh</code> connects to the VM by calling the <code>ssh</code> utility and nothing else. Wait, why the host is <code>127.0.0.1</code> ?  We’ll check this out in another blog post dedicated to Vagrant network.</p>
+
+<h3 id="how-it-works">How It Works</h3>
+<p>Essentially, Vagrant provides the features:</p>
+
+<ul>
+  <li>A nearly hypervisor-agnostic abstraction for managing virtual machines.</li>
+  <li>A way to define the development environment with code. A typical Vagrant development environment includes 2 parts
+    <ul>
+      <li>A virtual machine</li>
+      <li>Toolchain like GCC, lib dependencies and Java running in the virtual machine</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Let’s see how Vagrant makes it.</p>
+
+<h4 id="provider">Provider</h4>
+<p>Provider means the type of underlying virtualization technology. Though it is able to manage virtual machines, Vagrant is not a hypervisor itself. Instead, it is just abstraction of managing virtual machines in different hypervisors. That is why we said that hypervisor is a prerequisite for Vagrant.</p>
+
+<p>Vagrant supports multiple types of hypervisor such as <code>VirtualBox</code>, <code>VMware Fusion</code>, <code>VMware Workstation</code>, <code>Hyper-V</code> and <code>Docker</code>. It is worth mentioning that thanks to the plugable provider architecture, Vagrant is able to manage virtual machines in cloud service like <code>AWS</code>, <code>DigitalOcean</code>, <code>VMware vSphere</code>, <code>OpenStack</code> besides hypervisors mentioned before.</p>
+
+<h4 id="box">Box</h4>
+<p>Box packages OS images required by the underlying hypervisor to run the virtual machine. Typically, each hypervisor has its own OS image format. Thus when building or downloading boxes, you have to choose the target hypervisor. Boxes are organized in local repo located in  <code>$HOME/.vagrant.d/boxes</code>. There are multiple ways to add a box to the local box repo.</p>
+
+<ul>
+  <li>From HashiCorp’s <a href="https://atlas.hashicorp.com/boxes/search">box discovery service</a>. You can search the OS box you want to run and add it to the local repo by <code>vagrant box add</code> command. Note, you should <strong>ALWAYS</strong> download the boxes you trust. Fortunately, some popular OS distributions like <a href="https://atlas.hashicorp.com/centos/boxes/7">CentOS</a> and <a href="https://atlas.hashicorp.com/ubuntu/boxes/xenial64">Ubuntu</a> provide the OS boxes officially. HashiCorp provides some boxes too.</li>
+  <li>Use <a href="https://www.packer.io/">Packer</a>, another tool from HashiCorp to build boxes from iso images. <a href="https://www.chef.io/">Chef</a> provides a whole bunch of <a href="https://github.com/chef/bento">Packer templates</a> in GitHub to make life much more easier.</li>
+  <li>Create box from existing virtual machines running in different hypervisor. See the <a href="https://www.vagrantup.com/docs/boxes/base.html">doc</a> for more detail.</li>
+</ul>
+
+<p>For new Vagrant users, the first method should be preferred because it is easy. For example, a CentOS 7 box could be added by one command line <code>vagrant box add centos/7</code>. The box is trusted because it is distributed officially.</p>
+
+<p><strong>Tip</strong>: In some districts like China mainland, it would takes several hours to download the whole box and the download has to be restarted from the begin if any error occurs during transfer which is really painful sometime. A workaround is using some download tools like Thunder to <a href="http://stackoverflow.com/questions/28399324/download-vagrant-box-file-locally-from-atlas-and-configuring-it">download Vagrant box manually</a> to local hostand then add it to the box repo.</p>
+
+<h4 id="provisioner">Provisioner</h4>
+<p>The example doesn’t leverage any provisioner but we have mentioned that one of the essential parts of a development environment is the toolchain. It is impractical to package all the development tools in a box thus the Vagrant provides facility to customize the virtual machine.</p>
+
+<p>There are many deveops tools available to automate configuration management such as <a href="https://www.ansible.com/">Ansible</a>, <a href="https://puppet.com/">Puppet</a>, <a href="https://saltstack.com/">SaltStack</a> and <a href="https://www.chef.io/">Chef</a>. Vagrant does not reinvent the wheel. Instead, it makes an abstract on different tools so the users could choose any technique they want. The tools are called <code>provisioners</code>.</p>
+
+<p>Supported provisioner list could be found in the <a href="https://www.vagrantup.com/docs/provisioning/">doc</a>. You could choose any one you want. If you don’t have experience with any tool yet, I strongly recommend Anislbe because it is simple yet powerful. </p>
+
+<h3 id="what-is-next">What is Next</h3>
+<p>Vagrant is a powerful tool. It is impossible to cover everything in a single post.  Here are some other interesting topics deserves to be explored.</p>
+
+<ul>
+  <li><strong>Provisioner</strong>: We don’t show any usage about provisioner in this post. However, it is essential for customizing a envrionment. Ansible should be considered if you are a developer since it is lightweight and easy to learn.</li>
+  <li><strong>QEMU provider</strong>: VirtualBox is great and most of time it is adequate. But it does not support <a href="https://en.wikipedia.org/wiki/Virtualization#Nested_virtualization">nested virtualzation</a> which is the ability to run virtual machines within another virtual machine. Most of hypervisors like VMware Fusion, Hyper-V and QEMU except VirtualBox support such a feature. Nested virtualization is very useful when creating demo cluster. There is also a company named <a href="https://www.ravellosystems.com/">Ravello</a> who has been acquired by Oracle focusing on nested virtualzation technique. Hyper-V is not cross-platform and VMware Fusion/Workstation is charged. Vagrant provider for VMware Fusion/Workstation is also charged. So QEMU is another provider worthy playing with.</li>
+  <li><strong>Docker provider</strong>: As one of the hottest techniques, Docker is worthy noting. Compared with hypervisors like VirtualBox, Docker is much much more lightweight. It is not a hypervisor, but it does provide some abstraction of a virtual machine. Its overhead is very low too which makes it is easy to boot dozens of Docker containers in you laptop. Of course, it is not as versatile as hypervisors but if it meets your need,it would be a good choices.</li>
+  <li><strong>Network</strong>: Many new users will be confused on the network configuration of Vagrant. My suggestion is learning the network in hypervisor before you go ahead with Vagrant. <a href="https://www.virtualbox.org/manual/ch06.html">VirtualBox’s Network document</a> is a good source to refer.</li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-12-06T07:28:04+08:00" pubdate data-updated="true">Dec 6<span>th</span>, 2016</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/devops/'>DevOps</a>
+  
+</span>
+
+
+      
+
+<span class="tags">
+  
+    <a class='tag' href='/tags/tool/'>tool</a>, <a class='tag' href='/tags/vagrant/'>vagrant</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/" title="Previous Post: Getting Started with RocksDB in CentOS 7">&laquo; Getting Started with RocksDB in CentOS 7</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/" title="Next Post: Install Protocol Buffer from Source in CentOS 7">Install Protocol Buffer from Source in CentOS 7 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/">Install Protocol Buffer From Source in CentOS 7</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/06/a-beginners-guide-for-vagrant/">A Beginner's Guide for Vagrant</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started With RocksDB in CentOS 7</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/14/build-latest-wireshark-in-centos-7/">Build Latest Wireshark in CentOS 7</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/">Processes Relation on Python Multiprocessing Module</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
+<li class='category'><a href='/blog/categories/devops/'>DevOps (1)</a></li>
+<li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
+<li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>Linux (3)</a></li>
+<li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
+<li class='category'><a href='/blog/categories/python/'>Python (1)</a></li>
+<li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
+<li class='category'><a href='/blog/categories/storage/'>Storage (2)</a></li>
+<li class='category'><a href='/blog/categories/tips/'>Tips (2)</a></li>
+
+  </ul>
+</section>
+<section>
+  <h1>Topics</h1>
+  <ul class="tag-cloud">
+    <a style="font-size: 185%" href="/tags/avro/">avro</a>
+<a style="font-size: 90%" href="/tags/concurrency/">concurrency</a>
+<a style="font-size: 150%" href="/tags/cool/">cool</a>
+<a style="font-size: 90%" href="/tags/fuse/">fuse</a>
+<a style="font-size: 90%" href="/tags/go/">go</a>
+<a style="font-size: 90%" href="/tags/https/">https</a>
+<a style="font-size: 210%" href="/tags/java/">java</a>
+<a style="font-size: 90%" href="/tags/jetty/">jetty</a>
+<a style="font-size: 185%" href="/tags/kernel/">kernel</a>
+<a style="font-size: 90%" href="/tags/kv/">kv</a>
+<a style="font-size: 90%" href="/tags/linux/">linux</a>
+<a style="font-size: 90%" href="/tags/mac/">mac</a>
+<a style="font-size: 90%" href="/tags/maven/">maven</a>
+<a style="font-size: 90%" href="/tags/nosql/">nosql</a>
+<a style="font-size: 90%" href="/tags/octopress/">octopress</a>
+<a style="font-size: 210%" href="/tags/oss/">oss</a>
+<a style="font-size: 90%" href="/tags/protobuf/">protobuf</a>
+<a style="font-size: 90%" href="/tags/python/">python</a>
+<a style="font-size: 150%" href="/tags/systemtap/">systemtap</a>
+<a style="font-size: 90%" href="/tags/textmate/">textmate</a>
+<a style="font-size: 150%" href="/tags/tip/">tip</a>
+<a style="font-size: 90%" href="/tags/tool/">tool</a>
+<a style="font-size: 90%" href="/tags/vagrant/">vagrant</a>
+<a style="font-size: 90%" href="/tags/wireshark/">wireshark</a>
+
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Jeff Li -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'bluesalt';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2016/12/06/a-beginners-guide-for-vagrant/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2016/12/06/a-beginners-guide-for-vagrant/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
