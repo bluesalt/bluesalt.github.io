@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: kernel | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/kernel/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2016-12-13T21:57:40+08:00</updated>
+  <updated>2017-05-19T22:00:28+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -166,7 +166,7 @@ function find_pte:long (mm, addr) %{
 
 <h3 id="procpidpagemap">/proc/${pid}/pagemap</h3>
 <p>This file contains the map information between virtual pages and physical pages of a process. The mapping information between a virtual page and physical page is represented as a 64-bit long entry. The file is a virtual file which means that it does not exist in the disk. Even so, you can imagine that it consists of many 64-bit long records each of which contains the physical page frame number of a virtual memory page and some other attributes. For example, record 0, 1, 2  are for the first, second and third virtual page respectively. In other words, the records are indexed by the virtual page number.
-<span class='caption-wrapper left'><img class='caption' src='/images/pagemap.png' width='500' height='250' alt='Fig-1: Format of Pagemap Entry' title='Fig-1: Format of Pagemap Entry'><span class='caption-text'>Fig-1: Format of Pagemap Entry</span></span>
+{% imgcap left /images/pagemap.png 500 250 Fig-1: Format of Pagemap Entry %}
 Fig-1 is the format of pagemap entries. Please refer to the <a href="https://www.kernel.org/doc/Documentation/vm/pagemap.txt">design doc</a> of the pagemap interface to see the detail of the format. It should be noted that the entry’s content represent different information when page is present and swapped out.</p>
 
 <h3 id="prockpagecount">/proc/kpagecount</h3>

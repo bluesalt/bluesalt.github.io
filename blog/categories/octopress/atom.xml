@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2016-12-13T21:57:40+08:00</updated>
+  <updated>2017-05-19T22:00:28+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -34,8 +34,8 @@
 <!--more-->
 
 <h2 id="add-tags-and-tag-cloud-support-to-octopress">Add Tags and Tag Cloud Support to Octopress</h2>
-<p><span class='caption-wrapper left'><img class='caption' src='/images/tags.png' width='500' height='250' alt='Fig-1: Tags' title='Fig-1: Tags'><span class='caption-text'>Fig-1: Tags</span></span>
-<span class='caption-wrapper right'><img class='caption' src='/images/tag-cloud.png' width='250' height='500' alt='Fig-2: Tag Cloud' title='Fig-2: Tag Cloud'><span class='caption-text'>Fig-2: Tag Cloud</span></span></p>
+<p>{% imgcap left /images/tags.png 500 250 Fig-1: Tags%}
+{% imgcap right /images/tag-cloud.png 250 500  Fig-2: Tag Cloud%}</p>
 
 <h4 id="basic-usage">Basic Usage</h4>
 <p>After migrating my blog system from WordPress to Octopress, I have got more fun from blogging. Definitely Octopress is cool, however, no official support for tags and tag cloud makes it looks not so cool. IMO, using tags to organizing your posts is much more better using only categories. Luckily, after googling the topic, I found two plugins: <a href="https://github.com/robbyedwards/octopress-tag-pages">octopress-tag-pages</a> and <a href="https://github.com/robbyedwards/octopress-tag-cloud">octopress-tag-cloud</a>. The former generates tags for your posts(Fig-1)while the latter(Fig-2) collects all the tags and displays them in the aside area. The former can be applied without the latter while you have to install both plugins if you want to use tag cloud plugin.</p>

@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: nosql | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/nosql/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2016-12-13T21:57:40+08:00</updated>
+  <updated>2017-05-19T22:00:28+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -20,63 +20,29 @@
     <id>http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7</id>
     <content type="html"><![CDATA[<ul id="markdown-toc">
   <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#getting-started">Getting Started</a>    <ul>
-      <li><a href="#build-rocksdb">Build RocksDB</a></li>
-      <li><a href="#install-rocksdb">Install RocksDB</a></li>
+  <li><a href="#dynamic-linkage">Dynamic Linkage</a>    <ul>
+      <li><a href="#install-the-shared-lib">Install the shared lib</a></li>
       <li><a href="#run-the-example">Run the example</a></li>
     </ul>
   </li>
+  <li><a href="#static-linkage">Static Linkage</a></li>
   <li><a href="#conclusion">Conclusion</a></li>
 </ul>
 
 <h3 id="introduction">Introduction</h3>
 <p><a href="http://rocksdb.org/">RocksDB</a> is a high performance embedded key value storage engine which is written in C++. Though its name tells that it is a database, it is actually a C++ library providing a bunch of API instead of a Client-Server architected database.</p>
 
-<p>I am not a C++ programmer and when trying to play with RocksDB following the <a href="http://rocksdb.org/docs/getting-started.html">Getting Started</a> guide from the RocksDB website, I found it is not easy to run the example in CentOS 7 due to the incorrect installation of RocksDB dynamic library (.so file). To be more specific, the search paths of dynamic libraries vary from Linux distributions but the installation script of RocksDB does not take care of that.</p>
+<p>I am not a C++ programmer and when trying to play with RocksDB following the <a href="http://rocksdb.org/docs/getting-started.html">Getting Started</a> guide from the RocksDB website, I found it is not easy to run the example in CentOS 7 with either dynamic or static linkage. To be more specific with dynamic linkage, the search paths of dynamic libraries vary from Linux distributions but the installation script of RocksDB does not take care of that.</p>
 
-<p>This post is intended for those want to play with RocksDB but failed to run the example. What will be mentioned including</p>
+<p>This post is intended for those who want to play with RocksDB but failed to run the example. What will be mentioned including</p>
 
 <ul>
-  <li>How to build RocksDB dynamic library from source in CentOS 7</li>
-  <li>How to install RocksDB dynamic library in CentOS 7</li>
+  <li>How to install RocksDB as dynamic library from source in CentOS 7</li>
+  <li>How to install RocksDB as static library in CentOS 7</li>
   <li>How to run the example program</li>
 </ul>
 
-<p><strong>Note</strong>: I attempted to compile the program with static link but failed. Still need to figure it out.</p>
-
 <!--more-->
-
-<h3 id="getting-started">Getting Started</h3>
-
-<h4 id="build-rocksdb">Build RocksDB</h4>
-<ul>
-  <li>Install Dependencies</li>
-</ul>
-
-<p><code>
-sudo yum install gflags-devel snappy-devel zlib-devel bzip2-devel  gcc-c++ -y
-</code>
-* Build dynamic library</p>
-
-<p><code>
-make shared_lib
-</code></p>
-
-<h4 id="install-rocksdb">Install RocksDB</h4>
-<p>The <code>Makefile</code> provides a target called <code>install-shared</code> to install RocksDB shared lib.</p>
-
-<p><code>
-sudo make install-shared
-</code></p>
-
-<p>The target actually includes two jobs:</p>
-
-<ol>
-  <li>Copy all the header files under <code>$SRC_ROOT/include/rocksdb</code> to <code>/usr/local/include/rocksdb</code></li>
-  <li>Install the <code>.so</code> file and symbolic links to <code>/usr/local/lib</code>  </li>
-</ol>
-
-<h4 id="run-the-example">Run the example</h4>
 
 <p>Here is the demo program</p>
 
@@ -97,6 +63,36 @@ sudo make install-shared
 return 0; } ```
 </code></pre>
 
+<p>Before you continue, please install the dependencies.</p>
+
+<p><code>
+sudo yum install gflags-devel snappy-devel zlib-devel bzip2-devel  gcc-c++  libstdc++-devel -y
+</code></p>
+
+<h3 id="dynamic-linkage">Dynamic Linkage</h3>
+
+<h4 id="install-the-shared-lib">Install the shared lib</h4>
+
+<p>First, run the command line to build dynamic library </p>
+
+<p><code>
+DEBUG_LEVEL=0 make shared_lib
+</code></p>
+
+<p>The <code>Makefile</code> provides a target called <code>install-shared</code> to install RocksDB shared lib.</p>
+
+<p><code>
+DEBUG_LEVEL=0 sudo -E make install-shared
+</code></p>
+
+<p>The target actually includes two jobs:</p>
+
+<ol>
+  <li>Copy all the header files under <code>$SRC_ROOT/include/rocksdb</code> to <code>/usr/local/include/rocksdb</code></li>
+  <li>Copy the <code>.so</code> file and symbolic links to <code>/usr/local/lib</code>  </li>
+</ol>
+
+<h4 id="run-the-example">Run the example</h4>
 <ul>
   <li>Compile the program with following command</li>
 </ul>
@@ -113,7 +109,7 @@ g++ -o demo -std=c++11 -lrocksdb demo.cpp
 ./demo: error while loading shared libraries: librocksdb.so.4.9: cannot open shared object file: No such file or directory
 </code></p>
 
-<p>The problem with the <code>install-shared</code> target is that  <code>/usr/local/lib</code> is in <code>g++</code>’s dynamic library search paths but not in <code>ldconfig</code>’s in CentOS 7 by default. So the program can be linked during compiling time but will cause dynamic library load error during run time. This can be verified by following commands:</p>
+<p>The problem with the <code>install-shared</code> target is that  <code>/usr/local/lib</code> is in <code>g++</code>’s dynamic library search paths but not in <code>ldconfig</code>’s in CentOS 7 by default. So the program can be built during compiling time but will cause dynamic library load error during run time. This can be verified by following commands:</p>
 
 <ul>
   <li>Show search paths of g++</li>
@@ -151,11 +147,36 @@ echo "/usr/local/lib" |sudo tee /etc/ld.so.conf.d/rocksdb-x86_64.conf
 sudo ldconfig -v  #refresh the ldconfig cache
 </code></p>
 
+<h3 id="static-linkage">Static Linkage</h3>
+<p>As mentioned before, <code>/usr/local/lib</code> is in g++’s search path, thus there is no such dynamic load issue with static RocksDB. First build and install static RocksDB.</p>
+
+<p><code>
+DEBUG_LEVEL=0 make static_lib
+DEBUG_LEVEL=0 sudo -E make install-static
+</code></p>
+
+<p>Then compile the demo program with </p>
+
+<p><code>
+g++  demo.cc -o demo -lpthread -lrocksdb  -std=c++11  -lsnappy  -lz -lbz2
+</code></p>
+
+<p>or simply</p>
+
+<p><code>
+g++  demo.cc -o demo -lpthread -lrocksdb  -std=c++11
+</code></p>
+
+<p>Don’t miss the <code>pthread</code> lib.</p>
+
 <h3 id="conclusion">Conclusion</h3>
 
-<p>The problem is caused by shared library search paths which could vary from different Linux distributions. A good solution to avoid the issue is packaging the files into a rpm package, and deb package in Debian paltform of course.</p>
+<p>The problem is caused by shared library search paths which could vary from different Linux distributions. A good solution to avoid the issue is packaging the files into a rpm package, and deb package in Debian platform of course.</p>
 
-<p>There is another problem I have not figured out yet. It is about static linkage. If anyone know how to link RocksDB program statically please drop me a note. </p>
+<p>It is worth noting that <code>/usr/lib64</code>, instead of <code>/usr/lib</code>, is the common place to hold the lib files in x86_64 RedHat family OSes such as CentOS, Fedora. Though <code>/usr/lib</code> works but <code>/usr/lib64</code> is a better place for the lib files in RedHat family. There is a <a href="https://github.com/facebook/rocksdb/pull/2221">patch</a> to take care of that when creating a RPM.  </p>
+
+<s>There is another problem I have not figured out yet. It is about static linkage. If anyone know how to link RocksDB program statically please drop me a note.</s>
+
 ]]></content>
   </entry>
   

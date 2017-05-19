@@ -222,29 +222,27 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
 
   <div class="entry-content"><ul id="markdown-toc">
   <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#getting-started">Getting Started</a>    <ul>
-      <li><a href="#build-rocksdb">Build RocksDB</a></li>
-      <li><a href="#install-rocksdb">Install RocksDB</a></li>
+  <li><a href="#dynamic-linkage">Dynamic Linkage</a>    <ul>
+      <li><a href="#install-the-shared-lib">Install the shared lib</a></li>
       <li><a href="#run-the-example">Run the example</a></li>
     </ul>
   </li>
+  <li><a href="#static-linkage">Static Linkage</a></li>
   <li><a href="#conclusion">Conclusion</a></li>
 </ul>
 
 <h3 id="introduction">Introduction</h3>
 <p><a href="http://rocksdb.org/">RocksDB</a> is a high performance embedded key value storage engine which is written in C++. Though its name tells that it is a database, it is actually a C++ library providing a bunch of API instead of a Client-Server architected database.</p>
 
-<p>I am not a C++ programmer and when trying to play with RocksDB following the <a href="http://rocksdb.org/docs/getting-started.html">Getting Started</a> guide from the RocksDB website, I found it is not easy to run the example in CentOS 7 due to the incorrect installation of RocksDB dynamic library (.so file). To be more specific, the search paths of dynamic libraries vary from Linux distributions but the installation script of RocksDB does not take care of that.</p>
+<p>I am not a C++ programmer and when trying to play with RocksDB following the <a href="http://rocksdb.org/docs/getting-started.html">Getting Started</a> guide from the RocksDB website, I found it is not easy to run the example in CentOS 7 with either dynamic or static linkage. To be more specific with dynamic linkage, the search paths of dynamic libraries vary from Linux distributions but the installation script of RocksDB does not take care of that.</p>
 
-<p>This post is intended for those want to play with RocksDB but failed to run the example. What will be mentioned including</p>
+<p>This post is intended for those who want to play with RocksDB but failed to run the example. What will be mentioned including</p>
 
 <ul>
-  <li>How to build RocksDB dynamic library from source in CentOS 7</li>
-  <li>How to install RocksDB dynamic library in CentOS 7</li>
+  <li>How to install RocksDB as dynamic library from source in CentOS 7</li>
+  <li>How to install RocksDB as static library in CentOS 7</li>
   <li>How to run the example program</li>
 </ul>
-
-<p><strong>Note</strong>: I attempted to compile the program with static link but failed. Still need to figure it out.</p>
 
 </div>
   
@@ -710,7 +708,7 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - Jeff Li -
+  Copyright &copy; 2017 - Jeff Li -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
