@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Storage | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/blog/categories/storage/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2017-05-19T22:00:28+08:00</updated>
+  <updated>2017-05-20T22:06:35+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -203,16 +203,16 @@ g++  demo.cc -o demo -lpthread -lrocksdb  -std=c++11
 
 <p>There is a simple hello file system from the homepage of the FUSE project.
 Use following command lines to test the hello file system. I tested it in a Ubuntu 14.04 x86_64 box.
-{% raw %}
+
 <code>
 gcc -Wall hello.c `pkg-config fuse --cflags --libs` -o hello
 mkdir /tmp/fuse
 ./hello /tmp/fuse
 </code> 
-{% endraw %}</p>
+</p>
 
 <p>If every thing is all right, you should see following result:
-{% raw %}
+
 <code>
 jeff@trusty:~$ ls -l /tmp/fuse
 total 0
@@ -220,9 +220,9 @@ total 0
 jeff@trusty:~$ cat /tmp/fuse/hello
 Hello World!
 </code>
-{% endraw %}
+
 ## How does FUSE work
-{% imgcap  /images/fuse.png Fig-1: Workflow of FUSE %}</p>
+<span class='caption-wrapper'><img class='caption' src='/images/fuse.png' width='' height='' alt='Fig-1: Workflow of FUSE' title='Fig-1: Workflow of FUSE'><span class='caption-text'>Fig-1: Workflow of FUSE</span></span></p>
 
 <p>Fig-1 is the workflow of FUSE fetched from the homepage of the FUSE project. The remaining in this section will try to explain the process.</p>
 
@@ -243,13 +243,13 @@ Hello World!
 
 <h2 id="use-gdb-with-fuse">Use GDB with FUSE</h2>
 <p>Since the hello daemon runs in the user space, we can attach it to the GDB like other user space applications. But before that we should make some extra preparations.
-{% raw %}
+
 <code>bash
 gcc -Wall -g hello.c `pkg-config fuse --cflags --libs` -o hello # Compile with debug symbols flag
 ./hello /tmp/fuse -s # Run the daemon in single thread mode
 ps -ef | grep hello # Search the pid of the hello daemon
 </code>
-{% endraw %}</p>
+</p>
 
 <p>Now it is ready to enter the gdb by issue <code>gdb64</code> in the command line. Attach the process to the gdb by <code>attach PID_OF_THE_HELLO_DAMONE</code>. Since we want to track which functions are called when the command <code>ls -l /tmp/fuse</code> is issued, we should set breakpoints for the 4 functions, namely <code>hello_open, hello_getattr, hello_readdir, hello_read</code> with following gdb commands.</p>
 
@@ -313,12 +313,12 @@ hello.c:(.text+0x268): undefined reference to `fuse_main_real'
 collect2: error: ld returned 1 exit status 
 </code>
 This is a silly problem. Make sure you use the the correct command
-{% raw %} 
+ 
 <code>
 gcc -Wall hello.c `pkg-config fuse --cflags --libs` -o hello # work
 gcc -Wall `pkg-config fuse --cflags --libs` hello.c -o hello # can't work
 </code>
-{% endraw %}</p>
+</p>
 
 <h2 id="further-read">Further Read</h2>
 <ol>

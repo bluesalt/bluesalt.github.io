@@ -9,13 +9,8 @@
   <meta name="author" content="Jeff Li">
 
   
-  <meta name="description" content="Figuring out dependencies in specific distribution is really boring, not fun at all. Hope this post can save you some time. 1
-2
-3
-4
-5
-6
-sudo yum &hellip;">
+  <meta name="description" content="Introduction Triage Conclusion Introduction
+Vagrant and Ansible are used to manage my development environment which is really wonderful. Recently, I &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -91,7 +86,55 @@ sudo yum &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/">Install Protocol Buffer From Source in CentOS 7</a></h1>
+      <h1 class="entry-title"><a href="/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/">A Pitfall of Vagrant When Using Ansible&#8217;s wait_for Module</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2017-05-19T22:09:31+08:00" pubdate data-updated="true">May 19<span>th</span>, 2017</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#triage">Triage</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p>Vagrant and Ansible are used to manage my development environment which is really wonderful. Recently, I have written a Ansible playbook which would reboot the VM during Vagrant provisioning. Check <a href="https://www.vagrantup.com/docs/provisioning/ansible.html">here</a> to see how Vagrant works together with Ansible. Besides, there are tasks left which are expected to continue after the VM comes back. It is easy to find a solution in Ansible</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/">Install Protocol Buffer from Source in CentOS 7</a></h1>
     
     
       <p class="meta">
@@ -197,7 +240,7 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started With RocksDB in CentOS 7</a></h1>
+      <h1 class="entry-title"><a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started with RocksDB in CentOS 7</a></h1>
     
     
       <p class="meta">
@@ -365,7 +408,7 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/04/05/dump-pte-with-systemtap/">Dump PTE With SystemTap</a></h1>
+      <h1 class="entry-title"><a href="/blog/2015/04/05/dump-pte-with-systemtap/">Dump PTE with SystemTap</a></h1>
     
     
       <p class="meta">
@@ -565,56 +608,6 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/08/avro-cookbook-part-iii/">Avro Cookbook : Part III</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-08T17:24:45+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#recipe-6-serialize-data-as-json-data">Recipe 6: Serialize data as JSON data</a></li>
-  <li><a href="#recipe-7-deserialize-json-data">Recipe 7: Deserialize JSON data</a></li>
-  <li><a href="#recipe-8-serialize-array-in-json">Recipe 8: Serialize array in JSON</a></li>
-  <li><a href="#recipe-9-deserialize-json-array-data">Recipe 9: Deserialize JSON array data</a></li>
-  <li><a href="#recipe-10-deserialize-data-stream">Recipe 10: Deserialize data stream</a></li>
-  <li><a href="#summary">Summary</a></li>
-</ul>
-
-<h2 id="recipe-6-serialize-data-as-json-data">Recipe 6: Serialize data as JSON data</h2>
-<p>In <a href="http://jeffli.me/blog/2014/02/06/avro-cookbook-part-i/">Avro Cookbook : part I</a>, if you open the file <code>/tmp/log</code> created by recipe 3, you would find that it is definitely not a human readable text format. Avro provides the encoder/decoder mechanism which helps to serial the data to text format as JSON data.
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/04/08/avro-cookbook-part-iii/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -630,7 +623,11 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/">Install Protocol Buffer From Source in CentOS 7</a>
+        <a href="/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/">A Pitfall of Vagrant When Using Ansible&#8217;s wait_for Module</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/">Install Protocol Buffer from Source in CentOS 7</a>
       </li>
     
       <li class="post">
@@ -638,15 +635,11 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
       </li>
     
       <li class="post">
-        <a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started With RocksDB in CentOS 7</a>
+        <a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started with RocksDB in CentOS 7</a>
       </li>
     
       <li class="post">
         <a href="/blog/2016/08/14/build-latest-wireshark-in-centos-7/">Build Latest Wireshark in CentOS 7</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/">Processes Relation on Python Multiprocessing Module</a>
       </li>
     
   </ul>
@@ -659,7 +652,7 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
   <h1>Categories</h1>
   <ul id="categories">
     <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
-<li class='category'><a href='/blog/categories/devops/'>DevOps (1)</a></li>
+<li class='category'><a href='/blog/categories/devops/'>DevOps (2)</a></li>
 <li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
 <li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
 <li class='category'><a href='/blog/categories/linux/'>Linux (3)</a></li>
@@ -674,7 +667,8 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
 <section>
   <h1>Topics</h1>
   <ul class="tag-cloud">
-    <a style="font-size: 185%" href="/tags/avro/">avro</a>
+    <a style="font-size: 90%" href="/tags/ansible/">ansible</a>
+<a style="font-size: 185%" href="/tags/avro/">avro</a>
 <a style="font-size: 90%" href="/tags/concurrency/">concurrency</a>
 <a style="font-size: 150%" href="/tags/cool/">cool</a>
 <a style="font-size: 90%" href="/tags/fuse/">fuse</a>
@@ -696,7 +690,7 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
 <a style="font-size: 90%" href="/tags/textmate/">textmate</a>
 <a style="font-size: 150%" href="/tags/tip/">tip</a>
 <a style="font-size: 90%" href="/tags/tool/">tool</a>
-<a style="font-size: 90%" href="/tags/vagrant/">vagrant</a>
+<a style="font-size: 150%" href="/tags/vagrant/">vagrant</a>
 <a style="font-size: 90%" href="/tags/wireshark/">wireshark</a>
 
   </ul>

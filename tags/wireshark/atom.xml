@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: wireshark | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/wireshark/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2017-05-19T22:00:28+08:00</updated>
+  <updated>2017-05-20T22:06:35+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[build latest Wireshark in CentOS 7]]></title>
+    <title type="html"><![CDATA[Build Latest Wireshark in CentOS 7]]></title>
     <link href="http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7/"/>
     <updated>2016-08-14T16:27:37+08:00</updated>
     <id>http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7</id>

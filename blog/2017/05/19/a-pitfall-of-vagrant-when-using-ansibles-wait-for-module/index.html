@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>A Pitfall of Vagrant When Using Ansible's wait_for Module - Jeff Li</title>
+  <meta name="author" content="Jeff Li">
+
+  
+  <meta name="description" content="Introduction Triage Conclusion Introduction
+Vagrant and Ansible are used to manage my development environment which is really wonderful. Recently, I &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!-- <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+<!-- <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-49767927-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jeff Li</a></h1>
+  
+    <h2>Be another Jeff</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bluesalt.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/categories/chinese-posts">Chinese Posts</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">A Pitfall of Vagrant When Using Ansible's wait_for Module</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2017-05-19T22:09:31+08:00" pubdate data-updated="true">May 19<span>th</span>, 2017</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#triage">Triage</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p>Vagrant and Ansible are used to manage my development environment which is really wonderful. Recently, I have written a Ansible playbook which would reboot the VM during Vagrant provisioning. Check <a href="https://www.vagrantup.com/docs/provisioning/ansible.html">here</a> to see how Vagrant works together with Ansible. Besides, there are tasks left which are expected to continue after the VM comes back. It is easy to find a solution in Ansible</p>
+
+<!--more-->
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="nn">---</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">reboot the system</span>
+</span><span class="line">  <span class="l-Scalar-Plain">shell</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sleep 2 &amp;&amp; shutdown -r now &quot;Ansible updates triggered&quot;</span>
+</span><span class="line">  <span class="l-Scalar-Plain">async</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+</span><span class="line">  <span class="l-Scalar-Plain">poll</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+</span><span class="line">  <span class="l-Scalar-Plain">become</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">yes</span>
+</span><span class="line">  <span class="l-Scalar-Plain">ignore_errors</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</span><span class="line">
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">waiting for server to come back</span>
+</span><span class="line">  <span class="l-Scalar-Plain">wait_for</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="s">&quot;{{</span><span class="nv"> </span><span class="s">ansible_ssh_port</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default(22)</span><span class="nv"> </span><span class="s">}}&quot;</span>
+</span><span class="line">    <span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="s">&quot;{{</span><span class="nv"> </span><span class="s">ansible_ssh_host</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default(inventory_hostname)</span><span class="nv"> </span><span class="s">}}&quot;</span>
+</span><span class="line">    <span class="l-Scalar-Plain">state</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">started</span>
+</span><span class="line">    <span class="l-Scalar-Plain">delay</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">10</span>
+</span><span class="line">    <span class="l-Scalar-Plain">timeout</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">60</span>
+</span><span class="line">  <span class="l-Scalar-Plain">delegate_to</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">localhost</span>
+</span><span class="line">  <span class="l-Scalar-Plain">become</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">no</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This is the standard way to reboot and wait for a host to come back through polling in Ansible. However, it doesn’t work as expected. Technically, it works with <a href="https://github.com/vagrant-libvirt/vagrant-libvirt">libvirt</a> provider but not the built-in <a href="https://www.vagrantup.com/docs/virtualbox/">VirtualBox</a> provider.</p>
+
+<ul>
+  <li>Output of Ansible shows that the <code>wait_for</code> task is successful</li>
+  <li>SSH connection failure occurs in <code>wait_for</code> task’s following task</li>
+  <li>VirtualBox UI tells that the VM is still booting when <code>wait_for</code> task is done</li>
+</ul>
+
+<h3 id="triage">Triage</h3>
+
+<p>What makes me confused is that VirtualBox tells that VM is still booting but the <code>wait_for</code> module has finished successfully.</p>
+
+<p>For the first try, the value of <code>delay</code> option of <code>wait_for</code> task was set to a longer time like <code>30</code> which means Ansible will block for 30 seconds before it starts to check if the host is back or not. Every task got executed successfully and VirtualBox UI showed that the VM had been up. Though every thing seems to be OK, the workaround didn’t make sense because that is not how <code>wait_for</code> module works. It is supposed to poll the status of the VM and wait until port 22 of the VM is ready. However, the result tell that <code>wait_for</code> module will return immediately whenever it start to check the status.</p>
+
+<p>Next, enable <a href="https://www.vagrantup.com/docs/provisioning/ansible_common.html#verbose">Ansible’s verbose mode in Vagrant</a>. From the output of <code>wait_for</code> module we can find</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="p-Indicator">{</span>
+</span><span class="line">   <span class="s">&quot;changed&quot;</span><span class="p-Indicator">:</span><span class="nv">false</span><span class="p-Indicator">,</span>
+</span><span class="line">   <span class="s">&quot;elapsed&quot;</span><span class="p-Indicator">:</span><span class="nv">10</span><span class="p-Indicator">,</span>
+</span><span class="line">   <span class="s">&quot;invocation&quot;</span><span class="p-Indicator">:{</span>
+</span><span class="line">      <span class="s">&quot;module_args&quot;</span><span class="p-Indicator">:{</span>
+</span><span class="line">         <span class="s">&quot;connect_timeout&quot;</span><span class="p-Indicator">:</span><span class="nv">5</span><span class="p-Indicator">,</span>
+</span><span class="line">         <span class="s">&quot;delay&quot;</span><span class="p-Indicator">:</span><span class="nv">10</span><span class="p-Indicator">,</span>
+</span><span class="line">         <span class="s">&quot;exclude_hosts&quot;</span><span class="p-Indicator">:</span><span class="nv">null</span><span class="p-Indicator">,</span>
+</span><span class="line">         <span class="s">&quot;host&quot;</span><span class="p-Indicator">:</span><span class="s">&quot;127.0.0.1&quot;</span><span class="p-Indicator">,</span>
+</span><span class="line">         <span class="s">&quot;path&quot;</span><span class="p-Indicator">:</span><span class="nv">null</span><span class="p-Indicator">,</span>
+</span><span class="line">         <span class="s">&quot;port&quot;</span><span class="p-Indicator">:</span><span class="nv">2222</span><span class="p-Indicator">,</span>
+</span><span class="line">         <span class="s">&quot;search_regex&quot;</span><span class="p-Indicator">:</span><span class="nv">null</span><span class="p-Indicator">,</span>
+</span><span class="line">         <span class="s">&quot;state&quot;</span><span class="p-Indicator">:</span><span class="s">&quot;started&quot;</span><span class="p-Indicator">,</span>
+</span><span class="line">         <span class="s">&quot;timeout&quot;</span><span class="p-Indicator">:</span><span class="nv">60</span>
+</span><span class="line">      <span class="p-Indicator">},</span>
+</span><span class="line">      <span class="s">&quot;module_name&quot;</span><span class="p-Indicator">:</span><span class="s">&quot;wait_for&quot;</span>
+</span><span class="line">   <span class="p-Indicator">},</span>
+</span><span class="line">   <span class="s">&quot;path&quot;</span><span class="p-Indicator">:</span><span class="nv">null</span><span class="p-Indicator">,</span>
+</span><span class="line">   <span class="s">&quot;port&quot;</span><span class="p-Indicator">:</span><span class="nv">2222</span><span class="p-Indicator">,</span>
+</span><span class="line">   <span class="s">&quot;search_regex&quot;</span><span class="p-Indicator">:</span><span class="nv">null</span><span class="p-Indicator">,</span>
+</span><span class="line">   <span class="s">&quot;state&quot;</span><span class="p-Indicator">:</span><span class="s">&quot;started&quot;</span>
+</span><span class="line"><span class="p-Indicator">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Wait, why are the values of host and port <code>127.0.0.1</code> and <code>2222</code>? Aren’t they supposed to be the ip of VM and 22? The output means that 2 of Ansible’s facts, <code>ansible_ssh_port</code> and <code>ansible_ssh_host</code>, are interpreted unexpectedly. If not specified, Ansible’s inventory file will be <a href="https://www.vagrantup.com/docs/provisioning/ansible_intro.html#the-inventory-file">generated by Vagrant automatically</a>. The content of inventory file generated by Vagrant is</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="c1"># Generated by Vagrant</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">VM_NAME ansible_ssh_host=127.0.0.1 ansible_ssh_port=2222 ansible_ssh_private_key_file=VM_DIRECTORY/.vagrant/machines/VM_NAME/virtualbox/private_key</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Because Vagrant use a <a href="https://www.vagrantup.com/docs/networking/forwarded_ports.html">forwarded port</a> to create SSH connection in VirtualBox, the host will be <code>127.0.0.1</code> and the port is a <code>2222</code> other than 22.</p>
+
+<p>So, can we instruct Vagrant to generate the inventory file with the VM’s own address and port 22 by <a href="https://github.com/mitchellh/vagrant/issues/1922">disabling port forwarding</a>? Unfortunately, NO! You can disable any port <a href="https://github.com/mitchellh/vagrant/issues/474">except the forwarded SSH port in VirtualBox</a>. That is because Vagrant require a way to access and configure the VM through SSH and port forwarding is used with VirtualBox provider. The libvirt provider uses <a href="https://www.vagrantup.com/docs/networking/private_network.html">private network</a> to provide the SSH connection so the playbook works well.</p>
+
+<p>The reason why <code>wait_for</code> module is able to finish successfully is that the forwarded port will be created before the VM is ready. Every time <code>wait_for</code> module starts to check the VM, it finds that the port is ready. In fact, only the host’s port is ready but the guest’s port is not.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>Since the root cause has been found, there are several ways to fix it.</p>
+
+<ol>
+  <li>Provide a <a href="https://www.vagrantup.com/docs/provisioning/ansible_common.html#inventory_path">customized inventory file to Vagrant</a>. This is not a good practice because we should let Vagrant to manage as much stuff as possible.</li>
+  <li>Pass the VM’s address and port to the playbook. Not good enough since hardcoded parameters should be avoided.</li>
+  <li>Use the <code>search_regex</code> option of <code>wait_for</code> module. With the option, <code>wait_for</code> module will not just check if the port is ready, it will also try to read some data from the port and search if it matches the <code>search_regex</code>. After setting the <code>search_regex</code> option to <code>OpenSSH</code>, every one is happy now.</li>
+</ol>
+
+<p>Some lessons</p>
+
+<ul>
+  <li>Networking is really the must-know knowledge for Vagrant users.</li>
+  <li>Ansible’s verbose mode is informative and should be turned on when something is abnormal.</li>
+  <li>Let Vagrant to manage the environment as much as possible.</li>
+</ul>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2017-05-19T22:09:31+08:00" pubdate data-updated="true">May 19<span>th</span>, 2017</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/devops/'>DevOps</a>
+  
+</span>
+
+
+      
+
+<span class="tags">
+  
+    <a class='tag' href='/tags/ansible/'>ansible</a>, <a class='tag' href='/tags/vagrant/'>vagrant</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/" title="Previous Post: Install Protocol Buffer from Source in CentOS 7">&laquo; Install Protocol Buffer from Source in CentOS 7</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/">A Pitfall of Vagrant When Using Ansible's wait_for Module</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/">Install Protocol Buffer from Source in CentOS 7</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/06/a-beginners-guide-for-vagrant/">A Beginner's Guide for Vagrant</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started with RocksDB in CentOS 7</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/14/build-latest-wireshark-in-centos-7/">Build Latest Wireshark in CentOS 7</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/chinese-posts/'>Chinese Posts (1)</a></li>
+<li class='category'><a href='/blog/categories/devops/'>DevOps (2)</a></li>
+<li class='category'><a href='/blog/categories/golang/'>Golang (1)</a></li>
+<li class='category'><a href='/blog/categories/java/'>Java (4)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>Linux (3)</a></li>
+<li class='category'><a href='/blog/categories/octopress/'>Octopress (1)</a></li>
+<li class='category'><a href='/blog/categories/python/'>Python (1)</a></li>
+<li class='category'><a href='/blog/categories/softwares/'>Softwares (1)</a></li>
+<li class='category'><a href='/blog/categories/storage/'>Storage (2)</a></li>
+<li class='category'><a href='/blog/categories/tips/'>Tips (2)</a></li>
+
+  </ul>
+</section>
+<section>
+  <h1>Topics</h1>
+  <ul class="tag-cloud">
+    <a style="font-size: 90%" href="/tags/ansible/">ansible</a>
+<a style="font-size: 185%" href="/tags/avro/">avro</a>
+<a style="font-size: 90%" href="/tags/concurrency/">concurrency</a>
+<a style="font-size: 150%" href="/tags/cool/">cool</a>
+<a style="font-size: 90%" href="/tags/fuse/">fuse</a>
+<a style="font-size: 90%" href="/tags/go/">go</a>
+<a style="font-size: 90%" href="/tags/https/">https</a>
+<a style="font-size: 210%" href="/tags/java/">java</a>
+<a style="font-size: 90%" href="/tags/jetty/">jetty</a>
+<a style="font-size: 185%" href="/tags/kernel/">kernel</a>
+<a style="font-size: 90%" href="/tags/kv/">kv</a>
+<a style="font-size: 90%" href="/tags/linux/">linux</a>
+<a style="font-size: 90%" href="/tags/mac/">mac</a>
+<a style="font-size: 90%" href="/tags/maven/">maven</a>
+<a style="font-size: 90%" href="/tags/nosql/">nosql</a>
+<a style="font-size: 90%" href="/tags/octopress/">octopress</a>
+<a style="font-size: 210%" href="/tags/oss/">oss</a>
+<a style="font-size: 90%" href="/tags/protobuf/">protobuf</a>
+<a style="font-size: 90%" href="/tags/python/">python</a>
+<a style="font-size: 150%" href="/tags/systemtap/">systemtap</a>
+<a style="font-size: 90%" href="/tags/textmate/">textmate</a>
+<a style="font-size: 150%" href="/tags/tip/">tip</a>
+<a style="font-size: 90%" href="/tags/tool/">tool</a>
+<a style="font-size: 150%" href="/tags/vagrant/">vagrant</a>
+<a style="font-size: 90%" href="/tags/wireshark/">wireshark</a>
+
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2017 - Jeff Li -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'bluesalt';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
