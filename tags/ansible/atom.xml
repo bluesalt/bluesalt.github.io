@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: ansible | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/ansible/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2017-05-20T22:06:35+08:00</updated>
+  <updated>2017-05-21T07:06:19+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -63,7 +63,7 @@ become: no
 
 <h3 id="triage">Triage</h3>
 
-<p>What makes me confused is that VirtualBox tells that VM is still booting but the <code>wait_for</code> module has finished successfully.</p>
+<p>What makes me confused is that VirtualBox tells that VM is still booting but the <code>wait_for</code> module has finished successfully. Disclose SSH connection failure from following task means that the VM is not ready yet. It seems that something is wrong with <code>wait_for</code> module.</p>
 
 <p>For the first try, the value of <code>delay</code> option of <code>wait_for</code> task was set to a longer time like <code>30</code> which means Ansible will block for 30 seconds before it starts to check if the host is back or not. Every task got executed successfully and VirtualBox UI showed that the VM had been up. Though every thing seems to be OK, the workaround didn’t make sense because that is not how <code>wait_for</code> module works. It is supposed to poll the status of the VM and wait until port 22 of the VM is ready. However, the result tell that <code>wait_for</code> module will return immediately whenever it start to check the status.</p>
 
@@ -125,6 +125,7 @@ become: no
   <li>Ansible’s verbose mode is informative and should be turned on when something is abnormal.</li>
   <li>Let Vagrant to manage the environment as much as possible.</li>
 </ul>
+
 ]]></content>
   </entry>
   
