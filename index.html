@@ -326,22 +326,31 @@ By the way, besides Vagrant, HashiCorp also deliver several open source DevOps t
   </header>
 
 
-  <div class="entry-content"><p>As we know, Wireshark has switched from GTK+ to Qt since Version 2. As a Mac and Kubuntu user, the GTK UI was really not harmony with my desktop environment. So after the version 2 was released last year, I upgraded Wireshark in both my Mac and Kubuntu boxes. </p>
+  <div class="entry-content"><p>As we know, Wireshark has switched from GTK+ to Qt since Version 2. As a Mac and Kubuntu user, the GTK UI was really not harmony with my desktop environments. So after the version 2 was released last year, I upgraded Wireshark in both my Mac and Kubuntu boxes. </p>
 
-<p>For some reason, I have to work on some CentOS 7 boxes in which the latest Wireshark in the yum repo is 1.10. However, I found it is so difficult to find any existing Wireshark 2 rpm package in the web. So after spending some time on the Wireshark document, I came to know that it is really easy to build Wireshark rpm packages if you can figure out the dependencies. </p>
+<p>For some reason, I have to work on some CentOS 7 boxes in which the latest Wireshark in the yum repo is 1.10. Besides, it is difficult to find any existing Wireshark 2 rpm package in the web. After spending some time on the Wireshark document, I came to know that it is really easy to build Wireshark rpm package only if the dependencies are met. </p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
 <span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install gcc gcc-c++ bison flex libpcap-devel qt-devel gtk3-devel rpm-build libtool c-ares-devel qt5-qtbase-devel qt5-qtmultimedia-devel desktop-file-utils
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install gcc gcc-c++ bison flex libpcap-devel qt-devel gtk3-devel rpm-build libtool c-ares-devel qt5-qtbase-devel qt5-qtmultimedia-devel qt5-linguist desktop-file-utils
 </span><span class="line">wget https://1.eu.dl.wireshark.org/src/wireshark-2.0.5.tar.bz2
 </span><span class="line">tar xf wireshark-2.0.5.tar.bz2
 </span><span class="line">./configure
 </span><span class="line">make rpm-package</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>After that, you can find the rpms in the <code>package/rpm/RPMs/x86_64</code>. Hope this note could save you some time.</p>
+<p>The RPM files could be found in the <code>package/rpm/RPMs/x86_64</code> directory. </p>
+
+<p>Hope this note could save you some time.</p>
+
+<p><strong>Updates 1</strong>
+Wireshark 2.2.X has an extra dependency. If <code>configure</code> script complains about</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">configure: error: I couldn't find lrelease-qt5 or lrelease; make sure it's installed and in your path</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>, it means <code>qt5-linguist</code> which has been mentioned in the comments by Michel, is missing. Above guide has been updated.</p>
 
 </div>
   
