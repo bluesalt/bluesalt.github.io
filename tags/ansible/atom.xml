@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: ansible | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/ansible/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2017-07-11T07:15:02+08:00</updated>
+  <updated>2017-07-31T22:33:54+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -12,6 +12,134 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Notes on Ansible Include]]></title>
+    <link href="http://bluesalt.github.io/blog/2017/07/19/notes-on-ansible-include/"/>
+    <updated>2017-07-19T07:23:41+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2017/07/19/notes-on-ansible-include</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#awesomeness-of-include">Awesomeness of Include</a></li>
+  <li><a href="#filename-variable-substitution">Filename Variable Substitution</a></li>
+  <li><a href="#yaml">```yaml</a>    <ul>
+      <li><a href="#static-include">Static Include</a>        <ul>
+          <li><a href="#variable-substitution">Variable Substitution</a></li>
+          <li><a href="#handler-include">Handler Include</a></li>
+        </ul>
+      </li>
+      <li><a href="#dynamic-include">Dynamic Include</a></li>
+      <li><a href="#conclusion">Conclusion</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p>Include mechanism is one of my favorite features about Ansible because it is the key to adhere to the principle of DRY that stands for Don’t Repeat Yourself which is of great importance to write reusable and maintainable Ansible code.</p>
+
+<p>This post won’t cover every piece of the include feature. Please go through the docs from Ansible docs site before continuing if you are not familiar with Ansible include. <a href="http://docs.ansible.com/ansible/playbooks_roles.html">link 1</a>, <a href="https://docs.ansible.com/ansible/include_module.html">link 2</a>.</p>
+
+<!--more-->
+
+<p>There are 2 kinds of includes, namely dynamic and static. Essentially, at the moment. Any include in Ansible is a form of tasks expanding. When a file A includes file B, tasks defined in B will be added to file A. The difference between the two is that included tasks will be expanded during parsing time in static include while in the other case tasks will be expanded when playbooks are running.</p>
+
+<p>There is a <a href="https://github.com/rhops/ansible-static-include-demo">repo</a> in GitHub intended for demonstration and readers are supposed to be familiar with that. The idea comes from OpenStack’s  release convention through which each major release will have a numeric version and a associated code name such as <code>kilo</code> and <code>ocata</code>. The convention is similar to Ubuntu’s. Assume that the OpenStack infrastructure is managed by Ansible and sometimes the gap between different major release is so huge that you have to create dedicated tasks for each major release.</p>
+
+<h3 id="awesomeness-of-include">Awesomeness of Include</h3>
+<p>We know that include could be applied to tasks, plays and handlers. We also know that include could be dynamic or static. So far there are 2 features exciting me.</p>
+
+<ul>
+  <li>Filename variable substitution</li>
+  <li>Include with complex controls such as for loop which is impossible without dynamic include</li>
+</ul>
+
+<p>What makes them awesome is that they result in more clean Ansible code and thus more maintainable. Instead of being shipped when Ansible was born, they were added through the evolution of Ansible.</p>
+
+<ul>
+  <li>Filename variable substitution has been added since 1.7</li>
+  <li>Dynamic include was introduced for the first time in 2.0</li>
+</ul>
+
+<h3 id="filename-variable-substitution">Filename Variable Substitution</h3>
+<p>In the old days, variables in names of included files were not allowed. Take the demo repo as an example, anyone who wants to switch tasks based on the codename, he will have to write follow Ansible code.</p>
+
+<h2 id="yaml">```yaml</h2>
+<ul>
+  <li>
+    <p>include: ocata.yml
+when: codename == ‘ocata’</p>
+  </li>
+  <li>
+    <p>include: kilo.yml
+when: codename == ‘kilo’
+```</p>
+  </li>
+</ul>
+
+<p>Not bad so far since there are only 2 codenames. But what if you have 10 codenames? This definitely violates the DRY principle. With filename variable substitution, the code could become much more clean.</p>
+
+<p>
+<code>yaml
+---
+- include: "{{ codename }}.yml"
+</code>
+</p>
+
+<p>Now every one is happy with filename variable substitution because there is much less code to maintain. And as we know, there are multiple places to define variable in Ansible such as inventory vars, playbooks’ <code>vars</code> or <code>vars_files</code> sections, roles’ <code>defaults</code> or  <code>vars</code> directories, command lines’ <code>--extra-vars</code> parameters and so on. Are the variables used in filename allowed to be defined anywhere? The short answer is <em>NO</em> to static include and <em>YES</em> to dynamic include. More detail will be provided in following sections, just keep in mind that <strong>variable substitution is applied to both static and dynamic include</strong>.</p>
+
+<h3 id="static-include">Static Include</h3>
+<p>Refer to the <a href="http://docs.ansible.com/ansible/latest/playbooks_roles.html#dynamic-versus-static-includes">doc</a> to check how to identify a static include. You should learn when an include will be considered as static.</p>
+
+<h4 id="variable-substitution">Variable Substitution</h4>
+<p>As mentioned before, static include is parsed during compile time at which some variables such as those defined as inventory ones are not available, thus in static includes, variables used in names are not allowed to be defined in the places other than the following <em>3</em> places.</p>
+
+<ol>
+  <li>Extra vars in the command line. <a href="https://github.com/rhops/ansible-static-include-demo/commit/1e277440f5aca6bb1d918ef24e15e82a242c7e52">example</a></li>
+  <li><code>vars</code> section in playbook. <a href="https://github.com/rhops/ansible-static-include-demo/commit/594aca1ddef3f3e888588cd0990fa7fd97e0054b">example</a></li>
+  <li>Files which will be included in the <code>vars_files</code> section of playbook. <a href="https://github.com/rhops/ansible-static-include-demo/commit/fa29542da30eb98ecf22c6b55d54ecddc1a867cb">example</a></li>
+</ol>
+
+<h4 id="handler-include">Handler Include</h4>
+<p>The <a href="http://docs.ansible.com/ansible/latest/playbooks_roles.html#dynamic-versus-static-includes">doc</a> points out that it is impossible to notify trigger handlers from dynamic includes. The correct usage of handler include would looks like this.</p>
+
+<p>
+<code>yaml
+---
+- include: "{{ codename }}.yml"
+  static: yes
+</code>
+</p>
+
+<p>The <code>static</code> option introduced in 2.1 deserves more explanation.</p>
+
+<ul>
+  <li>Before 2.0, all includes were static, there is no need to add the <code>static</code> option.</li>
+  <li>In 2.0, all includes were considered as dynamic, the code will not works even the variables are defined following the rules described in previous section. No errors occurs but the handlers will never be triggered.</li>
+  <li>After 2.0, since handler includes must be static, the <code>static</code> modifier has to be added because includes with filename variables are considered dynamic unless forced to be static. Of course, <code>task_includes_static</code> and <code>handler_includes_static</code> could be leveraged. IMHO, it is not a good idea to override the default behavior of Ansible unless you have to.</li>
+</ul>
+
+<h3 id="dynamic-include">Dynamic Include</h3>
+<p>Dynamic include is relatively trivial because it is just a form of task which means it is possible to combine include and other complex control facilities such as for loop.</p>
+
+<p>There are several differences between static and dynamic include.</p>
+
+<ul>
+  <li>The time to expand the tasks. Dynamically included tasks will not get expanded until the include task is reached.</li>
+  <li>Play and handler includes must be static.</li>
+</ul>
+
+<p>It is worth noting that except for the circumstances under which the includes must be static, the gap between the two is really tiny. If both forms are applicable, they should result in the same state. In other words, they are equivalent in that case. If anyone find an exception, please drop me a comment.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+<ul>
+  <li>Filename variable substitution is applicable for both static and dynamic include.</li>
+  <li>Play and handler includes must be static.</li>
+  <li>Static and dynamic includes are equivalent if they are applicable at the same time.</li>
+  <li>Ansible is not 100% stable so far, pay attention to the the change log of every releases.</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[A Pitfall of Vagrant When Using Ansible's wait_for Module]]></title>

@@ -66,7 +66,7 @@
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7/</loc>
-        <lastmod>2017-07-11T07:15:02+08:00</lastmod>
+        <lastmod>2017-07-11T07:15:51+08:00</lastmod>
     </url>
     <url>
         <loc>
@@ -91,12 +91,16 @@
         <lastmod>2017-07-10T21:33:11+08:00</lastmod>
     </url>
     <url>
+        <loc>http://bluesalt.github.io/blog/2017/07/19/notes-on-ansible-include/</loc>
+        <lastmod>2017-07-31T22:32:40+08:00</lastmod>
+    </url>
+    <url>
         <loc>http://bluesalt.github.io/about/</loc>
         <lastmod>2014-03-27T21:35:41+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/archives/</loc>
-        <lastmod>2017-07-11T07:15:02+08:00</lastmod>
+        <lastmod>2017-07-31T22:32:40+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/chinese-posts/</loc>
@@ -104,7 +108,7 @@
     </url>
     <url>
         <loc>http://bluesalt.github.io/</loc>
-        <lastmod>2017-07-11T07:15:02+08:00</lastmod>
+        <lastmod>2017-07-31T22:32:40+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/robots.txt</loc>
