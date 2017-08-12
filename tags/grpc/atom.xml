@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: grpc | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/grpc/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2017-08-12T17:17:37+08:00</updated>
+  <updated>2017-08-12T17:19:35+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -35,6 +35,8 @@
 <p>I have been working on a project which leverages gRPC recently. In the project, a component, the gRPC client, written with Python communicates with another one, the gRPC server every day like a daily cron job. And during each round, multiple calls will be issued by the client. </p>
 
 <p>It worked well on the first round. One day later, when 2nd round got scheduled, unavailable exception was observed from the first call with the complaint.</p>
+
+<!--more-->
 
 <p><code>
 _Rendezvous: &lt;_Rendezvous of RPC that terminated with (StatusCode.UNAVAILABLE,Endpoint read failed)&gt;
