@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Jeff Li</title>
+  <title>Keep Python gRPC  Client Connection Truly Alive - Jeff Li</title>
   <meta name="author" content="Jeff Li">
 
   
@@ -19,7 +19,7 @@ gRPC is a high performance RPC framework from Google which &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://bluesalt.github.io">
+  <link rel="canonical" href="http://bluesalt.github.io/blog/2017/08/02/keep-python-grpc-client-connection-truly-alive">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Jeff Li" type="application/atom+xml">
@@ -78,15 +78,12 @@ gRPC is a high performance RPC framework from Google which &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2017/08/02/keep-python-grpc-client-connection-truly-alive/">Keep Python gRPC  Client Connection Truly Alive</a></h1>
+      <h1 class="entry-title">Keep Python gRPC  Client Connection Truly Alive</h1>
     
     
       <p class="meta">
@@ -109,7 +106,7 @@ gRPC is a high performance RPC framework from Google which &hellip;">
   </header>
 
 
-  <div class="entry-content"><ul id="markdown-toc">
+<div class="entry-content"><ul id="markdown-toc">
   <li><a href="#introduction">Introduction</a></li>
   <li><a href="#triage">Triage</a>    <ul>
       <li><a href="#reconnection-mechanism">Reconnection Mechanism</a></li>
@@ -271,79 +268,16 @@ gRPC is a high performance RPC framework from Google which &hellip;">
 <p>This would be confusing for beginners because there is no doc about this. And almost all the code samples—even the unit test case in gRPC code base—use Python procedural programming style in which the bug would not be produced. A warning should have been documented. That is why this post is created.</p>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2017/07/19/notes-on-ansible-include/">Notes on Ansible Include</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Jeff Li</span></span>
 
-<time datetime="2017-07-19T07:23:41+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2017</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#awesomeness-of-include">Awesomeness of Include</a></li>
-  <li><a href="#filename-variable-substitution">Filename Variable Substitution</a></li>
-  <li><a href="#static-include">Static Include</a>    <ul>
-      <li><a href="#variable-substitution">Variable Substitution</a></li>
-      <li><a href="#handler-include">Handler Include</a></li>
-    </ul>
-  </li>
-  <li><a href="#dynamic-include">Dynamic Include</a></li>
-  <li><a href="#conclusion">Conclusion</a></li>
-</ul>
-
-<h3 id="introduction">Introduction</h3>
-<p>Include mechanism is one of my favorite features about Ansible because it is the key to adhere to the principle of DRY that stands for Don’t Repeat Yourself which is of great importance to write reusable and maintainable Ansible code.</p>
-
-<p>This post won’t cover every piece of the include feature. Please go through the docs from Ansible docs site before continuing if you are not familiar with Ansible include. <a href="http://docs.ansible.com/ansible/playbooks_roles.html">link 1</a>, <a href="https://docs.ansible.com/ansible/include_module.html">link 2</a>.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2017/07/19/notes-on-ansible-include/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/">A Pitfall of Vagrant When Using Ansible&#8217;s wait_for Module</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -355,426 +289,51 @@ gRPC is a high performance RPC framework from Google which &hellip;">
   
 
 
-<time datetime="2017-05-19T22:09:31+08:00" pubdate data-updated="true">May 19<span>th</span>, 2017</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#triage">Triage</a></li>
-  <li><a href="#conclusion">Conclusion</a></li>
-</ul>
-
-<h3 id="introduction">Introduction</h3>
-<p>Vagrant and Ansible are used to manage my development environment which is really wonderful. Recently, I have written a Ansible playbook which would reboot the VM during Vagrant provisioning. Check <a href="https://www.vagrantup.com/docs/provisioning/ansible.html">here</a> to see how Vagrant works together with Ansible. Besides, there are tasks left which are expected to continue after the VM comes back. It is easy to find a solution in Ansible</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2017-08-02T07:27:54+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2017</time>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/">Install Protocol Buffer from Source in CentOS 7</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="categories">
   
-
-
-<time datetime="2016-12-08T13:45:59+08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2016</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Figuring out dependencies in specific distribution is really boring, not fun at all.</p>
-
-<p>Hope this post can save you some time.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install autoconf automake libtool unzip gcc-c++ git -y
-</span><span class="line">git clone https://github.com/google/protobuf.git
-</span><span class="line">cd protobuf
-</span><span class="line">./autogen.sh
-</span><span class="line">./configure
-</span><span class="line">make</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-</div>
+    <a class='category' href='/blog/categories/python/'>Python</a>
   
-  
+</span>
 
 
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/12/06/a-beginners-guide-for-vagrant/">A Beginner&#8217;s Guide for Vagrant</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="tags">
   
+    <a class='tag' href='/tags/grpc/'>grpc</a>
+  
+</span>
 
 
-<time datetime="2016-12-06T07:28:04+08:00" pubdate data-updated="true">Dec 6<span>th</span>, 2016</time>
-        
-      </p>
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#getting-started">Getting Started</a></li>
-  <li><a href="#how-it-works">How It Works</a>    <ul>
-      <li><a href="#provider">Provider</a></li>
-      <li><a href="#box">Box</a></li>
-      <li><a href="#provisioner">Provisioner</a></li>
-    </ul>
-  </li>
-  <li><a href="#what-is-next">What is Next</a></li>
-</ul>
-
-<h3 id="introduction">Introduction</h3>
-<p><a href="https://www.vagrantup.com/">Vagrant</a> is a tool developed at <a href="https://www.hashicorp.com/">HashiCorp</a> intended to relieve the effort to setup development environment. According to its document, Vagrant is able to “create and configure lightweight, reproducible, and portable development environments”. It relizes the vision through virtualization technologies like VirtualBox.
-By the way, besides Vagrant, HashiCorp also deliver several open source DevOps tools which are really cool. I suggest spending some time on exploring their products if you are interested in DevOps.
+      <div class="sharing">
+  
+  
+  
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2016/12/06/a-beginners-guide-for-vagrant/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Getting Started with RocksDB in CentOS 7</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-12-02T20:27:01+08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2016</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#introduction">Introduction</a></li>
-  <li><a href="#dynamic-linkage">Dynamic Linkage</a>    <ul>
-      <li><a href="#install-the-shared-lib">Install the shared lib</a></li>
-      <li><a href="#run-the-example">Run the example</a></li>
-    </ul>
-  </li>
-  <li><a href="#static-linkage">Static Linkage</a></li>
-  <li><a href="#conclusion">Conclusion</a></li>
-</ul>
-
-<h3 id="introduction">Introduction</h3>
-<p><a href="http://rocksdb.org/">RocksDB</a> is a high performance embedded key value storage engine which is written in C++. Though its name tells that it is a database, it is actually a C++ library providing a bunch of API instead of a Client-Server architected database.</p>
-
-<p>I am not a C++ programmer and when trying to play with RocksDB following the <a href="http://rocksdb.org/docs/getting-started.html">Getting Started</a> guide from the RocksDB website, I found it is not easy to run the example in CentOS 7 with either dynamic or static linkage. To be more specific with dynamic linkage, the search paths of dynamic libraries vary from Linux distributions but the installation script of RocksDB does not take care of that.</p>
-
-<p>This post is intended for those who want to play with RocksDB but failed to run the example. What will be mentioned including</p>
-
-<ul>
-  <li>How to install RocksDB as dynamic library from source in CentOS 7</li>
-  <li>How to install RocksDB as static library in CentOS 7</li>
-  <li>How to run the example program</li>
-</ul>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+        <a class="basic-alignment left" href="/blog/2017/07/19/notes-on-ansible-include/" title="Previous Post: Notes on Ansible Include">&laquo; Notes on Ansible Include</a>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/08/14/build-latest-wireshark-in-centos-7/">Build Latest Wireshark in CentOS 7</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-08-14T16:27:37+08:00" pubdate data-updated="true">Aug 14<span>th</span>, 2016</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>As we know, Wireshark has switched from GTK+ to Qt since Version 2. As a Mac and Kubuntu user, the GTK UI was really not harmony with my desktop environments. So after the version 2 was released last year, I upgraded Wireshark in both my Mac and Kubuntu boxes.</p>
-
-<p>For some reason, I have to work on some CentOS 7 boxes in which the latest Wireshark in the yum repo is 1.10. Besides, it is difficult to find any existing Wireshark 2 rpm package in the web. After spending some time on the Wireshark document, I came to know that it is really easy to build Wireshark rpm package only if the dependencies are met.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">sudo yum install gcc gcc-c++ bison flex libpcap-devel qt-devel gtk3-devel rpm-build libtool c-ares-devel qt5-qtbase-devel qt5-qtmultimedia-devel qt5-linguist desktop-file-utils
-</span><span class="line">wget https://1.eu.dl.wireshark.org/src/wireshark-2.0.5.tar.bz2
-</span><span class="line">tar xf wireshark-2.0.5.tar.bz2
-</span><span class="line">./configure
-</span><span class="line">make rpm-package</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The RPM files could be found in the <code>package/rpm/RPMs/x86_64</code> directory.</p>
-
-<p>Hope this note could save you some time.</p>
-
-<p><strong>Updates 1</strong>
-Wireshark 2.2.X has an extra dependency. If <code>configure</code> script complains about</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">configure: error: I couldn't find lrelease-qt5 or lrelease; make sure it's installed and in your path</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>, it means <code>qt5-linguist</code> which has been mentioned in the comments by Michel, is missing. Above guide has been updated.</p>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/">Processes Relation on Python Multiprocessing Module</a></h1>
-    
-    
-      <p class="meta">
-        
+    </p>
+  </footer>
+</article>
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-04-02T11:40:59+08:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2016</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#related-processes-in-linux">Related Processes in Linux</a></li>
-  <li><a href="#multiple-processes-in-python">Multiple Processes in Python</a>    <ul>
-      <li><a href="#fork-primitive">fork primitive</a></li>
-      <li><a href="#multiprocess-module">multiprocess module</a></li>
-    </ul>
-  </li>
-  <li><a href="#conclusion">Conclusion</a></li>
-  <li><a href="#reference">Reference</a></li>
-</ul>
-
-<h3 id="related-processes-in-linux">Related Processes in Linux</h3>
-<p>In 2007, when I was taking the undergraduate operating system course, the textbook<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> mentioned that a child process could possible be terminated on its parent’s exit.  Years later, I came to the world of Linux and found that the design is OS-dependent because in Linux, the child process will keep running even though its parent is gone. But it will be adopted by the process 1 instead of becoming an orphan. Let’s use a small program<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> to validate the behaviour.</p>
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/04/05/dump-pte-with-systemtap/">Dump PTE with SystemTap</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-04-05T14:41:47+08:00" pubdate data-updated="true">Apr 5<span>th</span>, 2015</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#systemtap-script">SystemTap Script</a></li>
-  <li><a href="#code-comments">Code Comments</a></li>
-  <li><a href="#conclusion">Conclusion</a></li>
-  <li><a href="#further-reading">Further Reading</a></li>
-</ul>
-
-<p>In my <a href="http://blog.jeffli.me/blog/2014/11/08/pagemap-interface-of-linux-explained/">last blog post</a>, we explored the pagemap interface in Linux which is an interface that exposes some kernel information about the memory management. As I mentioned in that post, the pagemap interface does not expose the raw pte content. Since PTEs are allocated in the kernel space, it is impossible to explore the PTEs from user space applications. To access the kernel space memory, a traditional way is writing a kernel module which, I believe, is of course kind of tedious.</p>
-
-<p>In this article, we’ll see how to leverage SystemTap infrastructure to dump the PTE for the page where an given virtual address of a process lives in. 
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/04/05/dump-pte-with-systemtap/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Pagemap Interface of Linux Explained</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-11-08T08:40:24+08:00" pubdate data-updated="true">Nov 8<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#pagemap-interface-explained">Pagemap Interface Explained</a>    <ul>
-      <li><a href="#procpidpagemap">/proc/${pid}/pagemap</a></li>
-      <li><a href="#prockpagecount">/proc/kpagecount</a></li>
-      <li><a href="#prockpageflags">/proc/kpageflags</a></li>
-    </ul>
-  </li>
-  <li><a href="#parse-the-pagemap-interface">Parse the Pagemap Interface</a></li>
-  <li><a href="#conclusion">Conclusion</a></li>
-  <li><a href="#further-reading">Further Reading</a></li>
-</ul>
-
-<p>As we know, Linux supports virtual memory. Actually, almost all modern general operating systems such as Solaris, Windows, Mac OS X support virtual memory. Every user space process in Linux has its own virtual address space. The virtual address will be translated to physical address by operating system finally. In fact, most CPU architectures such as x86 and arm provide hardware support for virtual to physical address translation with MMU. In that case, the translation is done by the cooperation of operating system(software) and CPU(hardware). In this post, I am trying to explain the pagemap interface which is used to explore the mapping information of physical memory.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/11/08/pagemap-interface-of-linux-explained/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-      <a class="prev" href="/blog/page/2/">&larr; Older</a>
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -790,7 +349,7 @@ Wireshark 2.2.X has an extra dependency. If <code>configure</code> script compla
       </li>
     
       <li class="post">
-        <a href="/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/">A Pitfall of Vagrant When Using Ansible&#8217;s wait_for Module</a>
+        <a href="/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/">A Pitfall of Vagrant When Using Ansible's wait_for Module</a>
       </li>
     
       <li class="post">
@@ -798,7 +357,7 @@ Wireshark 2.2.X has an extra dependency. If <code>configure</code> script compla
       </li>
     
       <li class="post">
-        <a href="/blog/2016/12/06/a-beginners-guide-for-vagrant/">A Beginner&#8217;s Guide for Vagrant</a>
+        <a href="/blog/2016/12/06/a-beginners-guide-for-vagrant/">A Beginner's Guide for Vagrant</a>
       </li>
     
   </ul>
@@ -859,6 +418,7 @@ Wireshark 2.2.X has an extra dependency. If <code>configure</code> script compla
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -873,7 +433,10 @@ Wireshark 2.2.X has an extra dependency. If <code>configure</code> script compla
       var disqus_shortname = 'bluesalt';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bluesalt.github.io/blog/2017/08/02/keep-python-grpc-client-connection-truly-alive/';
+        var disqus_url = 'http://bluesalt.github.io/blog/2017/08/02/keep-python-grpc-client-connection-truly-alive/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

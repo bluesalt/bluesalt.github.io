@@ -4,7 +4,7 @@
   <title><![CDATA[Jeff Li]]></title>
   <link href="http://bluesalt.github.io/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2017-07-31T22:33:54+08:00</updated>
+  <updated>2017-08-12T17:17:37+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -12,6 +12,175 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Keep Python gRPC  Client Connection Truly Alive]]></title>
+    <link href="http://bluesalt.github.io/blog/2017/08/02/keep-python-grpc-client-connection-truly-alive/"/>
+    <updated>2017-08-02T07:27:54+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2017/08/02/keep-python-grpc-client-connection-truly-alive</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#triage">Triage</a>    <ul>
+      <li><a href="#reconnection-mechanism">Reconnection Mechanism</a></li>
+      <li><a href="#code-revisit">Code Revisit</a></li>
+    </ul>
+  </li>
+  <li><a href="#solution">Solution</a></li>
+  <li><a href="#epilogue">Epilogue</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p><a href="https://grpc.io/">gRPC</a> is a high performance RPC framework from Google which helps to reduce the gap between components within large scale systems. It provides a program paradigm in which code written by various languages is able to work together as a single language. The framework is promising due to the microservices  tide at the moment. </p>
+
+<p>I have been working on a project which leverages gRPC recently. In the project, a component, the gRPC client, written with Python communicates with another one, the gRPC server every day like a daily cron job. And during each round, multiple calls will be issued by the client. </p>
+
+<p>It worked well on the first round. One day later, when 2nd round got scheduled, unavailable exception was observed from the first call with the complaint.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">_Rendezvous: &lt;_Rendezvous of RPC that terminated with (StatusCode.UNAVAILABLE,Endpoint read failed)&gt;</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>What is more, succeeding calls were totally OK. </p>
+
+<p>Fortunately, the issue is able to be reproduced by using the simple <a href="https://github.com/grpc/grpc/tree/master/examples/python/helloworld">hello world exmaple</a>. So I present a small project in <a href="https://github.com/bluesalt/pygrpc-reconnection">GitHub</a> based on the example to explain the detail. The demo program wraps a RPC client with object oriented style code.</p>
+
+<ul>
+  <li><a href="https://github.com/bluesalt/pygrpc-reconnection/commit/c12a3c2ab2e12de176f28919779cd48ef2aa13cf">Buggy code</a></li>
+  <li><a href="https://github.com/bluesalt/pygrpc-reconnection/commit/b1f3ab21151f5d9ad4be611d19c143cebc2afcc2">Resolved code</a></li>
+</ul>
+
+<p>Check out the buggy code and reproduce the bug with the steps.</p>
+
+<ol>
+  <li>Start the server with <code>python server.py</code>.</li>
+  <li>Start the client <code>python client.py</code> in another terminal and a normal greeting could see.</li>
+  <li>Kill the server started in step 1 with <code>Ctrl + C</code> and then restart it within 30s. When next round is scheduled, the exception should be raised.</li>
+</ol>
+
+<h3 id="triage">Triage</h3>
+<p>The issue is actually not rare. Through Google, one could find that there is even an <a href="https://github.com/grpc/grpc/issues/11043">official GitHub issue 11043</a> tracking the problem and that is exactly what I have met. However, it does not make any sense because the issue has been solved by <a href="https://github.com/grpc/grpc/pull/11154">PR 11154</a> and has been applied in our environment definitely. However, we are sure about 2 things at least.</p>
+
+<ol>
+  <li>The issue is caused by disconnected communication channel.</li>
+  <li>The reconnection mechanism did not work as expected.</li>
+</ol>
+
+<h4 id="reconnection-mechanism">Reconnection Mechanism</h4>
+<p>Every time an instance of <a href="https://github.com/grpc/grpc/blob/v1.4.2/src/python/grpcio/grpc/_channel.py#L912"><code>grpc._channel.Channel</code></a> is initialized, a <a href="https://github.com/grpc/grpc/blob/v1.4.2/src/python/grpcio/grpc/_channel.py#L932">subscription</a> which takes an callback parameter to monitor the connection status will be started. Multiple callbacks are allowed and every time the state of the connection changes, all of them will be called. According to the comment of the code, this is a workaround and will be removed in the future when c-core supports retry. The subscription actually takes following actions.</p>
+
+<ol>
+  <li><a href="https://github.com/grpc/grpc/blob/v1.4.2/src/python/grpcio/grpc/_channel.py#L880">Creates a thread</a> intended to poll the connection status if it does not exist yet.</li>
+  <li><a href="https://github.com/grpc/grpc/blob/v1.4.2/src/python/grpcio/grpc/_channel.py#L880">Polling</a> the state of the connection.</li>
+  <li>If there is no callback, <a href="https://github.com/grpc/grpc/blob/v1.4.2/src/python/grpcio/grpc/_channel.py#L854">quit the polling thread</a></li>
+</ol>
+
+<p>All the callbacks attached to the <code>grpc._channel.Channel</code> instance will be removed when the object is disposed by Python garbage collector because <a href="https://github.com/grpc/grpc/blob/v1.4.2/src/python/grpcio/grpc/_channel.py#L976">customized <code>__del__</code> method</a> which will detach all the callbacks is provided. That means connection state polling will be stopped which could cause our bug. Thus we are able to make an assumption now: the channel instance we have created somehow got destroyed by GC unexpectedly so that there is no connection monitor anymore.</p>
+
+<h4 id="code-revisit">Code Revisit</h4>
+
+<p>Let’s reexamine the buggy code.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="k">class</span> <span class="nc">RpcClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="n">channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="s">&#39;localhost:50051&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">stub</span> <span class="o">=</span> <span class="n">helloworld_pb2_grpc</span><span class="o">.</span><span class="n">GreeterStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">say_hi</span><span class="p">(</span><span class="bp">self</span> <span class="p">):</span>
+</span><span class="line">        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">SayHello</span><span class="p">(</span><span class="n">helloworld_pb2</span><span class="o">.</span><span class="n">HelloRequest</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;you&#39;</span><span class="p">))</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">message</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Line 3 creates a channel instance that will be passed to initialize the client stub of type <a href="https://github.com/bluesalt/pygrpc-reconnection/blob/master/common/helloworld_pb2_grpc.py#L7"><code>GreeterStub</code></a> which is generated by the protocol buffer compiler. If we are able to find anything that proves that there is not reference to the channel instance anymore after some time, we get more close to the truth.</p>
+
+<p>What is checked next is the generated code of <code>GreeterStub</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="k">class</span> <span class="nc">GreeterStub</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">  <span class="sd">&quot;&quot;&quot;The greeting service definition.</span>
+</span><span class="line"><span class="sd">  &quot;&quot;&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+</span><span class="line">    <span class="sd">&quot;&quot;&quot;Constructor.</span>
+</span><span class="line"><span class="sd">    Args:</span>
+</span><span class="line"><span class="sd">      channel: A grpc.Channel.</span>
+</span><span class="line"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class="line">    <span class="bp">self</span><span class="o">.</span><span class="n">SayHello</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+</span><span class="line">        <span class="s">&#39;/helloworld.Greeter/SayHello&#39;</span><span class="p">,</span>
+</span><span class="line">        <span class="n">request_serializer</span><span class="o">=</span><span class="n">helloworld__pb2</span><span class="o">.</span><span class="n">HelloRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+</span><span class="line">        <span class="n">response_deserializer</span><span class="o">=</span><span class="n">helloworld__pb2</span><span class="o">.</span><span class="n">HelloReply</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+</span><span class="line">        <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Oh, there is no explicit reference to the channel instance in this class but it is insufficient to rule out implicit reference yet. The <a href="https://github.com/grpc/grpc/blob/v1.4.2/src/python/grpcio/grpc/_channel.py#L940"><code>grpc._channel.Channel.unary_unary</code></a> method requires more investigation. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="k">def</span> <span class="nf">unary_unary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span class="line">                 <span class="n">method</span><span class="p">,</span>
+</span><span class="line">                 <span class="n">request_serializer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+</span><span class="line">                 <span class="n">response_deserializer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class="line">     <span class="k">return</span> <span class="n">_UnaryUnaryMultiCallable</span><span class="p">(</span>
+</span><span class="line">         <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="p">,</span>
+</span><span class="line">         <span class="n">_channel_managed_call_management</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_call_state</span><span class="p">),</span>
+</span><span class="line">         <span class="n">_common</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">request_serializer</span><span class="p">,</span> <span class="n">response_deserializer</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We can see that—although the whole channel instance is passed—the method references just some attributes of our channel instance but not the channel itself. That means after client stub is initialized, the channel instance will become an orphan Python object. So everything makes sense now.</p>
+
+<h3 id="solution">Solution</h3>
+<p>The solution is simple—prevent the channel instance from being collected.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="k">class</span> <span class="nc">RpcClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="s">&#39;localhost:50051&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">stub</span> <span class="o">=</span> <span class="n">helloworld_pb2_grpc</span><span class="o">.</span><span class="n">GreeterStub</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">say_hi</span><span class="p">(</span><span class="bp">self</span> <span class="p">):</span>
+</span><span class="line">        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">SayHello</span><span class="p">(</span><span class="n">helloworld_pb2</span><span class="o">.</span><span class="n">HelloRequest</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;you&#39;</span><span class="p">))</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">message</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="epilogue">Epilogue</h3>
+<p>To be honest, the behavior is quite surprising. <code>__del__</code> is evil most of the time   and should be avoided unless you have to. We shall not blame the authors of gRPC because without this mechanism, resource leak occurs. And I believe this is the best solution so far.</p>
+
+<p>This would be confusing for beginners because there is no doc about this. And almost all the code samples—even the unit test case in gRPC code base—use Python procedural programming style in which the bug would not be produced. A warning should have been documented. That is why this post is created.</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Notes on Ansible Include]]></title>
@@ -2614,41 +2783,6 @@ _from Run:4:in </code><main>&#8216;_</main></p>
 
 <p>Enjoy the powerful editor brought by community of open source!</p>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[ECUG Con 2011]]></title>
-    <link href="http://bluesalt.github.io/blog/2011/11/22/ecug-con-2011/"/>
-    <updated>2011-11-22T20:11:46+08:00</updated>
-    <id>http://bluesalt.github.io/blog/2011/11/22/ecug-con-2011</id>
-    <content type="html"><![CDATA[<p>从买域名到空间终于把博客搭好了，以后再慢慢弄wordpress。第一篇blog，严格的说应该是独立博客的第一篇，以后再慢慢研究要不要吧javaeye上的blog迁移过来，写点ECUG的吧，第一次参加这样的会议。</p>
-
-<p>第一天去了，第二天身体不大舒服，就没有去，想想还是有点遗憾。会议的主题是关于Go语言的应用，这个会议之前是关于Erlang，听许式伟的介绍，他在实践中发现Go语言比Erlang更适合他的项目使用需求，因此转向Go。关于语言的好坏真的是很难讲，几年前对语言还挺感兴趣，这几天虽然也关注语言的发展，当自己的兴趣已经更多的转移到服务器后端架构上了，所以对于Erlang与Go语言孰好孰坏也不作评价了。</p>
-
-<p>第一场演讲是黄东的系统工程师的非专业课，主要是宽带的计费的，互动很多，听听挺有意思，原来宽带的计费学问还挺大的。</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/Bxnj2cTq/medish.jpg" alt="" /></p>
-
-<p>接下来老莫的云储存。分布式存储一直是感兴趣的方向，因此听得格外仔细。当然由于公司原因，自然不会提到太多的细节。让我记住的一点是做网络相关服务器应用要保守，不需要采用太trick的算法，可靠性才是首要考虑目标，而不是性能。</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/BxnjbiQD/medish.jpg" alt="" /></p>
-
-<p>下午第一场是新浪微博田琪的关于redis的，这方面俺完全不懂。。</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/Bxnjklnq/medish.jpg" alt="" /></p>
-
-<p>上海商派的王磊讲关于他们自己开发的PaaS平台的。说实话，国内公司做这一方面开发而且愿意拿出来分享，我真的觉得挺意外的。。</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/BxnjsvfS/medish.jpg" alt="" /></p>
-
-<p>第一天最后一场：韦光京的关于Go语言的</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/BxnjBrZf/medish.jpg" alt="" /></p>
-
-<p>小花絮：参加ECUG的最小听众~</p>
-
-<p><img src="http://pic.yupoo.com/bluesalt/BxnjM8JR/medish.jpg" alt="" /></p>
 ]]></content>
   </entry>
   

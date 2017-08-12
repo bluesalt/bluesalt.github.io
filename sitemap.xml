@@ -2,116 +2,122 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://bluesalt.github.io/blog/2011/11/22/ecug-con-2011/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2012/08/18/bundles-command-error-in-textmate-2/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2012/09/25/test-if-a-value-implements-an-interface-in-golang/
         </loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2013/05/19/hello-world/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2013/06/17/tips-about-octopress/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2013/07/29/jetty-maven-plugin-and-https-support/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2014/02/06/avro-cookbook-part-i/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2014/04/05/avro-cookbook-part-ii/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2014/04/08/avro-cookbook-part-iii/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2014/08/30/use-gdb-to-understand-fuse-file-system/
         </loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2014/10/10/install-systemtap-in-ubuntu-14-dot-04/
         </loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2014/11/08/pagemap-interface-of-linux-explained/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2015/04/05/dump-pte-with-systemtap/</loc>
-        <lastmod>2016-12-04T17:05:39+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/
         </loc>
-        <lastmod>2017-07-10T21:33:11+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7/</loc>
-        <lastmod>2017-07-11T07:15:51+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/
         </loc>
-        <lastmod>2017-07-10T21:33:06+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2016/12/06/a-beginners-guide-for-vagrant/</loc>
-        <lastmod>2017-04-22T18:31:08+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2016/12/08/install-protocol-buffer-from-source-in-centos-7/
         </loc>
-        <lastmod>2016-12-08T21:47:19+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/
         </loc>
-        <lastmod>2017-07-10T21:33:11+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2017/07/19/notes-on-ansible-include/</loc>
-        <lastmod>2017-07-31T22:32:40+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://bluesalt.github.io/blog/2017/08/02/keep-python-grpc-client-connection-truly-alive/
+        </loc>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/about/</loc>
-        <lastmod>2014-03-27T21:35:41+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/archives/</loc>
-        <lastmod>2017-07-31T22:32:40+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/chinese-posts/</loc>
-        <lastmod>2014-03-27T21:35:41+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/</loc>
-        <lastmod>2017-07-31T22:32:40+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/robots.txt</loc>
-        <lastmod>2014-03-27T21:35:41+08:00</lastmod>
+        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
 </urlset>
