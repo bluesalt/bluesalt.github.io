@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: fuse | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/fuse/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2017-08-12T17:19:35+08:00</updated>
+  <updated>2017-09-04T23:18:59+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -55,7 +55,7 @@ Hello World!
 </code>
 
 ## How does FUSE work
-<span class='caption-wrapper'><img class='caption' src='/images/fuse.png' width='' height='' alt='Fig-1: Workflow of FUSE' title='Fig-1: Workflow of FUSE'><span class='caption-text'>Fig-1: Workflow of FUSE</span></span></p>
+<span class='caption-wrapper'><span class='caption-text'>Fig-1: Workflow of FUSE</span><img class='caption' src='/images/fuse.png' width='' height='' alt='Fig-1: Workflow of FUSE' title='Fig-1: Workflow of FUSE'></span></p>
 
 <p>Fig-1 is the workflow of FUSE fetched from the homepage of the FUSE project. The remaining in this section will try to explain the process.</p>
 

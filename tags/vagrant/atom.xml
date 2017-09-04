@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: vagrant | Jeff Li]]></title>
   <link href="http://bluesalt.github.io/tags/vagrant/atom.xml" rel="self"/>
   <link href="http://bluesalt.github.io/"/>
-  <updated>2017-08-12T17:19:35+08:00</updated>
+  <updated>2017-09-04T23:18:59+08:00</updated>
   <id>http://bluesalt.github.io/</id>
   <author>
     <name><![CDATA[Jeff Li]]></name>
@@ -124,6 +124,108 @@ become: no
   <li>Networking is really the must-know knowledge for Vagrant users.</li>
   <li>Ansible’s verbose mode is informative and should be turned on when something is abnormal.</li>
   <li>Let Vagrant to manage the environment as much as possible.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Vagrant Networking Explained]]></title>
+    <link href="http://bluesalt.github.io/blog/2017/04/22/vagrant-networking-explained/"/>
+    <updated>2017-04-22T18:28:44+08:00</updated>
+    <id>http://bluesalt.github.io/blog/2017/04/22/vagrant-networking-explained</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#concepts">Concepts</a></li>
+  <li><a href="#vagrant-networking">Vagrant Networking</a>    <ul>
+      <li><a href="#public-networking">Public Networking</a></li>
+      <li><a href="#private-networking">Private Networking</a></li>
+      <li><a href="#forwarded-ports">Forwarded Ports</a></li>
+    </ul>
+  </li>
+  <li><a href="#epilogue">Epilogue</a></li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+<p>In the post <a href="https://blog.jeffli.me/blog/2016/12/06/a-beginners-guide-for-vagrant/">A Beginner’s Guide for Vagrant</a> we showed how to get started with Vagrant. I believe it is worthwhile to write a dedicated post to explain networking in Vagrant for several reasons.
+<!--more--></p>
+
+<ul>
+  <li>I have found that some Vagrant beginner including me have got stuck on Vagrant networking such as failing to access the service in Vagrant VM.</li>
+  <li>Networking is the first priority to figure out when it comes to <a href="https://www.vagrantup.com/docs/multi-machine/">multiple machines</a> which is very common since applications are getting more and more complicated.</li>
+  <li>Sometimes you want to simulate a complex network environment.</li>
+</ul>
+
+<h3 id="concepts">Concepts</h3>
+
+<p>Figure-1 depicts a typical home networking topology which is should be familiar to the readers. We’ll use this model to explain networking in Vagrant because it is much simpler than that in data center. But the concepts should be applied in any network where Vagrant runs. We assume that Vagrant is running in the laptop whose IP address is <code>192.168.1.10</code>.</p>
+
+<p><span class='caption-wrapper'><span class='caption-text'>Figure-1: Home Networking Topology</span><img class='caption' src='/images/home-networking.png' width='' height='' alt='Figure-1: Home Networking Topology' title='Figure-1: Home Networking Topology'></span></p>
+
+<p>It is worth mentioning that <code>192.168.1.10</code> is actually a <a href="https://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces">private IPv4 address</a>. Ideally, every Vagrant host should be assigned with at least one public IP address. However, it is unrealistic at the moment due to the lack of IPv4 address resource and slow transformation from IPv4 to IPv6. Nevertheless, what we are gonna discuss should apply no matter the address of the host is public or not.</p>
+
+<h3 id="vagrant-networking">Vagrant Networking</h3>
+
+<p>So far, Vagrant has provide 3 networking options. The underlying implementation is provider-dependent hence it is possible that the option is unavailable with some specific provider—for example, the UDP port forwarding in <a href="https://github.com/vagrant-libvirt/vagrant-libvirt">libvirt provider</a> has not been implemented yet. If what is discussed in this post does not work as expected in your environment, please check the provider docs to see if it is fully supported.</p>
+
+<h4 id="public-networking">Public Networking</h4>
+
+<p>Public network gives the VM the same network visibility as the Vagrant host. Wherever the Vagrant host is accessable, the VM could be reached directly as another standalone machine because it has a dedicated IP address in the same network subnet with the Vagrant host. Figure-2 shows the network topology.</p>
+
+<p><span class='caption-wrapper'><span class='caption-text'>Figure-2: Vagrant Public Networking</span><img class='caption' src='/images/vagrant-public-networking.png' width='' height='' alt='Figure-2: Vagrant Public Networking' title='Figure-2: Vagrant Public Networking'></span></p>
+
+<p>Even the VM is running inside the host, it is able to be accessed directly by the desktop whose IP is <code>192.168.1.11</code>. Of course, this capability is implemented by the underlying providers instead of the Vagrant itself. Typically, it is achieved by a software bridge device. You can see that the IP address of the host has been shifted to the bridge device.</p>
+
+<p>The word <code>public</code> does not mean that the IP addresses have to be <a href="https://en.wikipedia.org/wiki/IP_address#Public_address">public routable IP addresses</a>. Hence it is kind of confusing. The <a href="https://www.vagrantup.com/docs/networking/public_network.html">doc</a> also states that <code>bridged networking</code> would be more accurate. In fact, <code>public networking</code> is called <code>bridged networking</code> in the early days—see the <a href="http://docs-v1.vagrantup.com/v1/docs/bridged_networking.html">doc of old version</a>. Just keep one simple rule in mind—if the VM’s assigned IP is in the same subnet of the host, then it is a public networking configuration.</p>
+
+<p>It should be noted that public networking is not always available even though the providers support bridged networking. It depends on whether you have control over the subnet where the host lives. Typically, the IP addresses—both public and private—assignment will be managed by network administrators in organizations which means you are not able to acquire extra IP addresses at will. In that case, the bridged networking will not work.</p>
+
+<h4 id="private-networking">Private Networking</h4>
+
+<blockquote>
+  <p>Vagrant private networks allow you to access your guest machine by some address that is not publicly accessible from the global internet. In general, this means your machine gets an address in the private address space.</p>
+</blockquote>
+
+<p>The definition is quoted from <a href="https://www.vagrantup.com/docs/networking/private_network.html">Vagrant docs</a>. However, IMHO, it is vague. As an experienced Vagrant user, it is really uninformative. Figure-3 shows the sketch of the private networking in Vagrant.</p>
+
+<p><span class='caption-wrapper'><span class='caption-text'>Figure-3: Vagrant Private Networking</span><img class='caption' src='/images/vagrant-private-networking.png' width='' height='' alt='Figure-3: Vagrant Private Networking' title='Figure-3: Vagrant Private Networking'></span></p>
+
+<p>Technically, in private networking, a virtualized subnet that is invisible from outside of Vagrant host will be created by the underling provider—Vagrant just provides the abstraction with no implementation. Virtual machines attached to the same virtualized subnet are ables to communicate with each other. Unlike public networking, there is no way for the desktop whose ip is <code>192.168.1.11</code> to connect to the virtual machines directly.</p>
+
+<p>Since the addresses assigned to the virtual machines are <a href="https://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces">private IPv4 ones</a>, the IP address range chosen to the virtualized subnet shall not be conflict with any existing network. Especially when the host itself is running in a private subnet as shown in Figure-3. Per my experience, <code>172.16.0.0 – 172.31.255.255</code> is rarely used in organizations which makes it suitable in private networking.</p>
+
+<p>As mentioned before, Vagrant itself just defines the high level abstract options which are implemented by underlying providers. Usually, Vagrant knows how to involve the underlying providers to create the necessary subnets automatically. Thus there is no need for users to configure subnets manually. However, if the IP address range chosen by the Vagrant needs to be changed, manual networking configuration in the provider is required. It varies from provider to provider and the docs of providers should be referenced if networking customization is required.</p>
+
+<p>The private networking in Vagrant only specifies that the virtual machines within the same subnet are visible to each other—it does NOT tell whether the virtual machines are able to access the network outside the host. The behavior is provider-dependent. For example, private networking with VirtualBox is limited on the host while in Libvirt the virtual machines are able to reach the outside. The docs about providers’ networking should be turned to if you need to get the detail.</p>
+
+<p>Finally, like the <code>public networking</code>, the <code>private</code> is kind of confusing, at least uninformative. <code>host-only</code> which was used to name the same method in <a href="http://docs-v1.vagrantup.com/v1/docs/host_only_networking.html">the early days</a> would be better. </p>
+
+<h4 id="forwarded-ports">Forwarded Ports</h4>
+
+<p>Forwarded ports expose the accessibility of virtual machines to the world outside the Vagrant host. In Figure-4, assume that an Nginx HTTP server runs in the virtual machine which uses private networking. Thus it is impossible to access the service from outside of the host. But through a forwarded port, the service is able to be exposed as a service of the Vagrant host which makes it public.</p>
+
+<p><span class='caption-wrapper'><span class='caption-text'>Figure-4: Vagrant Fowarded Ports Networking</span><img class='caption' src='/images/vagrant-fowarded-ports.png' width='' height='' alt='Figure-4: Vagrant Fowarded Ports Networking' title='Figure-4: Vagrant Fowarded Ports Networking'></span></p>
+
+<p>If public networking is used, forwarded ports would be useless because the VMs are already public. However, as mentioned, public networking is not always available due to the fact that it needs some prerequisites that are not always met. Under the circumstances, the combination of private networking and forwarded ports would be the only choice.</p>
+
+<h3 id="epilogue">Epilogue</h3>
+
+<p>Vagrant networking is not hard actually because it is an abstraction for the rich underlying providers. But it is not easy either so I hope this post would be a good complement to the official docs. Just keep the following rules in mind.</p>
+
+<ul>
+  <li>Don’t misunderstand the public/private networking for the public/private IPv4 addresses. They don’t address the same issues.</li>
+  <li>Public networking attaches virtual machines to the same subnet with the Vagrant host</li>
+  <li>Private networking hides virtual machines from the outside of the Vagrant host</li>
+  <li>Forwarded ports create tunnels from virtual machines to outside world</li>
+</ul>
+
+<p>Besides the common options, provider-specific options are also allowed such as <a href="https://www.vagrantup.com/docs/virtualbox/networking.html">VirtualBox</a> and  <a href="https://github.com/vagrant-libvirt/vagrant-libvirt#networks">Libvirt</a>. If you use different providers, check the doc to see if any extra option is available.</p>
+
+<p>The networking options provided by Vagrant are actually high level, abstraction ones. The implementation varies from provider to provider. Usually you don’t have to know the implementation detail but getting a deep view would helpful for troubleshooting. Learning the network models of each provider would be a good start.</p>
+
+<ul>
+  <li><a href="https://www.virtualbox.org/manual/ch06.html">VirtualBox Networking</a></li>
+  <li><a href="https://libvirt.org/archnetwork.html">Libvirt Networking Architecture</a></li>
 </ul>
 
 ]]></content>

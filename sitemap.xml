@@ -62,17 +62,17 @@
         <loc>
             http://bluesalt.github.io/blog/2016/04/02/processes-relation-on-python-multiprocessing-module/
         </loc>
-        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
+        <lastmod>2017-08-14T22:48:00+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2016/08/14/build-latest-wireshark-in-centos-7/</loc>
-        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
+        <lastmod>2017-08-14T22:48:00+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2016/12/02/getting-started-with-rocksdb-in-centos-7/
         </loc>
-        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
+        <lastmod>2017-08-14T22:48:00+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2016/12/06/a-beginners-guide-for-vagrant/</loc>
@@ -85,20 +85,24 @@
         <lastmod>2017-08-12T15:40:28+08:00</lastmod>
     </url>
     <url>
+        <loc>http://bluesalt.github.io/blog/2017/04/22/vagrant-networking-explained/</loc>
+        <lastmod>2017-09-04T23:18:23+08:00</lastmod>
+    </url>
+    <url>
         <loc>
             http://bluesalt.github.io/blog/2017/05/19/a-pitfall-of-vagrant-when-using-ansibles-wait-for-module/
         </loc>
-        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
+        <lastmod>2017-08-14T22:48:00+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/2017/07/19/notes-on-ansible-include/</loc>
-        <lastmod>2017-08-12T15:40:28+08:00</lastmod>
+        <lastmod>2017-08-14T22:48:00+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://bluesalt.github.io/blog/2017/08/02/keep-python-grpc-client-connection-truly-alive/
         </loc>
-        <lastmod>2017-08-12T17:19:16+08:00</lastmod>
+        <lastmod>2017-08-14T22:48:00+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/about/</loc>
@@ -106,7 +110,7 @@
     </url>
     <url>
         <loc>http://bluesalt.github.io/blog/archives/</loc>
-        <lastmod>2017-08-12T17:19:16+08:00</lastmod>
+        <lastmod>2017-09-04T23:18:23+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/chinese-posts/</loc>
@@ -114,7 +118,7 @@
     </url>
     <url>
         <loc>http://bluesalt.github.io/</loc>
-        <lastmod>2017-08-12T17:19:16+08:00</lastmod>
+        <lastmod>2017-09-04T23:18:23+08:00</lastmod>
     </url>
     <url>
         <loc>http://bluesalt.github.io/robots.txt</loc>
